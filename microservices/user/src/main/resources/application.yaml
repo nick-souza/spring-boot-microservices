@@ -1,0 +1,20 @@
+server:
+  port: 9092
+  error:
+    include-message: always
+
+spring:
+  application:
+    admin: user
+  datasource:
+    username: "microservices_root"
+    url: jdbc:postgresql://localhost:5432/user
+    password: "password"
+    jpa:
+      properties:
+        hibernate:
+          dialect: org.hibernate.dialect.PostgreSQLDialect
+          format_sql: "true"
+      hibernate:
+        ddl-auto: update
+      show-sql: "true"
