@@ -7,8 +7,8 @@ spring:
   application:
     admin: user
   datasource:
-    username: "microservices_root"
-    url: jdbc:postgresql://localhost:5432/user
+    url: jdbc:postgresql://localhost:50005/user
+    username: "user-root"
     password: "password"
     jpa:
       properties:
