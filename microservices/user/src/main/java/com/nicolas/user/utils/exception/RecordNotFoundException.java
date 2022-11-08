@@ -1,4 +1,4 @@
-package com.nicolas.user.handlers.exception;
+package com.nicolas.user.utils.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

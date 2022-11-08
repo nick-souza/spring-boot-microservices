@@ -1,5 +1,5 @@
 server:
-  port: 9092
+  port: 9093
   error:
     include-message: always
 
@@ -7,8 +7,8 @@ spring:
   application:
     admin: user
   datasource:
-    url: jdbc:postgresql://localhost:50005/user
-    username: "user-root"
+    url: jdbc:postgresql://localhost:50008/room
+    username: "room-root"
     password: "password"
     jpa:
       properties:

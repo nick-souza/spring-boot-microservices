@@ -1,6 +1,6 @@
-package com.nicolas.user.handlers.exception;
+package com.nicolas.user.utils.exception;
 
-import com.nicolas.user.handlers.GenericResponse;
+import com.nicolas.user.utils.GenericResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -20,5 +20,11 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     public final ResponseEntity<GenericResponse> handleRecordNotFound(Exception ex) {
         var response = new GenericResponse<>(404, ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    public final ResponseEntity<GenericResponse> handleBadRequest(Exception ex) {
+        var response = new GenericResponse<>(400, ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }

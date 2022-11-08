@@ -6,15 +6,16 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.NonNull;
 
+import java.time.LocalDate;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDTO {
+public class AddUserDTO {
 
     @NonNull
-    private Long id;
-    @NonNull
     private String name;
+
     @NonNull
-    private String dateOfBirth;
+    private LocalDate dateOfBirth;
 }

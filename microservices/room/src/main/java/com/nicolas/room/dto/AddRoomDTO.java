@@ -1,20 +1,18 @@
-package com.nicolas.user.dto;
+package com.nicolas.room.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.NonNull;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDTO {
+public class AddRoomDTO {
 
     @NonNull
-    private Long id;
-    @NonNull
     private String name;
+
     @NonNull
-    private String dateOfBirth;
+    private Long size;
 }
