@@ -5,9 +5,10 @@ server:
 
 spring:
   application:
+    name: user
     admin: user
   datasource:
-    url: jdbc:postgresql://localhost:50005/user
+    url: jdbc:postgresql://localhost:50005/user_db
     username: "user-root"
     password: "password"
     jpa:
@@ -18,3 +19,8 @@ spring:
       hibernate:
         ddl-auto: update
       show-sql: "true"
+
+eureka:
+  client:
+    service-url:
+      default-zone: http://localhost:8761/eureka

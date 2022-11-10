@@ -41,21 +41,30 @@ public class ScheduleService {
     }
 
     public ResponseEntity<GenericResponse<ScheduleDTO>> addSchedule(AddScheduleDTO model) {
-        if (model == null)
-            throw new BadRequestException("Invalid body");
+        // TODO: verify if the user and the room exists:
+        // TODO: verify that the room is available at that time and place
+        // TODO: add how many people will be, then validate using the room size
+        // TODO: check if the appointment time is valid (1 hour max, and cant contain minutes)
 
-        var _schedule = scheduleProfile.toSchedule().map(model);
+        try {
+            if (model == null)
+                throw new BadRequestException("Invalid body");
 
-        _schedule.setCreatedAt(LocalDateTime.now());
-        _schedule.setLastUpdateAt(LocalDateTime.now());
+            var _schedule = scheduleProfile.toSchedule().map(model);
 
-        scheduleRepository.save(_schedule);
+            _schedule.setCreatedAt(LocalDateTime.now());
+            _schedule.setLastUpdateAt(LocalDateTime.now());
 
-        var schedule = scheduleProfile.toScheduleDTO().map(_schedule);
+            scheduleRepository.save(_schedule);
 
-        var response = new GenericResponse<>(true, 201, schedule);
+            var schedule = scheduleProfile.toScheduleDTO().map(_schedule);
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+            var response = new GenericResponse<>(true, 201, schedule);
+
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (Exception ex) {
+            throw new BadRequestException(ex.getMessage());
+        }
     }
 
     public ResponseEntity<GenericResponse<List<ScheduleDTO>>> findAll() {
