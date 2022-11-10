@@ -1,56 +1,77 @@
 services:
-  postgres-user:
-    container_name: postgres-user
-    image: postgres
-    environment:
-      POSTGRES_USER: user-root
-      POSTGRES_PASSWORD: password
-      PGDATA: /data/postgres
-    volumes:
-      - user:/data/postgres
-    ports:
-      - "50005:5432"
-    networks:
-      - postgres
-    restart: unless-stopped
+    postgres-user:
+        container_name: postgres-user
+        image: postgres:15.0-alpine
+        environment:
+            POSTGRES_USER: user-root
+            POSTGRES_PASSWORD: password
+            PGDATA: /data/postgres
+        volumes:
+            - user:/data/postgres
+            - ./utils/user_db.sql:/docker-entrypoint-initdb.d/user.sql
+        ports:
+            - "50005:5432"
+        networks:
+            - postgres
+        restart: unless-stopped
 
-  postgres-room:
-    container_name: postgres-room
-    image: postgres
-    environment:
-      POSTGRES_USER: room-root
-      POSTGRES_PASSWORD: password
-      PGDATA: /data/postgres
-    volumes:
-      - room:/data/postgres
-    ports:
-      - "50008:5432"
-    networks:
-      - postgres
-    restart: unless-stopped
+    postgres-room:
+        container_name: postgres-room
+        image: postgres:15.0-alpine
+        environment:
+            POSTGRES_USER: room-root
+            POSTGRES_PASSWORD: password
+            PGDATA: /data/postgres
+        volumes:
+            - room:/data/postgres
+            - ./utils/room_db.sql:/docker-entrypoint-initdb.d/room.sql
+        ports:
+            - "50008:5432"
+        networks:
+            - postgres
+        restart: unless-stopped
 
-  pgadmin:
-    container_name: pgadmin
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
-      PGADMIN_CONFIG_SERVER_MODE: 'False'
-    volumes:
-      - pgadmin:/var/lib/pgadmin
-    ports:
-      - "5050:80"
-    networks:
-      - postgres
-    restart: unless-stopped
+    mysql-schedule:
+        container_name: mysql-schedule
+        image: mysql:8.0.31
+        environment:
+            MYSQL_DATABASE: 'schedule'
+            MYSQL_USER: 'schedule-root'
+            MYSQL_PASSWORD: 'password'
+            MYSQL_ROOT_PASSWORD: 'password'
+        volumes:
+            - schedule:/var/lib/mysql
+            - ./utils/schedule_db.sql:/docker-entrypoint-initdb.d/schedule.sql
+#        command: --init-file /data/application/init.sql
+        ports:
+            - '3360:3306'
+        expose:
+            - '3360'
+        restart: unless-stopped
+
+    pgadmin:
+        container_name: pgadmin
+        image: dpage/pgadmin4
+        environment:
+            PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+            PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+            PGADMIN_CONFIG_SERVER_MODE: 'False'
+        volumes:
+            - pgadmin:/var/lib/pgadmin
+        ports:
+            - "5050:80"
+        networks:
+            - postgres
+        restart: unless-stopped
 
 networks:
-  postgres:
-    driver: bridge
-  spring:
-    driver: bridge
+    postgres:
+        driver: bridge
+#    spring:
+#        driver: bridge
 
 volumes:
-  room:
-  user:
-  pgadmin:
+    room:
+    schedule:
+    user:
+    pgadmin:

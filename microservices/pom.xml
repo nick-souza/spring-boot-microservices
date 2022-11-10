@@ -11,6 +11,7 @@
   <modules>
     <module>user</module>
       <module>room</module>
+    <module>schedule</module>
   </modules>
 
   <name>microservices</name>
@@ -27,8 +28,15 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
         <version>2.7.5</version>
-        <scope>import</scope>
         <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-dependencies</artifactId>
+        <version>2021.0.4</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>org.springframework.cloud</groupId>
