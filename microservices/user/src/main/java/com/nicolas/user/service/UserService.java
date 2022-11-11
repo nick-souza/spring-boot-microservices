@@ -7,25 +7,29 @@ import com.nicolas.user.utils.exception.BadRequestException;
 import com.nicolas.user.utils.exception.RecordNotFoundException;
 import com.nicolas.user.profile.UserProfile;
 import com.nicolas.user.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final UserProfile userProfile;
+    private final RestTemplate restTemplate;
 
-    @Autowired
-    public UserService(UserRepository userRepository, UserProfile userProfile) {
-        this.userRepository = userRepository;
-        this.userProfile = userProfile;
-    }
+//    @Autowired
+//    public UserService(UserRepository userRepository, UserProfile userProfile, RestTemplate restTemplate) {
+//        this.userRepository = userRepository;
+//        this.userProfile = userProfile;
+//        this.restTemplate = restTemplate;
+//    }
 
     public ResponseEntity<GenericResponse<UserDTO>> findUserById(Long id) {
         var _user = userRepository.findById(id);

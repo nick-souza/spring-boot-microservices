@@ -1,8 +1,14 @@
 package com.nicolas.schedule.utils;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@Data
+//@AllArgsConstructor
+@NoArgsConstructor
 public class GenericResponse<T> {
     private boolean success;
     private int statusCode;

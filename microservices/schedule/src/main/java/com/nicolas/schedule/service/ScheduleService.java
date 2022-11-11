@@ -7,25 +7,29 @@ import com.nicolas.schedule.repository.ScheduleRepository;
 import com.nicolas.schedule.utils.GenericResponse;
 import com.nicolas.schedule.utils.exception.BadRequestException;
 import com.nicolas.schedule.utils.exception.RecordNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final ScheduleProfile scheduleProfile;
+    private final RestTemplate restTemplate;
 
-    @Autowired
-    public ScheduleService(ScheduleRepository scheduleRepository, ScheduleProfile scheduleProfile) {
-        this.scheduleRepository = scheduleRepository;
-        this.scheduleProfile = scheduleProfile;
-    }
+//    @Autowired
+//    public ScheduleService(ScheduleRepository scheduleRepository, ScheduleProfile scheduleProfile, RestTemplateBuilder restTemplateBuilder) {
+//        this.scheduleRepository = scheduleRepository;
+//        this.scheduleProfile = scheduleProfile;
+//        this.restTemplate = restTemplateBuilder.errorHandler(new RestTemplateErrorHandler()).build();
+//    }
 
     public ResponseEntity<GenericResponse<ScheduleDTO>> findScheduleById(Long id) {
         var _schedule = scheduleRepository.findById(id);
@@ -46,9 +50,13 @@ public class ScheduleService {
         // TODO: add how many people will be, then validate using the room size
         // TODO: check if the appointment time is valid (1 hour max, and cant contain minutes)
 
-        try {
+//        try {
             if (model == null)
                 throw new BadRequestException("Invalid body");
+
+            var userResponse = restTemplate.getForObject("http://USER/user/{responsibleId}", GenericResponse.class, model.getResponsibleId());
+
+            var roomResponse = restTemplate.getForObject("http://ROOM/room/{roomId}", GenericResponse.class, model.getRoomId());
 
             var _schedule = scheduleProfile.toSchedule().map(model);
 
@@ -62,9 +70,9 @@ public class ScheduleService {
             var response = new GenericResponse<>(true, 201, schedule);
 
             return new ResponseEntity<>(response, HttpStatus.CREATED);
-        } catch (Exception ex) {
-            throw new BadRequestException(ex.getMessage());
-        }
+//        } catch (Exception ex) {
+//            throw new BadRequestException(ex.getMessage());
+//        }
     }
 
     public ResponseEntity<GenericResponse<List<ScheduleDTO>>> findAll() {

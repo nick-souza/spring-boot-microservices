@@ -25,5 +25,6 @@ public class GenericResponse<T> {
     public GenericResponse(int statusCode, String errorMessage) {
         this.statusCode = statusCode;
         this.errorMessage = errorMessage;
+        this.success = false;
     }
 }
