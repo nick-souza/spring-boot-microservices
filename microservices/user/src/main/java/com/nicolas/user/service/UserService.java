@@ -19,7 +19,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -77,7 +76,8 @@ public class UserService {
 
         _user.setCreatedAt(LocalDateTime.now());
         _user.setLastUpdateAt(LocalDateTime.now());
-        _user.setRole(Role.User);
+        // TODO: Change to default user:
+        _user.setRole(Role.Admin);
         _user.setStatus(Status.Active);
 
         userRepository.save(_user);

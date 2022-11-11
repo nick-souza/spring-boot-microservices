@@ -150,8 +150,16 @@ export default function RoomList() {
 				loading={loading}
 				addButton={<CreateRoom fetchTable={fetchData} />}
 			>
-				<RoomForm saveForm={saveEdit} form={form} text={activeRoom?.name || "Room"} room={activeRoom} loading={editLoading} setLoading={setEditLoading} />
+				<RoomForm
+					saveForm={saveEdit}
+					form={form}
+					text={activeRoom?.name || "Room"}
+					room={activeRoom}
+					loading={editLoading}
+					setLoading={setEditLoading}
+				/>
 			</TableList>
+
 			<DeleteItemModal
 				name={activeRoom?.name}
 				handleOk={handleDelete}

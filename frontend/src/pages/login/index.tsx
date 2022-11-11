@@ -1,5 +1,7 @@
+import { GetServerSideProps } from "next";
 import LoginForm from "../../components/login/loginForm";
 import style from "./styles.module.css";
+import { parseCookies } from "nookies";
 
 export default function Login() {
 	return (
@@ -10,3 +12,20 @@ export default function Login() {
 		</div>
 	);
 }
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+	const { ["auth.token"]: token } = parseCookies(ctx);
+
+	if (token) {
+		return {
+			redirect: {
+				destination: "/schedule",
+				permanent: false,
+			},
+		};
+	}
+
+	return {
+		props: {},
+	};
+};

@@ -8,14 +8,17 @@ import { SignUpCredentials } from "../../interfaces/loginInterfaces";
 import style from "../../pages/signup/style.module.css";
 
 export default function SignUpForm() {
+	const [form] = Form.useForm();
 	const notify = useNotifications();
+
 	const { signUp } = useContext(AuthContext);
 	const [loading, setLoading] = useState(false);
-	const [form] = Form.useForm();
 
 	async function onFinish({ name, email, password, confirmPassword }: SignUpCredentials) {
 		if (password != confirmPassword) return notify.error("Passwords do not match");
+
 		setLoading(true);
+
 		await signUp({ name, email, password, confirmPassword }).finally(() => setLoading(false));
 	}
 

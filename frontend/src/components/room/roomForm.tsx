@@ -30,8 +30,9 @@ export default function RoomForm({ room, text, form, saveForm, loading, setLoadi
 	}, []);
 
 	const handleName = () => {
-		if (form.getFieldValue("name")) setTitle(form.getFieldValue("name"));
-		else {
+		if (form.getFieldValue("name")) {
+			setTitle(form.getFieldValue("name"));
+		} else {
 			form.setFieldValue("name", null);
 			setTitle(text);
 		}

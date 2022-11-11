@@ -13,3 +13,5 @@ export default function UserDashboard() {
 		</>
 	);
 }
+
+export { default as getServerSideProps } from "../../hooks/serverSideProps";

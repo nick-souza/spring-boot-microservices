@@ -8,9 +8,9 @@ import { api } from "../../service/api";
 import RightDrawer from "../table/rightDrawer";
 import CalendarListing from "./calendarListing";
 
+import ptBr from "antd/locale/pt_BR";
 import dayjs from "dayjs";
 import "dayjs/locale/pt-br";
-import ptBr from "antd/locale/pt_BR";
 
 interface CalendarEvent {
 	id: number;
@@ -23,6 +23,7 @@ export default function Calendar1() {
 	const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs>(dayjs());
 	const [listVisible, setListVisible] = useState(false);
 	const [loading, setLoading] = useState(false);
+
 	const { user: loggedUser } = useContext(AuthContext);
 
 	dayjs.extend(localeData);
@@ -129,10 +130,10 @@ export default function Calendar1() {
 			<div style={{ padding: 8 }} className={style.calendar_header}>
 				<h1 onDoubleClick={fetchData}>Calendário de agendamentos</h1>
 				<Select
-					className={style.calendar_select}
 					size="small"
-					dropdownMatchSelectWidth={false}
 					value={month}
+					popupMatchSelectWidth={false}
+					className={style.calendar_select}
 					onChange={(newMonth) => {
 						const now = value.clone().month(newMonth);
 						onChange(now);
@@ -151,18 +152,18 @@ export default function Calendar1() {
 	return (
 		<>
 			<div className={style.calendar_div}>
-				{loading ? (
+				{/* {loading ? (
 					<Calendar disabledDate={disabledDate} locale={ptBr.DatePicker} className={style.calendar} headerRender={header} />
-				) : (
-					<Calendar
-						className={style.calendar}
-						locale={ptBr.DatePicker} // FIXME: Fix the locale
-						headerRender={header}
-						dateCellRender={dateCellRender}
-						onSelect={handleSelect}
-						// disabledDate={disabledDate}
-					/>
-				)}
+				) : ( */}
+				<Calendar
+					className={style.calendar}
+					locale={ptBr.DatePicker} // FIXME: Fix the locale
+					headerRender={header}
+					cellRender={dateCellRender}
+					onSelect={handleSelect}
+					disabledDate={disabledDate}
+				/>
+				{/* )} */}
 			</div>
 
 			<RightDrawer

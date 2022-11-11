@@ -1,5 +1,6 @@
-import { CalendarOutlined, UserOutlined } from "@ant-design/icons";
-import { Avatar, Dropdown, Form, Layout, Menu, Tooltip } from "antd";
+import { UserOutlined } from "@ant-design/icons";
+import { Avatar, Dropdown, Form, Layout, Tooltip } from "antd";
+import { MenuItemType } from "antd/es/menu/hooks/useItems";
 import { ReactNode, useContext, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import { useNotifications } from "../../hooks/useNotifications";
@@ -48,59 +49,75 @@ export default function LayoutComp({ children }: LayoutCompProps) {
 			});
 	};
 
-	const items = [
+	const items: MenuItemType[] = [
 		{
+			key: "1",
 			icon: (
 				<Tooltip title={user?.email}>
-					<i className="uil-user"></i>
+					<i className="uil-user" />
 				</Tooltip>
 			),
 			label: <span onClick={() => setEditVisible(true)}>{user?.name}</span>,
 		},
 		{
-			icon: <i className="uil-schedule"></i>,
+			key: "2",
+			icon: <i className="uil-schedule" />,
 			label: <span onClick={() => setVisibleScheduleList(true)}>Meus agendamentos</span>,
 		},
 		{
-			icon: <i className="uil-sign-out-alt"></i>,
+			key: "3",
+			icon: <i className="uil-sign-out-alt" />,
 			label: <span onClick={() => logout()}>Log out</span>,
 		},
-	] as any[];
+	];
 
 	return (
 		<>
 			<Layout className="layout">
 				<Header className="navbar-bg navbar-header">
 					<div className={style.logo}>
-						{/* <CalendarOutlined className={style.icon} /> */}
 						<span className={style.title}>Agendamentos</span>
 					</div>
 
 					<div className="navbar-actions">
-						<NavMenu />
-						<Dropdown trigger={["click"]} overlay={<Menu className="custom-scrollbar" style={{ overflow: "auto", maxHeight: "80vh" }} items={items} />}>
-							<Avatar className={style.user_profile} icon={<UserOutlined />}></Avatar>
+						{/* TODO: Fix this */}
+						<div style={{ width: "445px" }}>
+							<NavMenu />
+						</div>
+						<Dropdown trigger={["click"]} menu={{ items }}>
+							<Avatar className={style.user_profile} icon={<UserOutlined />} />
 						</Dropdown>
 					</div>
 				</Header>
+
 				<Content className="layout-content" style={{ padding: "0 50px" }}>
 					{children}
 				</Content>
 			</Layout>
+
 			<RightDrawer
 				title={visibleEdit ? "Editar" : "Meus agendamentos"}
 				visible={visibleEdit || visibleScheduleList}
 				setVisible={visibleEdit ? setEditVisible : setVisibleScheduleList}
 				loading={loading}
 				setLoading={setLoading}
+				drawerWidth={visibleEdit ? 620 : 820}
+				okBtnName={"Ok"}
 				handleOk={() => {
 					if (visibleEdit) form.submit();
 					else if (visibleScheduleList) setVisibleScheduleList(false);
 				}}
-				drawerWidth={visibleEdit ? 620 : 820}
-				okBtnName={"Ok"}
 			>
-				{visibleEdit && <UserForm saveForm={saveEdit} form={form} text={user?.name || "user"} user={user} loading={loading} setLoading={setLoading} />}
+				{visibleEdit && (
+					<UserForm
+						saveForm={saveEdit}
+						form={form}
+						text={user?.name || "user"}
+						user={user}
+						loading={loading}
+						setLoading={setLoading}
+					/>
+				)}
 				{visibleScheduleList && <UserSchedules user={user} />}
 			</RightDrawer>
 		</>

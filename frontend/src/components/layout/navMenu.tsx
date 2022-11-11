@@ -1,8 +1,6 @@
 import { Menu } from "antd";
 import { useRouter } from "next/router";
-import { useState } from "react";
 import MenuItem from "./menuItem";
-import style from "./style.module.css";
 
 export default function NavMenu() {
 	const router = useRouter();
