@@ -13,6 +13,7 @@ public class ScheduleRestConfig {
     @Bean
     @LoadBalanced
     public RestTemplate restTemplate() {
+        // Usando RestTemplateBuilder para poder usar o custom error handler RestTemplateErrorHandler:
         return new RestTemplateBuilder().errorHandler(new RestTemplateErrorHandler()).build();
     }
 }

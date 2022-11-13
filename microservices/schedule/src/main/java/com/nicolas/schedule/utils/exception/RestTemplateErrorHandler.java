@@ -2,8 +2,6 @@ package com.nicolas.schedule.utils.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nicolas.schedule.utils.GenericResponse;
-import com.nicolas.schedule.utils.exception.BadRequestException;
-import com.nicolas.schedule.utils.exception.RecordNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;

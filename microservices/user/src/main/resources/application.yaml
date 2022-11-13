@@ -1,28 +1,11 @@
 server:
-  port: 9092
-  error:
-    include-message: always
-
-spring:
-  application:
-    name: user
-    admin: user
-  datasource:
-    url: jdbc:postgresql://localhost:50005/user_db
-    username: "user-root"
-    password: "password"
-    jpa:
-      properties:
-        hibernate:
-          dialect: org.hibernate.dialect.PostgreSQLDialect
-          format_sql: "true"
-      hibernate:
-        ddl-auto: update
-      show-sql: "true"
+    port: 9092
+    error:
+        include-message: always
 
 eureka:
-  client:
-    service-url:
-      default-zone: http://localhost:8761/eureka
-    fetch-registry: true
-    register-with-eureka: true
+    client:
+        service-url:
+            default-zone: http://localhost:8761/eureka
+        fetch-registry: true
+        register-with-eureka: true
