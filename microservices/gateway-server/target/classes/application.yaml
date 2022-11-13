@@ -1,0 +1,31 @@
+server:
+    port: 8080
+#    port: ${PORTA:8080}
+
+spring:
+    application:
+        name: gateway
+    cloud:
+        gateway:
+            routes:
+                - id: user
+                  uri: lb://user
+                  predicates:
+                      - Path=/user/**
+                - id: room
+                  uri: lb://room
+                  predicates:
+                      - Path=/room/**
+                - id: schedule
+                  uri: lb://schedule
+                  predicates:
+                      - Path=/schedule/**
+
+eureka:
+    instance:
+        hostname: localhost
+    client:
+        service-url:
+            defaultZone: http://localhost:8761/eureka
+        register-with-eureka: true
+        fetch-registry: true

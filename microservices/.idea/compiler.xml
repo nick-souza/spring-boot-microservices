@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="schedule" />
         <module name="config-server" />
+        <module name="gateway-server" />
         <module name="user" />
         <module name="eureka-server" />
         <module name="room" />
