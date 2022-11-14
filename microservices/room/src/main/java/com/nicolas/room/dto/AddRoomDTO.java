@@ -14,5 +14,5 @@ public class AddRoomDTO {
     private String name;
 
     @NonNull
-    private Long size;
+    private Long capacity;
 }

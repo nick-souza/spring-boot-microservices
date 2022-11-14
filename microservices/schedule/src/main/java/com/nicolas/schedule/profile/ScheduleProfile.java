@@ -6,20 +6,17 @@ import com.nicolas.schedule.model.Schedule;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 import org.modelmapper.convention.MatchingStrategies;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
+
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class ScheduleProfile {
     private final ModelMapper modelMapper;
 
-//    @Autowired
-    public ScheduleProfile(/*ModelMapper modelMapper*/) {
-//        this.modelMapper = modelMapper;
+    public ScheduleProfile() {
         modelMapper =  new ModelMapper();
     }
-
 
     public TypeMap<Schedule, ScheduleDTO> toScheduleDTO() {
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
@@ -28,7 +25,8 @@ public class ScheduleProfile {
             mapper.map(Schedule::getId, ScheduleDTO::setId);
             mapper.map(Schedule::getRoomId, ScheduleDTO::setRoomId);
             mapper.map(Schedule::getResponsibleId, ScheduleDTO::setResponsibleId);
-            mapper.map(Schedule::getBookingDate, ScheduleDTO::setBookingDate);
+            mapper.map(Schedule::getBookingStart, ScheduleDTO::setBookingStart);
+            mapper.map(Schedule::getBookingEnd, ScheduleDTO::setBookingEnd);
         });
     }
 
@@ -38,7 +36,8 @@ public class ScheduleProfile {
         return modelMapper.typeMap(AddScheduleDTO.class, Schedule.class).addMappings(mapper -> {
             mapper.map(AddScheduleDTO::getRoomId, Schedule::setRoomId);
             mapper.map(AddScheduleDTO::getResponsibleId, Schedule::setResponsibleId);
-            mapper.map(AddScheduleDTO::getBookingDate, Schedule::setBookingDate);
+            mapper.map(AddScheduleDTO::getBookingStart, Schedule::setBookingStart);
+            mapper.map(AddScheduleDTO::getBookingEnd, Schedule::setBookingEnd);
         });
     }
 }

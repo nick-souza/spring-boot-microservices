@@ -1,26 +1,33 @@
 package com.nicolas.schedule.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.lang.NonNull;
+import lombok.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class ScheduleDTO {
+    @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
+    protected DateTimeFormatter DateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm", Locale.US);
 
-    @NonNull
     private Long id;
-    @NonNull
     private Long roomId;
-    @NonNull
+    private String room;
     private Long responsibleId;
-//    private Object responsible;
+    private String responsible;
+    @Getter(AccessLevel.NONE)
+    private LocalDateTime bookingStart;
+    @Getter(AccessLevel.NONE)
+    private LocalDateTime bookingEnd;
 
-    @NonNull
-    private LocalDateTime bookingDate;
+    public String getBookingStart() {
+        return bookingStart.format(DateTimeFormat);
+    }
+
+    public String getBookingEnd() {
+        return bookingEnd.format(DateTimeFormat);
+    }
 }

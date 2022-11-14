@@ -5,13 +5,15 @@ import com.nicolas.schedule.dto.ScheduleDTO;
 import com.nicolas.schedule.service.ScheduleService;
 import com.nicolas.schedule.utils.GenericResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/schedule")
+@RequestMapping("/schedule/")
 public class ScheduleController {
     private final ScheduleService scheduleService;
 
@@ -20,18 +22,28 @@ public class ScheduleController {
         this.scheduleService = scheduleService;
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<GenericResponse<ScheduleDTO>> findScheduleById(@PathVariable Long id) {
-        return scheduleService.findScheduleById(id);
-    }
-
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<GenericResponse<List<ScheduleDTO>>> findAll() {
         return scheduleService.findAll();
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<GenericResponse<ScheduleDTO>> addSchedule(@RequestBody AddScheduleDTO model) {
+    @GetMapping("{id}")
+    public ResponseEntity<GenericResponse<ScheduleDTO>> findScheduleById(@PathVariable Long id) {
+        return scheduleService.findScheduleById(id);
+    }
+
+    @PostMapping("add/")
+    public ResponseEntity<GenericResponse<ScheduleDTO>> addSchedule(@RequestBody @Valid AddScheduleDTO model) {
         return scheduleService.addSchedule(model);
+    }
+
+    @GetMapping("room/{roomId}")
+    public ResponseEntity<GenericResponse<List<ScheduleDTO>>> findSchedulesByRoom(@PathVariable Long roomId) {
+        return scheduleService.findSchedulesByRoom(roomId);
+    }
+
+    @GetMapping("user/{responsibleId}")
+    public ResponseEntity<GenericResponse<List<ScheduleDTO>>> findSchedulesByResponsible(@PathVariable Long responsibleId) {
+        return scheduleService.findSchedulesByResponsible(responsibleId);
     }
 }

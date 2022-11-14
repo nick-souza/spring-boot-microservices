@@ -1,17 +1,20 @@
 package com.nicolas.user.service;
 
 import com.nicolas.user.dto.AddUserDTO;
+import com.nicolas.user.dto.UpdateUserAdminDTO;
+import com.nicolas.user.dto.UpdateUserDTO;
 import com.nicolas.user.dto.UserDTO;
+import com.nicolas.user.model.Enums.Role;
+import com.nicolas.user.model.Enums.Status;
+import com.nicolas.user.profile.UserProfile;
+import com.nicolas.user.repository.UserRepository;
 import com.nicolas.user.utils.GenericResponse;
 import com.nicolas.user.utils.exception.BadRequestException;
 import com.nicolas.user.utils.exception.RecordNotFoundException;
-import com.nicolas.user.profile.UserProfile;
-import com.nicolas.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,22 +25,23 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
     private final UserProfile userProfile;
-    private final RestTemplate restTemplate;
 
-//    @Autowired
-//    public UserService(UserRepository userRepository, UserProfile userProfile, RestTemplate restTemplate) {
-//        this.userRepository = userRepository;
-//        this.userProfile = userProfile;
-//        this.restTemplate = restTemplate;
-//    }
+
+    public ResponseEntity<GenericResponse<List<UserDTO>>> findAllActiveUsers() {
+        var users = userRepository.findAllByStatusOrderById(Status.Active).stream().map(user -> userProfile.toUserDTO().map(user)).collect(Collectors.toList());
+
+        if (users.isEmpty())
+            throw new RecordNotFoundException("No user found");
+
+        var response = new GenericResponse<>(true, 200, users);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     public ResponseEntity<GenericResponse<UserDTO>> findUserById(Long id) {
-        var _user = userRepository.findById(id);
+        var _user = userRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("User not found"));
 
-        if (_user.isEmpty())
-            throw new RecordNotFoundException("User not found");
-
-        var user = userProfile.toUserDTO().map(_user.get());
+        var user = userProfile.toUserDTO().map(_user);
 
         var response = new GenericResponse<>(true, 200, user);
 
@@ -48,10 +52,17 @@ public class UserService {
         if (model == null)
             throw new BadRequestException("Invalid body");
 
-        var _user = userProfile.toUser().map(model);
+        if (!emailCheck(model.getEmail()))
+            throw new BadRequestException("Email already taken");
+
+        var _user = userProfile.addToUser().map(model);
 
         _user.setCreatedAt(LocalDateTime.now());
         _user.setLastUpdateAt(LocalDateTime.now());
+        _user.setRole(Role.User);
+
+        // TODO: Send email verification here before setting the status to active:
+        _user.setStatus(Status.Active);
 
         userRepository.save(_user);
 
@@ -62,14 +73,68 @@ public class UserService {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    public ResponseEntity<GenericResponse<List<UserDTO>>> findAll() {
-        var users = userRepository.findAll().stream().map(user -> userProfile.toUserDTO().map(user)).collect(Collectors.toList());
+    public ResponseEntity<GenericResponse<UserDTO>> updateUser(Long id, UpdateUserDTO model) {
+        if (model == null)
+            throw new BadRequestException("Invalid body");
 
-        if (users.isEmpty())
-            throw new RecordNotFoundException("No user found");
+        if (!model.getId().equals(id))
+            throw new BadRequestException("Route and DTO identifiers do not match");
 
-        var response = new GenericResponse<>(true, 200, users);
+        var _user = userRepository.findByIdAndStatus(id, Status.Active).orElseThrow(() -> new RecordNotFoundException("User not found"));
+
+        if (model.getEmail() != null && !emailCheck(model.getEmail()))
+            throw new BadRequestException("Email already taken");
+
+        userProfile.updateToUser().map(model, _user);
+
+        _user.setLastUpdateAt(LocalDateTime.now());
+
+        userRepository.save(_user);
+
+        var user = userProfile.toUserDTO().map(_user);
+
+        var response = new GenericResponse<>(true, 200, user);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    public ResponseEntity<HttpStatus> deleteUser(Long id) {
+        if (id < 0)
+            throw new BadRequestException("Invalid id");
+
+        var _user = userRepository.findByIdAndStatus(id, Status.Active).orElseThrow(() -> new RecordNotFoundException("User not found"));
+
+        _user.setStatus(Status.Deleted);
+        _user.setLastUpdateAt(LocalDateTime.now());
+
+        userRepository.save(_user);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    // TODO: Method to update status and role, needing admin role:
+    public ResponseEntity<GenericResponse<UserDTO>> updateUserAdmin(Long id, UpdateUserAdminDTO model) {
+        if (!model.getId().equals(id))
+            throw new BadRequestException("Route and DTO identifiers do not match");
+
+        var _user = userRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("User not found"));
+
+        userProfile.updateAdminToUser().map(model, _user);
+
+        _user.setLastUpdateAt(LocalDateTime.now());
+
+        userRepository.save(_user);
+
+        var user = userProfile.toUserDTO().map(_user);
+
+        var response = new GenericResponse<>(true, 200, user);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // TODO: Method to reset the password:
+    private boolean emailCheck(String email) {
+        var user = userRepository.findByEmail(email);
+        return user.isEmpty();
     }
 }

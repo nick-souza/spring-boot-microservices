@@ -2,7 +2,9 @@ package com.nicolas.room.profile;
 
 import com.nicolas.room.dto.AddRoomDTO;
 import com.nicolas.room.dto.RoomDTO;
+import com.nicolas.room.dto.UpdateRoomDTO;
 import com.nicolas.room.model.Room;
+import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,18 +19,31 @@ public class RoomProfile {
         this.modelMapper = modelMapper;
     }
 
+    // Return
     public TypeMap<Room, RoomDTO> toRoomDTO() {
         return modelMapper.typeMap(Room.class, RoomDTO.class).addMappings(mapper -> {
             mapper.map(Room::getId, RoomDTO::setId);
             mapper.map(Room::getName, RoomDTO::setName);
-            mapper.map(Room::getSize, RoomDTO::setSize);
+            mapper.map(Room::getCapacity, RoomDTO::setCapacity);
         });
     }
 
-    public TypeMap<AddRoomDTO, Room> toRoom() {
+    // Add
+    public TypeMap<AddRoomDTO, Room> addToRoom() {
         return modelMapper.typeMap(AddRoomDTO.class, Room.class).addMappings(mapper -> {
             mapper.map(AddRoomDTO::getName, Room::setName);
-            mapper.map(AddRoomDTO::getSize, Room::setSize);
+            mapper.map(AddRoomDTO::getCapacity, Room::setCapacity);
+        });
+    }
+
+    // Update
+    public TypeMap<UpdateRoomDTO, Room> updateToRoom() {
+        // Ignorando propriedades nulas, para atualizar apenas os campos que vierem da requisição:
+        modelMapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
+
+        return modelMapper.typeMap(UpdateRoomDTO.class, Room.class).addMappings(mapper -> {
+            mapper.map(UpdateRoomDTO::getName, Room::setName);
+            mapper.map(UpdateRoomDTO::getCapacity, Room::setCapacity);
         });
     }
 }

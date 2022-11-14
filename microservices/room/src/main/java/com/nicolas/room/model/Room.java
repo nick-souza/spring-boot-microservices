@@ -3,9 +3,7 @@ package com.nicolas.room.model;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Data
 @Entity
@@ -21,7 +19,7 @@ public class Room {
     private String name;
 
     @Column(name = "room_size")
-    private Integer size;
+    private Integer capacity;
 
     @Column(name = "room_created_at")
     private LocalDateTime createdAt;

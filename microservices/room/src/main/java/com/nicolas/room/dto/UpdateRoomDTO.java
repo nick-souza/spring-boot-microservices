@@ -3,17 +3,16 @@ package com.nicolas.room.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.lang.NonNull;
+
+import javax.validation.constraints.NotNull;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RoomDTO {
+public class UpdateRoomDTO {
 
-    @NonNull
+    @NotNull(message = "Room ID is required")
     private Long id;
-    @NonNull
     private String name;
-    @NonNull
     private Long capacity;
 }

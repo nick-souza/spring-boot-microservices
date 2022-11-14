@@ -21,3 +21,6 @@ ALTER TABLE IF EXISTS public.tb_users OWNER to "user-root";
 INSERT INTO public.tb_users(
     user_name, user_birth_date, user_created_at, user_last_update_at)
 VALUES ('user_1', '2022-11-07', '2022-11-07', '2022-11-07');
+
+-- user1@email.com
+--

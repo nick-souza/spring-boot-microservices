@@ -13,7 +13,7 @@ public class GenericResponse<T> {
     private boolean success;
     private int statusCode;
     private String errorMessage;
-    private T data;
+    private Object data;
 
     public GenericResponse(boolean success, int statusCode, String errorMessage, T data) {
         this.success = success;

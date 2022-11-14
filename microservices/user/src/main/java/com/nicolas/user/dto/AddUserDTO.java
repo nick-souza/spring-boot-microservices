@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.NonNull;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Data
@@ -13,9 +15,14 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class AddUserDTO {
 
-    @NonNull
+    @NotNull(message = "Name can't be null")
     private String name;
 
-    @NonNull
-    private LocalDate dateOfBirth;
+    private String lastName;
+
+    @NotNull(message = "Email can't be null")
+    @Email
+    private String email;
+
+    // TODO: Add password and password confirmation:
 }

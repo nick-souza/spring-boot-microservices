@@ -16,13 +16,16 @@ public class Schedule {
     private Long id;
 
     @Column(name = "user_id")
-    private String responsibleId;
+    private Long responsibleId;
 
     @Column(name = "room_id")
-    private Integer roomId;
+    private Long roomId;
 
-    @Column(name = "sch_booking_date")
-    private LocalDateTime bookingDate;
+    @Column(name = "sch_booking_start")
+    private LocalDateTime bookingStart;
+
+    @Column(name = "sch_booking_end")
+    private LocalDateTime bookingEnd;
 
     @Column(name = "sch_created_at")
     private LocalDateTime createdAt;
