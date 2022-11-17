@@ -38,8 +38,8 @@ public class UserService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ResponseEntity<GenericResponse<UserDTO>> findUserById(Long id) {
-        var _user = userRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("User not found"));
+    public ResponseEntity<GenericResponse<UserDTO>> findActiveUserById(Long id) {
+        var _user = userRepository.findByIdAndStatus(id, Status.Active).orElseThrow(() -> new RecordNotFoundException("User not found"));
 
         var user = userProfile.toUserDTO().map(_user);
 

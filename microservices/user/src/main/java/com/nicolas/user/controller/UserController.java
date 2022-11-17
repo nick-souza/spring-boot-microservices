@@ -1,7 +1,6 @@
 package com.nicolas.user.controller;
 
 import com.nicolas.user.dto.AddUserDTO;
-import com.nicolas.user.dto.UpdateUserAdminDTO;
 import com.nicolas.user.dto.UpdateUserDTO;
 import com.nicolas.user.dto.UserDTO;
 import com.nicolas.user.utils.GenericResponse;
@@ -26,7 +25,7 @@ public class UserController {
 
     @GetMapping("{id}")
     public ResponseEntity<GenericResponse<UserDTO>> findUserById(@PathVariable Long id) {
-        return userService.findUserById(id);
+        return userService.findActiveUserById(id);
     }
 
     @PostMapping("add")

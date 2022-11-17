@@ -19,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -103,7 +104,7 @@ public class ScheduleService {
             if (model == null)
                 throw new BadRequestException("Invalid body");
 
-            // TODO: For the creation method only, add new method to find by id only active users and rooms, so you cant create an appointment with a deleted user:
+            // TODO (DONE): For the creation method only, add new method to find by id only active users and rooms, so you cant create an appointment with a deleted user:
             validateUser(model.getResponsibleId());
             validateRoom(model.getRoomId());
 
@@ -132,15 +133,19 @@ public class ScheduleService {
 
     private void validateAppointmentHours(LocalDateTime start, LocalDateTime end) {
         if (start.getMinute() != 0 || end.getMinute() != 0)
-            throw new BadRequestException("Appointments must be made on full hours"); // TODO: Check translations
+            throw new BadRequestException("Appointments must be made on full hours"); // TODO: Check translation
 
         // Verificando se tem uma hora de duração pela diferença das datas:
         var appointmentDuration = Duration.between(start, end).toSeconds();
 
         if (appointmentDuration != 3600)
-            throw new BadRequestException("Appointments must be one hour long");
+            throw new BadRequestException("Appointments must be one hour long only");
 
-//        start.toLocalTime()
+        var startTime = start.toLocalTime();
+
+        // Verificando se a hora está entre o horário comercial: // 2022-11-13T19:00
+        if (!startTime.isAfter(LocalTime.of(8, 0)) || !startTime.isBefore(LocalTime.of(18, 0)))
+            throw new BadRequestException("Appointments must be done during business hours");
     }
 
     private void validateUser(Long id) {
@@ -148,6 +153,7 @@ public class ScheduleService {
     }
 
     private void validateRoom(Long id) {
+        // Em caso de erro (ex 404),
         restTemplate.getForObject(ROOM_URI + "{roomId}", GenericResponse.class, id);
     }
 

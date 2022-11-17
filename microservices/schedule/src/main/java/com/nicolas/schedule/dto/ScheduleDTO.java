@@ -11,7 +11,7 @@ import java.util.Locale;
 @NoArgsConstructor
 public class ScheduleDTO {
     @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
-    protected DateTimeFormatter DateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm", Locale.US);
+    protected DateTimeFormatter DateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm", Locale.US);
 
     private Long id;
     private Long roomId;
