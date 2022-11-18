@@ -28,7 +28,8 @@ CREATE TABLE `tb_schedules` (
                                 `sch_id` int NOT NULL AUTO_INCREMENT,
                                 `user_id` int NOT NULL,
                                 `room_id` int NOT NULL,
-                                `sch_booking_date` datetime NOT NULL,
+                                `sch_booking_start` datetime NOT NULL,
+                                `sch_booking_end` datetime NOT NULL,
                                 `sch_created_at` datetime NOT NULL,
                                 `sch_last_update_at` datetime NOT NULL,
                                 PRIMARY KEY (`sch_id`),
@@ -42,7 +43,7 @@ CREATE TABLE `tb_schedules` (
 
 LOCK TABLES `tb_schedules` WRITE;
 /*!40000 ALTER TABLE `tb_schedules` DISABLE KEYS */;
-INSERT INTO `tb_schedules` VALUES (1,1,2,'2018-12-07 00:00:00','2018-12-07 00:00:00','2018-12-07 00:00:00');
+INSERT INTO `tb_schedules` VALUES (1,1,3,'2022-11-13 17:00:00','2022-11-13 18:00:00','2022-11-17 16:53:05','2022-11-17 16:53:05');
 /*!40000 ALTER TABLE `tb_schedules` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -54,5 +55,3 @@ UNLOCK TABLES;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2022-11-09 19:53:56

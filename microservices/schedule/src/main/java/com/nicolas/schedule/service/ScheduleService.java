@@ -112,7 +112,7 @@ public class ScheduleService {
             // TODO (DONE): Validate if the start and end is 1 hour long and has no minutes:
             validateAppointmentHours(model.getBookingStart(), model.getBookingEnd());
 
-            // TODO: Check if the room is available at that time and day:
+            // TODO (DONE): Check if the room is available at that time and day:
             validateConflicts(model.getRoomId(), model.getBookingStart(), model.getBookingEnd());
 
             var _schedule = scheduleProfile.toSchedule().map(model);
@@ -144,31 +144,30 @@ public class ScheduleService {
     }
 
     private void validateAppointmentHours(LocalDateTime start, LocalDateTime end) {
+        // Verificando se é hora cheia:
         if (start.getMinute() != 0 || end.getMinute() != 0)
             throw new BadRequestException("Appointments must be made on full hours"); // TODO: Check translation
 
-        // Verificando se tem uma hora de duração pela diferença das datas:
+        // Verificando se tem uma hora de duração, pela diferença das datas:
         var appointmentDuration = Duration.between(start, end).toSeconds();
 
         if (appointmentDuration != 3600)
             throw new BadRequestException("Appointments must be one hour long only");
 
-        var startTime = start.toLocalTime();
-        var endTime = end.toLocalTime();
-
         // Verificando se a hora está entre o horário comercial:
+        var startTime = start.toLocalTime();
+
         if (!startTime.isAfter(LocalTime.of(DAY_STARTS_AT, 0)) || !startTime.isBefore(LocalTime.of(DAY_ENDS_AT, 0)))
             throw new BadRequestException("Appointments must be done during business hours");
 
-//        if (!endTime.isAfter(LocalTime.of(DAY_STARTS_AT, 0)) || !endTime.isBefore(LocalTime.of(DAY_ENDS_AT, 0)))
-//            throw new BadRequestException("Appointments must be done during business hours");
-
+        // Verificando se o dia não cai em um final de semana:
         if ((start.getDayOfWeek() == DayOfWeek.SATURDAY || start.getDayOfWeek() == DayOfWeek.SUNDAY)
             || (end.getDayOfWeek() == DayOfWeek.SATURDAY || end.getDayOfWeek() == DayOfWeek.SUNDAY))
             throw new BadRequestException("Appointments must be on valid week days");
     }
 
     private void validateUser(Long id) {
+        // Em caso de erro (ex: 404), uma Exception will be thrown:
         restTemplate.getForObject(USER_URI + "{responsibleId}", GenericResponse.class, id);
     }
 
