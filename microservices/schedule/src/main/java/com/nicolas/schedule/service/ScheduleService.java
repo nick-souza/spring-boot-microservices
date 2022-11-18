@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -27,9 +28,10 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class ScheduleService {
-
     protected final String USER_URI = "http://USER/user/";
     protected final String ROOM_URI = "http://ROOM/room/";
+    protected final Integer DAY_STARTS_AT = 8;
+    protected final Integer DAY_ENDS_AT = 18;
 
     private final ScheduleRepository scheduleRepository;
     private final ScheduleProfile scheduleProfile;
@@ -97,7 +99,6 @@ public class ScheduleService {
     }
 
     public ResponseEntity<GenericResponse<ScheduleDTO>> addSchedule(AddScheduleDTO model) {
-        // TODO: verify that the room is available at that time and place
         // TODO: add how many people will be, then validate using the room size
 
         try {
@@ -108,8 +109,11 @@ public class ScheduleService {
             validateUser(model.getResponsibleId());
             validateRoom(model.getRoomId());
 
-            // TODO: Validate if the start and end is 1 hour long and has no minutes:
+            // TODO (DONE): Validate if the start and end is 1 hour long and has no minutes:
             validateAppointmentHours(model.getBookingStart(), model.getBookingEnd());
+
+            // TODO: Check if the room is available at that time and day:
+            validateConflicts(model.getRoomId(), model.getBookingStart(), model.getBookingEnd());
 
             var _schedule = scheduleProfile.toSchedule().map(model);
 
@@ -131,6 +135,14 @@ public class ScheduleService {
         }
     }
 
+    private void validateConflicts(Long roomId, LocalDateTime bookingStart, LocalDateTime bookingEnd) {
+        var _schedule = scheduleRepository
+                .findByRoomIdAndBookingStartAndBookingEnd(roomId, bookingStart, bookingEnd);
+
+        if (_schedule.isPresent())
+            throw new BadRequestException("The room is not available at that time");
+    }
+
     private void validateAppointmentHours(LocalDateTime start, LocalDateTime end) {
         if (start.getMinute() != 0 || end.getMinute() != 0)
             throw new BadRequestException("Appointments must be made on full hours"); // TODO: Check translation
@@ -142,10 +154,18 @@ public class ScheduleService {
             throw new BadRequestException("Appointments must be one hour long only");
 
         var startTime = start.toLocalTime();
+        var endTime = end.toLocalTime();
 
-        // Verificando se a hora está entre o horário comercial: // 2022-11-13T19:00
-        if (!startTime.isAfter(LocalTime.of(8, 0)) || !startTime.isBefore(LocalTime.of(18, 0)))
+        // Verificando se a hora está entre o horário comercial:
+        if (!startTime.isAfter(LocalTime.of(DAY_STARTS_AT, 0)) || !startTime.isBefore(LocalTime.of(DAY_ENDS_AT, 0)))
             throw new BadRequestException("Appointments must be done during business hours");
+
+//        if (!endTime.isAfter(LocalTime.of(DAY_STARTS_AT, 0)) || !endTime.isBefore(LocalTime.of(DAY_ENDS_AT, 0)))
+//            throw new BadRequestException("Appointments must be done during business hours");
+
+        if ((start.getDayOfWeek() == DayOfWeek.SATURDAY || start.getDayOfWeek() == DayOfWeek.SUNDAY)
+            || (end.getDayOfWeek() == DayOfWeek.SATURDAY || end.getDayOfWeek() == DayOfWeek.SUNDAY))
+            throw new BadRequestException("Appointments must be on valid week days");
     }
 
     private void validateUser(Long id) {
@@ -153,7 +173,6 @@ public class ScheduleService {
     }
 
     private void validateRoom(Long id) {
-        // Em caso de erro (ex 404),
         restTemplate.getForObject(ROOM_URI + "{roomId}", GenericResponse.class, id);
     }
 
