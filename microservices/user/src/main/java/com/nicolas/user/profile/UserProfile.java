@@ -38,8 +38,8 @@ public class UserProfile {
     public TypeMap<AddUserDTO, User> addToUser() {
         return modelMapper.typeMap(AddUserDTO.class, User.class).addMappings(mapper -> {
             mapper.map(AddUserDTO::getName, User::setName);
-            mapper.map(AddUserDTO::getLastName, User::setLastName);
             mapper.map(AddUserDTO::getEmail, User::setEmail);
+            mapper.map(AddUserDTO::getEncryptedPass, User::setPassword);
         });
     }
 

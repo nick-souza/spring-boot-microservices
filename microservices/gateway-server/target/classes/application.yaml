@@ -7,6 +7,7 @@ spring:
         name: gateway
     cloud:
         gateway:
+#            discovery.locator.enabled: true
             routes:
                 - id: user
                   uri: lb://user
@@ -20,6 +21,10 @@ spring:
                   uri: lb://schedule
                   predicates:
                       - Path=/schedule/**
+                - id: authentication
+                  uri: lb://authentication
+                  predicates:
+                      - Path=/auth/**
 
 eureka:
     instance:

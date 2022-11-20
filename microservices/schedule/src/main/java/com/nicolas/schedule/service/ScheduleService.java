@@ -2,10 +2,8 @@ package com.nicolas.schedule.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nicolas.schedule.dto.AddScheduleDTO;
-import com.nicolas.schedule.dto.RoomDTO;
-import com.nicolas.schedule.dto.ScheduleDTO;
-import com.nicolas.schedule.dto.UserDTO;
+import com.nicolas.schedule.dto.*;
+import com.nicolas.schedule.model.Schedule;
 import com.nicolas.schedule.profile.ScheduleProfile;
 import com.nicolas.schedule.repository.ScheduleRepository;
 import com.nicolas.schedule.utils.GenericResponse;
@@ -17,11 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.DayOfWeek;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -98,21 +94,26 @@ public class ScheduleService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ResponseEntity<GenericResponse<ScheduleDTO>> addSchedule(AddScheduleDTO model) {
-        // TODO: add how many people will be, then validate using the room size
+    public ResponseEntity<HttpStatus> deleteSchedule(Long id) {
+        if (id < 0)
+            throw new BadRequestException("Invalid id");
 
+        var _schedule = scheduleRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Schedule not found"));
+
+        scheduleRepository.delete(_schedule);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    public ResponseEntity<GenericResponse<ScheduleDTO>> addSchedule(AddScheduleDTO model) {
         try {
             if (model == null)
                 throw new BadRequestException("Invalid body");
 
-            // TODO (DONE): For the creation method only, add new method to find by id only active users and rooms, so you cant create an appointment with a deleted user:
+            // Validations:
             validateUser(model.getResponsibleId());
             validateRoom(model.getRoomId());
-
-            // TODO (DONE): Validate if the start and end is 1 hour long and has no minutes:
             validateAppointmentHours(model.getBookingStart(), model.getBookingEnd());
-
-            // TODO (DONE): Check if the room is available at that time and day:
             validateConflicts(model.getRoomId(), model.getBookingStart(), model.getBookingEnd());
 
             var _schedule = scheduleProfile.toSchedule().map(model);
@@ -122,16 +123,59 @@ public class ScheduleService {
 
             scheduleRepository.save(_schedule);
 
-            var schedule = scheduleProfile.toScheduleDTO().map(_schedule);
+            var schedule = toScheduleDTO(_schedule);
 
-            schedule.setRoom(getRoomDTO(schedule.getRoomId()).getName());
-            schedule.setResponsible(getUserDTO(schedule.getResponsibleId()).getName());
+//            var schedule = scheduleProfile.toScheduleDTO().map(_schedule);
+//            schedule.setRoom(getRoomDTO(schedule.getRoomId()).getName());
+//            schedule.setResponsible(getUserDTO(schedule.getResponsibleId()).getName());
 
             var response = new GenericResponse<>(true, 201, schedule);
 
             return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (DateTimeParseException ex) {
+            throw new BadRequestException(String.format("The field '%s' is not a valid date", ex.getParsedString()));
         } catch (Exception ex) {
-            return new ResponseEntity<>(new GenericResponse<>(500, ex.getMessage()), HttpStatus.OK);
+            return new ResponseEntity<>(new GenericResponse<>(500, ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public ResponseEntity<GenericResponse<ScheduleDTO>> updateSchedule(Long id, UpdateScheduleDTO model) {
+        try {
+            if (model == null)
+                throw new BadRequestException("Invalid body");
+
+            if (!model.getScheduleId().equals(id))
+                throw new BadRequestException("Route and DTO identifiers do not match");
+
+            var _schedule = scheduleRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Schedule not found"));
+
+            if (model.getBookingStart() != null && model.getBookingEnd() != null) {
+                var start = model.getBookingStart();
+                var end = model.getBookingEnd();
+                validateAppointmentHours(start, end);
+            } else if (model.getBookingStart() != null){
+                var start = model.getBookingStart();
+                validateAppointmentHours(start, _schedule.getBookingEnd());
+            } else if (model.getBookingEnd() != null){
+                var end = model.getBookingEnd();
+                validateAppointmentHours(_schedule.getBookingStart(), end);
+            }
+
+            scheduleProfile.updateToSchedule().map(model, _schedule);
+
+            _schedule.setLastUpdateAt(LocalDateTime.now());
+
+            scheduleRepository.save(_schedule);
+
+            var schedule = toScheduleDTO(_schedule);
+
+            var response = new GenericResponse<>(true, 200, schedule);
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (DateTimeParseException ex) {
+            throw new BadRequestException(String.format("The field '%s' is not a valid date", ex.getParsedString()));
+        } catch (Exception ex) {
+            return new ResponseEntity<>(new GenericResponse<>(500, ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -162,8 +206,12 @@ public class ScheduleService {
 
         // Verificando se o dia não cai em um final de semana:
         if ((start.getDayOfWeek() == DayOfWeek.SATURDAY || start.getDayOfWeek() == DayOfWeek.SUNDAY)
-            || (end.getDayOfWeek() == DayOfWeek.SATURDAY || end.getDayOfWeek() == DayOfWeek.SUNDAY))
+                || (end.getDayOfWeek() == DayOfWeek.SATURDAY || end.getDayOfWeek() == DayOfWeek.SUNDAY))
             throw new BadRequestException("Appointments must be on valid week days");
+
+        // Verificando se a data ja passou:
+        if (start.toLocalDate().isBefore(LocalDate.now()))
+            throw new BadRequestException("Appointments can't be schedule on dates that already passed");
     }
 
     private void validateUser(Long id) {
@@ -205,5 +253,17 @@ public class ScheduleService {
         } catch (JsonProcessingException ex) {
             throw new BadRequestException(ex.getMessage());
         }
+    }
+
+    private ScheduleDTO toScheduleDTO(Schedule schedule) {
+        var roomName = getRoomDTO(schedule.getRoomId()).getName();
+        var responsibleName = getUserDTO(schedule.getResponsibleId()).getName();
+
+        var scheduleDTO = scheduleProfile.toScheduleDTO().map(schedule);
+
+        scheduleDTO.setResponsible(responsibleName);
+        scheduleDTO.setRoom(roomName);
+
+        return scheduleDTO;
     }
 }

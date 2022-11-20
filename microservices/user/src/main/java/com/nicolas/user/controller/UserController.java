@@ -28,7 +28,7 @@ public class UserController {
         return userService.findActiveUserById(id);
     }
 
-    @PostMapping("add")
+    @PostMapping("sign-in")
     public ResponseEntity<GenericResponse<UserDTO>> addUser(@RequestBody @Valid AddUserDTO model) {
         return userService.addUser(model);
     }
@@ -36,6 +36,11 @@ public class UserController {
     @GetMapping("")
     public ResponseEntity<GenericResponse<List<UserDTO>>> findAll() {
         return userService.findAllActiveUsers();
+    }
+
+    @GetMapping("email/{email}")
+    public ResponseEntity<GenericResponse<String>> findByEmail(@PathVariable String email) {
+        return userService.findUserByEmail(email);
     }
 
     @PutMapping("update/{id}")

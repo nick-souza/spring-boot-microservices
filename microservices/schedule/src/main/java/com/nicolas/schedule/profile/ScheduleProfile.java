@@ -2,7 +2,9 @@ package com.nicolas.schedule.profile;
 
 import com.nicolas.schedule.dto.AddScheduleDTO;
 import com.nicolas.schedule.dto.ScheduleDTO;
+import com.nicolas.schedule.dto.UpdateScheduleDTO;
 import com.nicolas.schedule.model.Schedule;
+import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 import org.modelmapper.convention.MatchingStrategies;
@@ -38,6 +40,18 @@ public class ScheduleProfile {
             mapper.map(AddScheduleDTO::getResponsibleId, Schedule::setResponsibleId);
             mapper.map(AddScheduleDTO::getBookingStart, Schedule::setBookingStart);
             mapper.map(AddScheduleDTO::getBookingEnd, Schedule::setBookingEnd);
+        });
+    }
+
+    public TypeMap<UpdateScheduleDTO, Schedule> updateToSchedule() {
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        modelMapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
+
+        return modelMapper.typeMap(UpdateScheduleDTO.class, Schedule.class).addMappings(mapper -> {
+            mapper.map(UpdateScheduleDTO::getRoomId, Schedule::setRoomId);
+            mapper.map(UpdateScheduleDTO::getResponsibleId, Schedule::setResponsibleId);
+            mapper.map(UpdateScheduleDTO::getBookingStart, Schedule::setBookingStart);
+            mapper.map(UpdateScheduleDTO::getBookingEnd, Schedule::setBookingEnd);
         });
     }
 }

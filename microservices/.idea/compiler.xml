@@ -13,6 +13,7 @@
         <module name="user" />
         <module name="eureka-server" />
         <module name="room" />
+        <module name="authentication" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

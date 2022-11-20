@@ -2,6 +2,7 @@ package com.nicolas.schedule.controller;
 
 import com.nicolas.schedule.dto.AddScheduleDTO;
 import com.nicolas.schedule.dto.ScheduleDTO;
+import com.nicolas.schedule.dto.UpdateScheduleDTO;
 import com.nicolas.schedule.service.ScheduleService;
 import com.nicolas.schedule.utils.GenericResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,5 +46,15 @@ public class ScheduleController {
     @GetMapping("user/{responsibleId}")
     public ResponseEntity<GenericResponse<List<ScheduleDTO>>> findSchedulesByResponsible(@PathVariable Long responsibleId) {
         return scheduleService.findSchedulesByResponsible(responsibleId);
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<HttpStatus> deleteSchedule(@PathVariable Long id) {
+        return scheduleService.deleteSchedule(id);
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<GenericResponse<ScheduleDTO>> updateSchedule(@PathVariable Long id, @RequestBody @Valid UpdateScheduleDTO model) {
+        return scheduleService.updateSchedule(id, model);
     }
 }

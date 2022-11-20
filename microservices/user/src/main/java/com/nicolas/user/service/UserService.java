@@ -38,6 +38,14 @@ public class UserService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    public ResponseEntity<GenericResponse<String>> findUserByEmail(String email) {
+        var _user = userRepository.findByEmail(email).orElseThrow(() -> new RecordNotFoundException("User not found"));
+
+        var response = new GenericResponse<>(true, 200, _user.getPassword());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     public ResponseEntity<GenericResponse<UserDTO>> findActiveUserById(Long id) {
         var _user = userRepository.findByIdAndStatus(id, Status.Active).orElseThrow(() -> new RecordNotFoundException("User not found"));
 

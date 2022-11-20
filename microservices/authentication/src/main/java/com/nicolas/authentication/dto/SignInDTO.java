@@ -1,20 +1,16 @@
-package com.nicolas.user.dto;
+package com.nicolas.authentication.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.lang.NonNull;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddUserDTO {
-
+public class SignInDTO {
     @NotNull(message = "Name can't be null")
     private String name;
 
@@ -23,5 +19,7 @@ public class AddUserDTO {
     private String email;
 
     @NotNull
-    private String encryptedPass;
+    private String password;
+    @NotNull
+    private String confirmPassword;
 }

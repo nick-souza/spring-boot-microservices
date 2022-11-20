@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS public.tb_users
     user_status integer NOT NULL,
     user_role integer NOT NULL,
     user_verified_at timestamp without time zone,
+    user_password character varying COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT tb_users_pkey PRIMARY KEY (user_id)
 )
 
@@ -23,5 +24,5 @@ TABLESPACE pg_default;
 ALTER TABLE IF EXISTS public.tb_users OWNER to "user-root";
 
 INSERT INTO public.tb_users(
-    user_name, user_created_at, user_last_update_at, user_lastname, user_email, user_status, user_role)
-VALUES ('user_1', '2022-11-13 17:49:02', '2022-11-13 17:49:02', 'last_name', 'email@email.com', 1, 1);
+    user_name, user_created_at, user_last_update_at, user_lastname, user_email, user_password, user_status, user_role)
+VALUES ('user_1', '2022-11-13 17:49:02', '2022-11-13 17:49:02', 'last_name', 'email@email.com', 'pass', 1, 1);
