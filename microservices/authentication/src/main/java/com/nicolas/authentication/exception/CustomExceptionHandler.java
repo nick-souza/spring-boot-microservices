@@ -1,6 +1,6 @@
-package com.nicolas.user.utils.exception;
+package com.nicolas.authentication.exception;
 
-import com.nicolas.user.utils.GenericResponse;
+import com.nicolas.authentication.utils.GenericResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public final ResponseEntity<GenericResponse> handleAll(Exception ex) {
-        var response = new GenericResponse<>(500, "Internal error");
+        var response = new GenericResponse<>(500, ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -32,6 +32,12 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     public final ResponseEntity<GenericResponse> handleBadRequest(Exception ex) {
         var response = new GenericResponse<>(400, ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UnauthorizedRequestException.class)
+    public final ResponseEntity<GenericResponse> handleUnauthorizedRequest(Exception ex) {
+        var response = new GenericResponse<>(401, ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
 
     // DTO Validation:

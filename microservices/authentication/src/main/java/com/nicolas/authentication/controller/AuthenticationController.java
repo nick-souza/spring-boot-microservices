@@ -34,10 +34,4 @@ public class AuthenticationController {
     public ResponseEntity<LogInResponseDTO> validateToken(@RequestParam String token) {
         return ResponseEntity.ok(authService.validateToken(token));
     }
-
-
-//    @PostMapping("log-in/{email}")
-//    public ResponseEntity<GenericResponse> check(@PathVariable String email) {
-//        return authService.findByEmailOptional(email);
-//    }
 }

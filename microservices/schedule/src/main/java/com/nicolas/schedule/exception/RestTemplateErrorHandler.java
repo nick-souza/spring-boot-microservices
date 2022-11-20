@@ -1,4 +1,4 @@
-package com.nicolas.schedule.utils.exception;
+package com.nicolas.schedule.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nicolas.schedule.utils.GenericResponse;

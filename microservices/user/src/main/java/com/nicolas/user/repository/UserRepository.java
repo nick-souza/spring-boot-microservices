@@ -10,10 +10,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    List<User> findAllByOrderByIdAsc();
-
     @Query(value = "FROM User WHERE id = :id AND status = :status")
     Optional<User> findByIdAndStatus(@Param("id") Long id, @Param("status") Status status);
     List<User> findAllByStatusOrderById(Status status);
-    public Optional<User> findByEmail(String email);
+    Optional<User> findByEmail(String email);
+
+    // List<User> findAllByOrderByIdAsc();
 }

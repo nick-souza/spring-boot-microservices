@@ -11,9 +11,9 @@ import com.nicolas.authentication.dto.outgoing.SignInResponseDTO;
 import com.nicolas.authentication.dto.outgoing.UserDTO;
 import com.nicolas.authentication.model.User;
 import com.nicolas.authentication.utils.GenericResponse;
-import com.nicolas.authentication.utils.exception.BadRequestException;
-import com.nicolas.authentication.utils.exception.RecordNotFoundException;
-import com.nicolas.authentication.utils.exception.UnauthorizedRequestException;
+import com.nicolas.authentication.exception.BadRequestException;
+import com.nicolas.authentication.exception.RecordNotFoundException;
+import com.nicolas.authentication.exception.UnauthorizedRequestException;
 import io.jsonwebtoken.*;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -34,94 +34,93 @@ public class AuthenticationService {
     private final PasswordEncoder passEncoder;
 
     public ResponseEntity<GenericResponse<SignInResponseDTO>> signIn(SignInDTO model) {
+        // Comparando as senhas:
         if (!model.getPassword().equals(model.getConfirmPassword()))
             throw new BadRequestException("Passwords do not match");
 
         var addUserDTO = new AddUserDTO();
+
         addUserDTO.setEmail(model.getEmail());
         addUserDTO.setName(model.getName());
-
         // Usando BCrypt para encriptar a senha:
         addUserDTO.setEncryptedPass(passEncoder.encode(model.getPassword()));
 
+        // Mandando o DTO para o user service, que em caso de sucesso retorna um SignInResponseDTO:
         var restResponse = restTemplate.postForObject(USER_URI + "sign-in", addUserDTO, GenericResponse.class);
 
         return new ResponseEntity<>(restResponse, HttpStatus.resolve(restResponse.getStatusCode()));
     }
 
     public ResponseEntity<GenericResponse<LogInResponseDTO>> logIn(LogInDTO model) {
+        // Chamando o user service para verificar o email:
         var userResponse = restTemplate.getForObject(USER_URI + "email-check/{email}", GenericResponse.class, model.getEmail());
 
+        // Em caso de sucesso, convertendo o response para User:
         var user = getUser(userResponse.getData());
 
+        // Validando a senha encriptada e do model:
         var valid = passEncoder.matches(model.getPassword(), user.getPassword());
 
-        // TODO: Throw unauthorized instead:
         if (!valid)
-            throw new BadRequestException("Invalid credentials");
+            throw new UnauthorizedRequestException("Invalid credentials");
 
-        var userDTO = getUserDTO(user);
-
+        // Convertendo para a resposta, com o JWT:
         var logInDTO = new LogInResponseDTO();
+
         logInDTO.setEmail(user.getEmail());
         logInDTO.setId(user.getId());
-        logInDTO.setToken(createToken(userDTO));
+        logInDTO.setToken(createToken(user.getEmail()));
 
         var response = new GenericResponse<>(true, 200, logInDTO);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public GenericResponse findByEmailOptional(String email) {
-        try {
-            var response = restTemplate.getForObject(USER_URI + "email/{email}", GenericResponse.class, email);
-
-            var data = response.getData();
-
-//            return new ResponseEntity<>(new GenericResponse<>(true, 200, data), HttpStatus.OK);
-            return new GenericResponse<>(true, 200, data);
-        } catch (Exception ex) {
-            var msg = ex.getMessage();
-//            return new ResponseEntity<>(new GenericResponse<>(false, 400, msg), HttpStatus.BAD_REQUEST);
-            return new GenericResponse<>(false, 400, msg);
-        }
-    }
-
     // Used by the GatewayFilter to validate the JWT token:
     public LogInResponseDTO validateToken(String token) {
         try {
             // Pegando o email do JWT Claim para validar se existe:
-            var email = Jwts.parser().setSigningKey(SECRET_KEY)
-                                .parseClaimsJws(token)
-                                .getBody()
-                                .getSubject();
+            var email = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody().getSubject();
 
             var response = findByEmailOptional(email);
 
-            if (response.getData() == null)
+            if (response == null)
                 throw new RecordNotFoundException("User not found");
 
-            var user = getUserDTO(response.getData());
+            var user = getUserDTO(response);
 
             var logInDTO = new LogInResponseDTO();
 
             logInDTO.setId(user.getId());
-            logInDTO.setToken(createToken(user));
             logInDTO.setEmail(user.getEmail());
+            logInDTO.setToken(createToken(user.getEmail()));
 
             return logInDTO;
-
         } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException ex) {
             throw new UnauthorizedRequestException("Invalid JWT");
         }
     }
 
-    private String createToken(UserDTO user) {
-        var claims = Jwts.claims().setSubject(user.getEmail());
+    private Object findByEmailOptional(String email) {
+        try {
+            // Chamando o user service para procurar o usuário pelo email:
+            var response = restTemplate.getForObject(USER_URI + "email/{email}", GenericResponse.class, email);
 
+            return response.getData();
+        } catch (Exception ex) {
+            throw new BadRequestException(ex.getMessage());
+        }
+    }
+
+    private String createToken(String userEmail) {
+        // Colocando o email do user na claim:
+        var claims = Jwts.claims().setSubject(userEmail);
+
+        // Validade de uma hora:
         var now = new Date();
         var validity = new Date(now.getTime() + 3600000); // 1 hour
 
+        // Criando e retornando o JWT token:
         return Jwts.builder().setClaims(claims).setIssuedAt(now).setExpiration(validity).signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();
     }
 
@@ -132,9 +131,6 @@ public class AuthenticationService {
 
             // Para poder ignorar o password:
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-//            // Chamando a aplicação USER para pegar o objeto pelo Id:
-//            var userObj = restTemplate.getForObject(USER_URI + "{responsibleId}", GenericResponse.class, id).getData();
 
             // Convertendo para JSON String:
             String jsonStr = mapper.writeValueAsString(userObj);

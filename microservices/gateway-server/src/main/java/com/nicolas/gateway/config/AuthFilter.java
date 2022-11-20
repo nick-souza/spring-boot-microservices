@@ -29,6 +29,7 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
     @Override
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
+            // Caso não tenha Authorization na header:
             if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION))
                 throw new UnauthorizedRequestException("Missing authorization information");
 
@@ -36,26 +37,32 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
 
             String[] parts = authHeader.split(" ");
 
-            // TODO: Add unauthorized response:
+            // Caso não tenha o Token ou não for do tipo Bearer:
             if (parts.length != 2 || !"Bearer".equals(parts[0]))
                 throw new UnauthorizedRequestException("Unauthorized");
 
+            // Fazendo a chamada para validar:
             return webClientBuilder.build()
                     .post()
+                    // Chamando o método para validar o JTW:
                     .uri("http://AUTHENTICATION/auth/validateToken?token=" + parts[1])
                     .retrieve()
+                    // Convertendo para a classe de resposta:
                     .bodyToMono(LogInResponseDTO.class)
+                    // Mapeando para poder incluir o ID do usuário na header:
                     .map(logInResponseDto -> {
                         exchange.getRequest()
                                 .mutate()
                                 .header("X-auth-user-id", String.valueOf(logInResponseDto.getId()));
                         return exchange;
                     }).flatMap(chain::filter)
+                    // Error handler:
                     .onErrorMap(WebClientException.class, this::handleHttpClientException);
         };
     }
 
     private Throwable handleHttpClientException(Throwable ex) {
+        // Conforme o status code do WebClient:
         if (!(ex instanceof WebClientResponseException))
             return ex;
 
@@ -74,6 +81,7 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
 
     private String getErrorMessage(WebClientResponseException ex) {
         try {
+            // Mapeando o erro para a GenericResponse.class:
             return new ObjectMapper().readValue(ex.getResponseBodyAsString(), GenericResponse.class).getErrorMessage();
         } catch (IOException ioe) {
             return ex.getMessage();
@@ -81,7 +89,7 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
     }
 
     public static class Config {
-        // empty class as I don't need any particular configuration
+        // No configuration;
     }
 }
 

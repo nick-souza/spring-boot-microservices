@@ -1,4 +1,4 @@
-package com.nicolas.authentication.utils.exception;
+package com.nicolas.authentication.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nicolas.authentication.utils.GenericResponse;

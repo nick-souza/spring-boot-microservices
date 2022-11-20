@@ -1,6 +1,6 @@
 package com.nicolas.authentication.utils;
 
-import com.nicolas.authentication.utils.exception.RestTemplateErrorHandler;
+import com.nicolas.authentication.exception.RestTemplateErrorHandler;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;

@@ -1,4 +1,4 @@
-package com.nicolas.room.utils.exception;
+package com.nicolas.schedule.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/user/")
@@ -46,7 +47,7 @@ public class UserController {
     }
 
     @GetMapping("email/{email}")
-    public ResponseEntity<GenericResponse> findByEmailOptional(@PathVariable String email) {
+    public ResponseEntity<GenericResponse<Optional<User>>> findByEmailOptional(@PathVariable String email) {
         return userService.findUserByEmailOptional(email);
     }
 
@@ -54,12 +55,6 @@ public class UserController {
     public ResponseEntity<GenericResponse<UserDTO>> updateUser(@PathVariable Long id, @RequestBody @Valid UpdateUserDTO model) {
         return userService.updateUser(id, model);
     }
-
-    // TODO: Add role authentication here
-//    @PutMapping("update/{id}")
-//    public ResponseEntity<GenericResponse<UserDTO>> updateUserAdmin(@PathVariable Long id, @RequestBody @Valid UpdateUserAdminDTO model) {
-//        return userService.updateUserAdmin(id, model);
-//    }
 
     @DeleteMapping("delete/{id}")
     public ResponseEntity<HttpStatus> deleteUser(@PathVariable Long id) {

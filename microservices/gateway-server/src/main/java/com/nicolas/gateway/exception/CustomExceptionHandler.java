@@ -20,10 +20,6 @@ public class CustomExceptionHandler extends DefaultErrorAttributes {
     public CustomExceptionHandler() {
     }
 
-    public CustomExceptionHandler(boolean includeException) {
-        super();
-    }
-
     @Override
     public Map<String, Object> getErrorAttributes(ServerRequest request, ErrorAttributeOptions options) {
         Throwable error = this.getError(request);

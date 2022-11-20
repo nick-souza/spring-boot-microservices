@@ -1,6 +1,6 @@
-package com.nicolas.schedule.utils.exception;
+package com.nicolas.room.exception;
 
-import com.nicolas.schedule.utils.GenericResponse;
+import com.nicolas.room.utils.GenericResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public final ResponseEntity<GenericResponse> handleAll(Exception ex) {
-        var response = new GenericResponse<>(500, ex.getMessage());
+        var response = new GenericResponse<>(500, "Internal error");
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -36,9 +36,9 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     // DTO Validation:
     @Override @NonNull
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException exception, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException exception, HttpHeaders headers,HttpStatus status, WebRequest request) {
         var validationErrors = exception.getBindingResult().getFieldErrors().stream()
-                .map(err -> err.getDefaultMessage() != null ? err.getDefaultMessage() : err.getField() + " is invalid").toList();
+                .map(err -> err.getDefaultMessage() != null ? err.getDefaultMessage() : err.getField() + "can't be null").toList();
 
         var response = new GenericResponse<>(400, validationErrors.get(0));
 
