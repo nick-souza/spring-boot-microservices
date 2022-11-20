@@ -1,8 +1,10 @@
 package com.nicolas.user.controller;
 
 import com.nicolas.user.dto.AddUserDTO;
+import com.nicolas.user.dto.LogInResponseDTO;
 import com.nicolas.user.dto.UpdateUserDTO;
 import com.nicolas.user.dto.UserDTO;
+import com.nicolas.user.model.User;
 import com.nicolas.user.utils.GenericResponse;
 import com.nicolas.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +40,14 @@ public class UserController {
         return userService.findAllActiveUsers();
     }
 
-    @GetMapping("email/{email}")
-    public ResponseEntity<GenericResponse<String>> findByEmail(@PathVariable String email) {
+    @GetMapping("email-check/{email}")
+    public ResponseEntity<GenericResponse<User>> findByEmail(@PathVariable String email) {
         return userService.findUserByEmail(email);
+    }
+
+    @GetMapping("email/{email}")
+    public ResponseEntity<GenericResponse> findByEmailOptional(@PathVariable String email) {
+        return userService.findUserByEmailOptional(email);
     }
 
     @PutMapping("update/{id}")

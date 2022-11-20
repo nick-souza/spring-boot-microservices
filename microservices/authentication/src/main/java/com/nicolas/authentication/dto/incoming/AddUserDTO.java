@@ -1,4 +1,4 @@
-package com.nicolas.authentication.dto;
+package com.nicolas.authentication.dto.incoming;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,11 +10,15 @@ import javax.validation.constraints.NotNull;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LogInDTO {
-    @NotNull
+public class AddUserDTO {
+
+    @NotNull(message = "Name can't be null")
+    private String name;
+
+    @NotNull(message = "Email can't be null")
     @Email
     private String email;
 
     @NotNull
-    private String password;
+    private String encryptedPass;
 }

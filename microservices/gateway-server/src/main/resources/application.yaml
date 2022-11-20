@@ -2,25 +2,35 @@ server:
     port: 8080
 #    port: ${PORTA:8080}
 
+management:
+    endpoint.gateway.enabled: true
+    endpoints.web.exposure.include: gateway
+
 spring:
     application:
         name: gateway
     cloud:
         gateway:
-#            discovery.locator.enabled: true
+            discovery.locator.enabled: true
             routes:
                 - id: user
                   uri: lb://user
                   predicates:
                       - Path=/user/**
+                  filters:
+                    - AuthFilter
                 - id: room
                   uri: lb://room
                   predicates:
                       - Path=/room/**
+                  filters:
+                      - AuthFilter
                 - id: schedule
                   uri: lb://schedule
                   predicates:
                       - Path=/schedule/**
+                  filters:
+                      - AuthFilter
                 - id: authentication
                   uri: lb://authentication
                   predicates:

@@ -1,11 +1,9 @@
 package com.nicolas.user.service;
 
-import com.nicolas.user.dto.AddUserDTO;
-import com.nicolas.user.dto.UpdateUserAdminDTO;
-import com.nicolas.user.dto.UpdateUserDTO;
-import com.nicolas.user.dto.UserDTO;
+import com.nicolas.user.dto.*;
 import com.nicolas.user.model.Enums.Role;
 import com.nicolas.user.model.Enums.Status;
+import com.nicolas.user.model.User;
 import com.nicolas.user.profile.UserProfile;
 import com.nicolas.user.repository.UserRepository;
 import com.nicolas.user.utils.GenericResponse;
@@ -18,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,10 +37,32 @@ public class UserService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ResponseEntity<GenericResponse<String>> findUserByEmail(String email) {
+    public ResponseEntity<GenericResponse<User>> findUserByEmail(String email) {
         var _user = userRepository.findByEmail(email).orElseThrow(() -> new RecordNotFoundException("User not found"));
 
-        var response = new GenericResponse<>(true, 200, _user.getPassword());
+//        var logInDTO = new LogInResponseDTO();
+//
+//        logInDTO.setEmail(_user.getEmail());
+//        logInDTO.setId(_user.getId());
+//        logInDTO.setToken(null); // Token será criado pelo AuthenticationService;
+
+        var response = new GenericResponse<>(true, 200, _user);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    public ResponseEntity<GenericResponse> findUserByEmailOptional(String email) {
+        var _user = userRepository.findByEmail(email);
+
+//        GenericResponse response;
+//        if (_user.isPresent()){
+//            var user = userProfile.toUserDTO().map(_user.get());
+//            response = new GenericResponse<>(true, 200, user);
+//        } else {
+//            response = new GenericResponse<>(true, 200, _user);
+//        }
+
+       var response = new GenericResponse<>(true, 200, _user);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

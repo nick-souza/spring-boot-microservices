@@ -1,4 +1,4 @@
-package com.nicolas.authentication.dto;
+package com.nicolas.user.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SignInResponseDTO {
-    private String jwt;
+public class LogInResponseDTO {
+    private long id;
+    private String email;
+    private String token;
 }

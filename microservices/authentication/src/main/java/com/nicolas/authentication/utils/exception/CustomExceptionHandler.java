@@ -34,6 +34,12 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(UnauthorizedRequestException.class)
+    public final ResponseEntity<GenericResponse> handleUnauthorizedRequest(Exception ex) {
+        var response = new GenericResponse<>(401, ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
+
     // DTO Validation:
     @Override @NonNull
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException exception, HttpHeaders headers, HttpStatus status, WebRequest request) {
