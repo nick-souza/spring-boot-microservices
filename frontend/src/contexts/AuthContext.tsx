@@ -1,6 +1,7 @@
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { setCookie, parseCookies } from "nookies";
 import Router from "next/router";
+import { api } from "../service/api";
 
 // import { recoverUserInformation, signInRequest } from "../services/auth";
 // import { api } from "../services/api";
@@ -34,11 +35,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
 	const isAuthenticated = !!user;
 
+	// Use effect para toda vez que uma pagina for recarregada, ele verifica se existe o token,
+	// Caso exista, faz uma call para api para pegar os dados do user:
 	useEffect(() => {
-		const { "nextauth.token": token } = parseCookies();
+		// Usando parseCookies para pegar todos os cookies:
+		const { "auth.token": token } = parseCookies();
 
+		// Caso exista, call API para pegar os dados:
 		if (token) {
-			// TODO: Recover information from the JWT Claims??
+			// TODO: Recover information from API call:
 			// recoverUserInformation().then((response) => {
 			// 	setUser(response.user);
 			// });
@@ -54,16 +59,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
 		// });
 
 		// TODO: Set the cookie with the token:
-		// setCookie(undefined, "nextauth.token", token, {
+
+		console.log("SignIn 💥");
+
+		// setCookie(undefined, "auth.token", "token", {
+		// 	// FIXME: Add the actual token:
 		// 	maxAge: 60 * 60 * 1, // 1 hour
 		// });
 
-		// api.defaults.headers["Authorization"] = `Bearer ${token}`;
+		// // Colocando o token no header: FIXME:
+		// api.defaults.headers["Authorization"] = `Bearer ${"token"}`;
 
-		setUser(user);
+		// setUser(user);
 
 		// TODO: Redirect to the ALL APPOINTMENTS page:
-		Router.push("/dashboard");
+		Router.push("/schedule");
 	}
 
 	return <AuthContext.Provider value={{ user, isAuthenticated, signIn }}>{children}</AuthContext.Provider>;
