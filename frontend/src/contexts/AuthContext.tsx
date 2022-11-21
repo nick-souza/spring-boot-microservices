@@ -1,27 +1,12 @@
-import { createContext, ReactNode, useEffect, useState } from "react";
-import { setCookie, parseCookies } from "nookies";
 import Router from "next/router";
-import { api } from "../service/api";
-
-// import { recoverUserInformation, signInRequest } from "../services/auth";
-// import { api } from "../services/api";
-
-interface User {
-	id: number;
-	name: string;
-	email: string;
-	// avatar_url: string;
-}
-
-interface SignInData {
-	email: string;
-	password: string;
-}
+import { parseCookies } from "nookies";
+import { createContext, ReactNode, useEffect, useState } from "react";
+import { LoginCredentials, UserLoginResponse } from "../interfaces/login/loginInterfaces";
 
 interface AuthContextType {
 	isAuthenticated: boolean;
-	user: User | null; // FIXME: Do not allow null here. Only until we cant get the dada from the API
-	signIn: (data: SignInData) => Promise<void>;
+	user: UserLoginResponse | null; // FIXME: Do not allow null here. Only until we cant get the dada from the API
+	signIn: (data: LoginCredentials) => Promise<void>;
 }
 
 interface AuthProviderProps {
@@ -31,7 +16,7 @@ interface AuthProviderProps {
 export const AuthContext = createContext({} as AuthContextType);
 
 export function AuthProvider({ children }: AuthProviderProps) {
-	const [user, setUser] = useState<User | null>(null);
+	const [user, setUser] = useState<UserLoginResponse | null>(null);
 
 	const isAuthenticated = !!user;
 
@@ -50,7 +35,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 		}
 	}, []);
 
-	async function signIn({ email, password }: SignInData) {
+	async function signIn({ email, password }: LoginCredentials) {
 		// TODO: Add the login logic here:
 
 		// const { token, user } = await signInRequest({

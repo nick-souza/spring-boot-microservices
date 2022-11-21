@@ -1,69 +1,52 @@
-import { Button, Checkbox, Form, Input } from "antd";
+import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import { Button, Form, Input } from "antd";
 import { useContext } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
-import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import { LoginCredentials } from "../../interfaces/login/loginInterfaces";
+import style from "../../pages/login/styles.module.css";
 
 export default function LoginForm() {
 	const { signIn } = useContext(AuthContext);
 
-	async function handleClick() {
-		console.log("🌟🌟");
-		await signIn({ email: "email@email.com", password: "123" });
+	async function handleClick({ email, password }: LoginCredentials) {
+		console.log("Success:", email, password);
+		await signIn({ email: email, password: password });
 	}
 
-	const onFinish = (values: any) => {
-		console.log("Success:", values);
-	};
-
-	const onFinishFailed = (errorInfo: any) => {
-		console.log("Failed:", errorInfo);
-	};
-
 	return (
-		// TODO: Take this to the loginForm class;
-		// TODO: Add the image above;
-
-		<Form
-			name="login"
-			className="login-form"
-			onFinish={onFinish}
-			onFinishFailed={onFinishFailed}
-			// labelCol={{
-			// 	span: 100,
-			// }}
-			// wrapperCol={{
-			// 	span: 100,
-			// }}
-		>
+		<Form name="login" className="login-form" onFinish={handleClick}>
+			{/*onFinishFailed={onFinishFailed}*/}
 			<Form.Item
-				// style={{ 'min-width': 100% }}
-				name="username"
+				style={{ minWidth: "100%" }}
+				name="email"
 				rules={[
 					{
 						required: true,
-						message: "Please input your Username!",
+						message: "Email is required",
 					},
 				]}
 			>
-				<Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
+				<Input prefix={<UserOutlined />} type="email" placeholder="Email" />
 			</Form.Item>
 			<Form.Item
+				style={{ minWidth: "100%" }}
 				name="password"
 				rules={[
 					{
 						required: true,
-						message: "Please input your Password!",
+						message: "Password is required",
 					},
 				]}
 			>
-				<Input prefix={<LockOutlined className="site-form-item-icon" />} type="password" placeholder="Password" />
+				<Input prefix={<LockOutlined />} type="password" placeholder="Password" />
 			</Form.Item>
-
 			<Form.Item>
-				<Button type="primary" htmlType="submit" className="login-form-button">
+				<a href="" className={style.sign_up_btn}>
+					Criar conta
+				</a>
+				<Button type="primary" htmlType="submit" className={style.login_btn}>
 					Log in
 				</Button>
-				<a href="">Criar conta</a>
 			</Form.Item>
 		</Form>
 	);
