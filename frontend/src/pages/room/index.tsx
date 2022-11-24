@@ -1,15 +1,17 @@
 import { GetServerSideProps } from "next";
 import { parseCookies } from "nookies";
 import LayoutComp from "../../components/layout/layoutComp";
-// import Layout from "../../components/layout/layout";
 import RoomList from "../../components/room/roomList";
+import { AuthProvider } from "../../contexts/AuthContext";
 
 export default function RoomDashboard() {
 	return (
 		<>
-			<LayoutComp>
-				<RoomList />
-			</LayoutComp>
+			<AuthProvider>
+				<LayoutComp>
+					<RoomList />
+				</LayoutComp>
+			</AuthProvider>
 		</>
 	);
 }

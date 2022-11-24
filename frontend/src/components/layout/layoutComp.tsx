@@ -8,7 +8,6 @@ interface LayoutCompProps {
 }
 
 export default function LayoutComp({ children }: LayoutCompProps) {
-	// const { Breadcrumb, Layout, Menu } = antd;
 	const { Header, Content, Footer } = Layout;
 
 	return (
@@ -21,8 +20,10 @@ export default function LayoutComp({ children }: LayoutCompProps) {
 						<div className={style.user_profile} />
 					</div>
 				</Header>
-				<Content style={{ padding: "0 50px" }}>{children}</Content>
-				<Footer style={{ textAlign: "center" }}>Nicolas Sá de Souza</Footer>
+				<Content className="layout-content" style={{ padding: "0 50px" }}>
+					{children}
+				</Content>
+				{/* <Footer style={{ textAlign: "center" }}>Nicolas Sá de Souza</Footer> */}
 			</Layout>
 		</>
 	);

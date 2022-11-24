@@ -7,6 +7,7 @@
 	--blueGrottoHover: #147b90;
 
 	--danger: #ffa940;
+	--link: #1890ff;
 }
 
 html,
@@ -15,6 +16,10 @@ body,
 	font-family: "Source Sans Pro", sans-serif;
 	font-weight: inherit;
 	color: inherit;
+}
+
+body {
+	background-color: var(--babyBlue) !important;
 }
 
 .form {
@@ -43,12 +48,15 @@ body,
 	display: flex !important;
 }
 
+.layout-content {
+	background-color: var(--babyBlue);
+}
+
 .navbar-item-icon {
 	margin-right: 4px;
 }
 
 .ant-menu-item-selected {
-	/* background-color: var(--blueGrottoHover) !important; */
 	background-color: none !important;
 }
 

@@ -4,7 +4,8 @@ import { useContext, useState } from "react";
 import { useForm } from "react-hook-form/dist/useForm";
 import { AuthContext } from "../../contexts/AuthContext";
 import { useNotifications } from "../../hooks/useNotifications";
-import { SignUpCredentials } from "../../interfaces/login/loginInterfaces";
+import { SignUpCredentials } from "../../interfaces/loginInterfaces";
+import style from "../../pages/signup/style.module.css";
 
 export default function SignUpForm() {
 	const notify = useNotifications();
@@ -78,7 +79,7 @@ export default function SignUpForm() {
 			</Form.Item>
 
 			<Form.Item>
-				<Button type="primary" htmlType="submit" style={{ width: "100%" }} loading={loading}>
+				<Button type="primary" htmlType="submit" style={{ width: "100%" }} loading={loading} className={style.signup_btn}>
 					Register
 				</Button>
 			</Form.Item>

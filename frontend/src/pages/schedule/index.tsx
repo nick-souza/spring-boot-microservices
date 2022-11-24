@@ -1,15 +1,16 @@
 import { GetServerSideProps } from "next";
 import { parseCookies } from "nookies";
 import LayoutComp from "../../components/layout/layoutComp";
+import { AuthProvider } from "../../contexts/AuthContext";
 
 export default function ScheduleDashboard() {
-	// const { user } = useContext(AuthContext);
-	// console.log(user);
 	return (
 		<>
-			<LayoutComp>
-				<h1>Hello222</h1>
-			</LayoutComp>
+			<AuthProvider>
+				<LayoutComp>
+					<h1>Hello222</h1>
+				</LayoutComp>
+			</AuthProvider>
 		</>
 	);
 }

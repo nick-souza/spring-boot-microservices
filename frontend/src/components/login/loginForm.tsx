@@ -4,7 +4,7 @@ import Router from "next/router";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import { useNotifications } from "../../hooks/useNotifications";
-import { LoginCredentials } from "../../interfaces/login/loginInterfaces";
+import { LoginCredentials } from "../../interfaces/loginInterfaces";
 import style from "../../pages/login/styles.module.css";
 
 export default function LoginForm() {
@@ -13,7 +13,6 @@ export default function LoginForm() {
 	const notify = useNotifications();
 
 	async function handleClick({ email, password }: LoginCredentials) {
-		console.log("Success:", email, password); // TODO:
 		setLoading(true);
 		await signIn({ email: email, password: password }).finally(() => setLoading(false));
 	}
