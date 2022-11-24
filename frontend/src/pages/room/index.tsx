@@ -1,14 +1,14 @@
 import { GetServerSideProps } from "next";
 import { parseCookies } from "nookies";
 import LayoutComp from "../../components/layout/layoutComp";
+// import Layout from "../../components/layout/layout";
+import RoomList from "../../components/room/roomList";
 
-export default function ScheduleDashboard() {
-	// const { user } = useContext(AuthContext);
-	// console.log(user);
+export default function RoomDashboard() {
 	return (
 		<>
 			<LayoutComp>
-				<h1>Hello222</h1>
+				<RoomList />
 			</LayoutComp>
 		</>
 	);
@@ -30,14 +30,3 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 		props: {},
 	};
 };
-
-// FIXME: TODO:
-// export const getServerSideProps: GetServerSideProps = async () => {
-//     return {
-//         props: {},
-//         redirect: {
-//             permanent: true,
-//             destination: "/sales/pipeline"
-//         }
-//     };
-// };

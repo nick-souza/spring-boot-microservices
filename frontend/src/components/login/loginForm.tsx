@@ -1,17 +1,26 @@
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Form, Input } from "antd";
-import { useContext } from "react";
+import Router from "next/router";
+import { useContext, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
+import { useNotifications } from "../../hooks/useNotifications";
 import { LoginCredentials } from "../../interfaces/login/loginInterfaces";
 import style from "../../pages/login/styles.module.css";
 
 export default function LoginForm() {
+	const [loading, setLoading] = useState(false);
 	const { signIn } = useContext(AuthContext);
+	const notify = useNotifications();
 
 	async function handleClick({ email, password }: LoginCredentials) {
-		console.log("Success:", email, password);
-		await signIn({ email: email, password: password });
+		console.log("Success:", email, password); // TODO:
+		setLoading(true);
+		await signIn({ email: email, password: password }).finally(() => setLoading(false));
 	}
+
+	const handleSignUp = () => {
+		Router.push("/signup");
+	};
 
 	return (
 		<Form name="login" className="login-form" onFinish={handleClick}>
@@ -41,10 +50,10 @@ export default function LoginForm() {
 				<Input prefix={<LockOutlined />} type="password" placeholder="Password" />
 			</Form.Item>
 			<Form.Item>
-				<a href="" className={style.sign_up_btn}>
+				<a className={style.sign_up_btn} onClick={handleSignUp}>
 					Criar conta
 				</a>
-				<Button type="primary" htmlType="submit" className={style.login_btn}>
+				<Button type="primary" htmlType="submit" className={style.login_btn} loading={loading}>
 					Log in
 				</Button>
 			</Form.Item>

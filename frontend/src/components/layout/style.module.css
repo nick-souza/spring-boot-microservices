@@ -1,0 +1,30 @@
+.logo {
+	float: left;
+	width: 120px;
+	height: 31px;
+	margin: 16px 24px 16px 0;
+	background: rgba(255, 255, 255, 0.3);
+}
+
+.user_profile {
+	float: right;
+	width: 35px;
+	height: 35px;
+	border-radius: 50%;
+	margin: 12px 0 0;
+	background: var(--danger);
+	margin-left: 24px;
+}
+
+.header {
+	border-bottom: 1px solid var(--blueGrotto) !important;
+}
+
+.header ul {
+	border-bottom: 0 !important;
+}
+
+.navItem {
+	text-decoration: none;
+	color: #fff !important;
+}

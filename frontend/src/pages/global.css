@@ -1,0 +1,91 @@
+:root {
+	--navyBlue: #05445e;
+	--blueGrotto: #189ab4;
+	--blueGreen: #75e6da;
+	--babyBlue: #d4f1f4;
+
+	--blueGrottoHover: #147b90;
+
+	--danger: #ffa940;
+}
+
+html,
+body,
+* {
+	font-family: "Source Sans Pro", sans-serif;
+	font-weight: inherit;
+	color: inherit;
+}
+
+.form {
+	width: 25%;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	-webkit-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+}
+
+.navbar-bg {
+	background-color: var(--blueGrotto) !important;
+}
+
+.navbar-bg ul {
+	border-bottom: 0 !important;
+}
+
+.navbar-actions {
+	display: flex;
+	margin-left: auto;
+}
+
+.navbar-header {
+	display: flex !important;
+}
+
+.navbar-item-icon {
+	margin-right: 4px;
+}
+
+.ant-menu-item-selected {
+	/* background-color: var(--blueGrottoHover) !important; */
+	background-color: none !important;
+}
+
+/* .ant-menu-item  */
+.navbar-item-active {
+	background-color: var(--blueGrottoHover) !important;
+}
+
+.ant-menu-item:hover::after {
+	border: 0 !important;
+}
+
+.ant-menu-item:hover {
+	background-color: var(--blueGrottoHover) !important;
+}
+
+.ant-menu-item-selected::after {
+	border: 0 !important;
+}
+
+.spinner-div {
+	background-color: rgba(0, 0, 0, 0.5) !important;
+	pointer-events: none !important;
+	position: absolute;
+	min-height: 100vh;
+	min-width: 100vw;
+	display: flex;
+	margin: auto;
+	z-index: 99;
+	bottom: 0;
+	right: 0;
+	left: 0;
+	top: 0;
+}
+
+.spinner-div .spinner-svg {
+	z-index: 100;
+	max-width: 150px;
+	margin: auto;
+}

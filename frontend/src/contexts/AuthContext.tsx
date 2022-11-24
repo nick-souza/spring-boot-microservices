@@ -1,12 +1,15 @@
 import Router from "next/router";
-import { parseCookies } from "nookies";
+import { parseCookies, setCookie } from "nookies";
 import { createContext, ReactNode, useEffect, useState } from "react";
-import { LoginCredentials, UserLoginResponse } from "../interfaces/login/loginInterfaces";
+import { useNotifications } from "../hooks/useNotifications";
+import { LoginCredentials, SignUpCredentials, UserLoggedIn, UserLoginResponse } from "../interfaces/login/loginInterfaces";
+import { api, TokenResponse, validateToken } from "../service/api";
 
 interface AuthContextType {
 	isAuthenticated: boolean;
-	user: UserLoginResponse | null; // FIXME: Do not allow null here. Only until we cant get the dada from the API
+	user: UserLoggedIn | null;
 	signIn: (data: LoginCredentials) => Promise<void>;
+	signUp: (data: SignUpCredentials) => Promise<void>;
 }
 
 interface AuthProviderProps {
@@ -16,7 +19,10 @@ interface AuthProviderProps {
 export const AuthContext = createContext({} as AuthContextType);
 
 export function AuthProvider({ children }: AuthProviderProps) {
-	const [user, setUser] = useState<UserLoginResponse | null>(null);
+	// const [messageApi, contextHolder] = message.useMessage();
+	const [user, setUser] = useState<UserLoggedIn | null>(null);
+	const [loading, setLoading] = useState(false);
+	const notify = useNotifications();
 
 	const isAuthenticated = !!user;
 
@@ -28,38 +34,61 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
 		// Caso exista, call API para pegar os dados:
 		if (token) {
-			// TODO: Recover information from API call:
-			// recoverUserInformation().then((response) => {
-			// 	setUser(response.user);
-			// });
+			validateToken(token).then((res: TokenResponse) => {
+				if (res.success) setUser(res.data);
+				if (!res.success) Router.push("/");
+			});
+			// .catch((err) => console.error(err));
+		} else {
+			Router.push("/");
 		}
 	}, []);
 
 	async function signIn({ email, password }: LoginCredentials) {
-		// TODO: Add the login logic here:
+		await api
+			.post("/auth/login", {
+				email,
+				password,
+			})
+			.then((res) => {
+				notify.success("Successfully logged in!");
 
-		// const { token, user } = await signInRequest({
-		// 	email,
-		// 	password,
-		// });
+				const { id, email, token } = res.data.data as UserLoginResponse;
 
-		// TODO: Set the cookie with the token:
+				const user = {
+					id,
+					email,
+				} as UserLoggedIn;
 
-		console.log("SignIn 💥");
+				setCookie(undefined, "auth.token", token, {
+					maxAge: 60 * 60 * 1, // 1 hour
+				});
 
-		// setCookie(undefined, "auth.token", "token", {
-		// 	// FIXME: Add the actual token:
-		// 	maxAge: 60 * 60 * 1, // 1 hour
-		// });
+				api.defaults.headers["Authorization"] = `Bearer ${token}`;
 
-		// // Colocando o token no header: FIXME:
-		// api.defaults.headers["Authorization"] = `Bearer ${"token"}`;
+				setUser(user);
 
-		// setUser(user);
-
-		// TODO: Redirect to the ALL APPOINTMENTS page:
-		Router.push("/schedule");
+				Router.push("/schedule");
+			})
+			.catch((err) => {
+				notify.error(err.response?.data?.errorMessage);
+				console.log(err);
+			});
 	}
 
-	return <AuthContext.Provider value={{ user, isAuthenticated, signIn }}>{children}</AuthContext.Provider>;
+	async function signUp(SignUpCredentials: SignUpCredentials) {
+		await api
+			.post("/auth/sign-in", SignUpCredentials)
+			.then((res) => {
+				if (res.data?.success) {
+					notify.success("Account created successfully, you can now log in");
+					Router.push("/");
+				}
+			})
+			.catch((err) => {
+				notify.error(err.response?.data?.errorMessage);
+			});
+	}
+
+	return <AuthContext.Provider value={{ user, isAuthenticated, signIn, signUp }}>{children}</AuthContext.Provider>;
 }

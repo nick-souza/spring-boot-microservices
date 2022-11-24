@@ -8,6 +8,9 @@ export function getAPIClient(context?: any) {
 		baseURL: "http://localhost:8080",
 	});
 
+	api.defaults.headers.post["Content-Type"] = "application/json;charset=utf-8";
+	api.defaults.headers.post["Access-Control-Allow-Origin"] = "*";
+
 	if (token) {
 		api.defaults.headers["Authorization"] = `Bearer ${token}`;
 	}
