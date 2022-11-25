@@ -1,14 +1,20 @@
 import { GetServerSideProps } from "next";
 import { parseCookies } from "nookies";
 import LayoutComp from "../../components/layout/layoutComp";
+import Calendar1 from "../../components/schedule/calendar";
+import ScheduleList from "../../components/schedule/scheduleList";
 import { AuthProvider } from "../../contexts/AuthContext";
+import style from "./style.module.css";
 
 export default function ScheduleDashboard() {
 	return (
 		<>
 			<AuthProvider>
 				<LayoutComp>
-					<h1>Hello222</h1>
+					<ScheduleList />
+					{/* <div className={style.calendar_wrapper}>
+						<Calendar1 />
+					</div> */}
 				</LayoutComp>
 			</AuthProvider>
 		</>

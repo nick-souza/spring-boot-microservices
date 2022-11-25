@@ -29,8 +29,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
 	// Use effect para toda vez que uma pagina for recarregada, ele verifica se existe o token,
 	// Caso exista, faz uma call para api para pegar os dados do user:
 	useEffect(() => {
-		console.log("🌟🌟");
-
 		// Usando parseCookies para pegar todos os cookies:
 		const { "auth.token": token } = parseCookies();
 

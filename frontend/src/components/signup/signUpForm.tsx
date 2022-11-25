@@ -1,5 +1,6 @@
 import { KeyOutlined, LockOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
 import { Form, Input, Button } from "antd";
+import Router from "next/router";
 import { useContext, useState } from "react";
 import { useForm } from "react-hook-form/dist/useForm";
 import { AuthContext } from "../../contexts/AuthContext";
@@ -22,6 +23,8 @@ export default function SignUpForm() {
 
 		await signUp({ name, email, password, confirmPassword }).finally(() => setLoading(false));
 	}
+
+	const handleLogin = () => Router.push("/");
 
 	return (
 		<Form name="nest-messages" onFinish={onFinish} form={form}>
@@ -64,7 +67,7 @@ export default function SignUpForm() {
 					},
 				]}
 			>
-				<Input prefix={<LockOutlined />} type="password" placeholder="Password" />
+				<Input.Password prefix={<LockOutlined />} type="password" placeholder="Password" visibilityToggle={true} />
 			</Form.Item>
 			<Form.Item
 				name="confirmPassword"
@@ -75,10 +78,13 @@ export default function SignUpForm() {
 					},
 				]}
 			>
-				<Input prefix={<LockOutlined />} type="password" placeholder="Confirm password" />
+				<Input.Password prefix={<LockOutlined />} type="password" placeholder="Confirm password" visibilityToggle={true} />
 			</Form.Item>
 
 			<Form.Item>
+				<a className={style.login_btn} onClick={handleLogin}>
+					Login
+				</a>
 				<Button type="primary" htmlType="submit" style={{ width: "100%" }} loading={loading} className={style.signup_btn}>
 					Register
 				</Button>

@@ -46,7 +46,7 @@ export default function LoginForm() {
 					},
 				]}
 			>
-				<Input prefix={<LockOutlined />} type="password" placeholder="Password" />
+				<Input.Password prefix={<LockOutlined />} type="password" placeholder="Password" visibilityToggle={true} />
 			</Form.Item>
 			<Form.Item>
 				<a className={style.sign_up_btn} onClick={handleSignUp}>

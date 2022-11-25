@@ -1,21 +1,18 @@
 import { SettingOutlined } from "@ant-design/icons";
-import { Form, Table } from "antd";
+import { Form } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useEffect, useState } from "react";
 import { useNotifications } from "../../hooks/useNotifications";
-import { RoomInterface } from "../../interfaces/roomInterface";
-import style from "../../pages/room/style.module.css";
+import { ScheduleInterface } from "../../interfaces/scheduleInterface";
 import { api } from "../../service/api";
-import DeleteItemModal from "../table/deleteItemModal";
-import EditDrawer from "../table/editDrawer";
 import TableList from "../table/table";
 import TableOptions from "../table/tableOptions";
-import RoomEditForm from "./roomEditForm";
+import ScheduleEditForm from "./scheduleEditForm";
 
-export default function RoomList() {
-	const [rooms, setRooms] = useState<RoomInterface[]>();
+export default function ScheduleList() {
+	const [schedules, setSchedules] = useState<ScheduleInterface[]>();
 	const [loading, setLoading] = useState(false);
-	const [activeRoom, setActiveRoom] = useState<RoomInterface>();
+	const [activeSchedule, setActiveSchedule] = useState<ScheduleInterface>();
 	const [visibleDelete, setDeleteVisible] = useState(false);
 	const [visibleEdit, setEditVisible] = useState(false);
 	const [deleteLoading, setDeleteLoading] = useState(false);
@@ -31,9 +28,9 @@ export default function RoomList() {
 	const fetchData = async () => {
 		setLoading(true);
 		await api
-			.get("/room/")
+			.get("/schedule/")
 			.then((res) => {
-				if (res.data.success) setRooms(res.data.data);
+				if (res.data.success) setSchedules(res.data.data);
 			})
 			.catch((err) => {
 				console.log(err);
@@ -46,9 +43,9 @@ export default function RoomList() {
 	const handleDelete = async () => {
 		setDeleteLoading(true);
 		await api
-			.delete(`/room/delete/${activeRoom?.id}`)
+			.delete(`/schedule/${activeSchedule?.id}`)
 			.then((res) => {
-				notify.success("Sala excluída com sucesso!");
+				notify.success("Agendamento excluído com sucesso!");
 			})
 			.catch((err) => {
 				console.log(err);
@@ -60,62 +57,67 @@ export default function RoomList() {
 			});
 	};
 
-	const saveEdit = async (room: RoomInterface) => {
+	const saveEdit = async (schedule: ScheduleInterface) => {
 		setEditLoading(true);
-		console.log(room);
-		await api
-			.put(`/room/update/${room?.id}`, room)
-			.then((res) => {
-				notify.success("Sala editada com sucesso!");
-			})
-			.catch((err) => {
-				console.log(err);
-			})
-			.finally(() => {
-				setEditVisible(false);
-				setEditLoading(false);
-				fetchData();
-			});
+		console.log(schedule);
+		// await api
+		// 	.put(`/schedule/update/${schedule?.id}`, {
+		// 		id: schedule.id,
+		// 		name: schedule.name,
+		// 		lastName: schedule.lastName,
+		// 		email: schedule.email != activeSchedule?.email ? schedule.email : null,
+		// 	})
+		// 	.then((res) => {
+		// 		console.log(res);
+		// 		notify.success("Usuário editado com sucesso!");
+		// 	})
+		// 	.catch((err) => {
+		// 		notify.error(err.response.data.errorMessage || "Erro!");
+		// 	})
+		// 	.finally(() => {
+		// 		setEditVisible(false);
+		// 		setEditLoading(false);
+		// 		fetchData();
+		// 	});
 	};
 
-	const columns: ColumnsType<RoomInterface> = [
+	const columns: ColumnsType<ScheduleInterface> = [
 		{
-			key: "room_name",
-			title: "Name",
-			dataIndex: "name",
+			key: "schedule_room",
+			title: "Sala",
+			dataIndex: "room",
 		},
 		{
-			key: "room_capacity",
-			title: "Room capacity",
-			dataIndex: "capacity",
+			key: "schedule_responsible",
+			title: "Responsável",
+			dataIndex: "responsible",
+		},
+		{
+			key: "schedule_bookingStart",
+			title: "Começa em",
+			dataIndex: "bookingStart",
 			align: "right",
 		},
 		{
-			key: "room_creationDate",
-			title: "Created at",
-			dataIndex: "creationDate",
+			key: "schedule_bookingEnd",
+			title: "Termina em",
+			dataIndex: "bookingEnd",
 			align: "right",
 		},
 		{
-			key: "room_lastUpdate",
-			title: "Last updated at",
-			dataIndex: "lastUpdate",
-			align: "right",
-		},
-		{
-			key: "room_opt",
+			key: "schedule_opt",
 			title: <SettingOutlined />,
 			align: "center",
 			width: 60,
 			dataIndex: "operation",
-			render: (_, room: RoomInterface) => (
+			render: (_, schedule: ScheduleInterface) => (
 				<TableOptions
 					handleDelete={() => {
 						setDeleteVisible(true);
-						setActiveRoom(room);
+						setActiveSchedule(schedule);
 					}}
 					handleEdit={() => {
-						setActiveRoom(room);
+						setActiveSchedule(schedule);
 						setEditVisible(true);
 					}}
 				/>
@@ -126,10 +128,8 @@ export default function RoomList() {
 	return (
 		<>
 			<TableList
-				panelTitle="Salas disponíveis"
-				editChildren={
-					<RoomEditForm saveForm={saveEdit} form={form} text={activeRoom?.name || "Room"} room={activeRoom} loading={editLoading} setLoading={setEditLoading} />
-				}
+				panelTitle="Usuários"
+				editChildren={<ScheduleEditForm saveForm={saveEdit} form={form} schedule={activeSchedule} loading={editLoading} setLoading={setEditLoading} />}
 				form={form}
 				handleDeleteOk={() => handleDelete()}
 				setEditLoading={setEditLoading}
@@ -140,9 +140,9 @@ export default function RoomList() {
 				deleteLoading={deleteLoading}
 				setDeleteLoading={setDeleteLoading}
 				fetchData={fetchData}
-				dataSource={rooms}
+				dataSource={schedules}
 				loading={loading}
-				deleteModalName={activeRoom?.name}
+				deleteModalName={"Agendamento"}
 				visibleDelete={visibleDelete}
 				setDeleteVisible={setDeleteVisible}
 			/>

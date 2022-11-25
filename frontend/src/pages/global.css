@@ -6,8 +6,14 @@
 
 	--blueGrottoHover: #147b90;
 
-	--danger: #ffa940;
+	--warning: #ffa940;
 	--link: #1890ff;
+
+	--danger: #ff4d4f;
+	--danger-hover: #ff7875;
+
+	--success: #52c41a;
+	--success-hover: #73d13d;
 }
 
 html,
@@ -60,7 +66,6 @@ body {
 	background-color: none !important;
 }
 
-/* .ant-menu-item  */
 .navbar-item-active {
 	background-color: var(--blueGrottoHover) !important;
 }
@@ -97,3 +102,23 @@ body {
 	max-width: 150px;
 	margin: auto;
 }
+
+.text-right {
+	text-align: right;
+}
+
+.btn-success {
+	background-color: var(--success);
+	color: #fff;
+}
+
+.btn-success:hover {
+	color: #fff !important;
+	background-color: var(--success-hover) !important;
+	border-color: var(--success) !important;
+}
+
+/* .ant-drawer-close {
+	margin-inline-end: 0 !important;
+	float: right !important;
+} */

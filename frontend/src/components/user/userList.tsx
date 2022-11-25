@@ -1,21 +1,18 @@
-import { SettingOutlined } from "@ant-design/icons";
-import { Form, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
+import { Form } from "antd";
 import { useEffect, useState } from "react";
 import { useNotifications } from "../../hooks/useNotifications";
-import { RoomInterface } from "../../interfaces/roomInterface";
-import style from "../../pages/room/style.module.css";
+import { UserInterface } from "../../interfaces/userInterface";
 import { api } from "../../service/api";
-import DeleteItemModal from "../table/deleteItemModal";
-import EditDrawer from "../table/editDrawer";
-import TableList from "../table/table";
+import { SettingOutlined } from "@ant-design/icons";
 import TableOptions from "../table/tableOptions";
-import RoomEditForm from "./roomEditForm";
+import TableList from "../table/table";
+import UserEditForm from "./userEditForm";
 
-export default function RoomList() {
-	const [rooms, setRooms] = useState<RoomInterface[]>();
+export default function UserList() {
+	const [users, setUsers] = useState<UserInterface[]>();
 	const [loading, setLoading] = useState(false);
-	const [activeRoom, setActiveRoom] = useState<RoomInterface>();
+	const [activeUser, setActiveUser] = useState<UserInterface>();
 	const [visibleDelete, setDeleteVisible] = useState(false);
 	const [visibleEdit, setEditVisible] = useState(false);
 	const [deleteLoading, setDeleteLoading] = useState(false);
@@ -31,9 +28,9 @@ export default function RoomList() {
 	const fetchData = async () => {
 		setLoading(true);
 		await api
-			.get("/room/")
+			.get("/user/")
 			.then((res) => {
-				if (res.data.success) setRooms(res.data.data);
+				if (res.data.success) setUsers(res.data.data);
 			})
 			.catch((err) => {
 				console.log(err);
@@ -46,9 +43,9 @@ export default function RoomList() {
 	const handleDelete = async () => {
 		setDeleteLoading(true);
 		await api
-			.delete(`/room/delete/${activeRoom?.id}`)
+			.delete(`/user/delete/${activeUser?.id}`)
 			.then((res) => {
-				notify.success("Sala excluída com sucesso!");
+				notify.success("Usuário excluído com sucesso!");
 			})
 			.catch((err) => {
 				console.log(err);
@@ -60,16 +57,22 @@ export default function RoomList() {
 			});
 	};
 
-	const saveEdit = async (room: RoomInterface) => {
+	const saveEdit = async (user: UserInterface) => {
 		setEditLoading(true);
-		console.log(room);
+		console.log(user);
 		await api
-			.put(`/room/update/${room?.id}`, room)
+			.put(`/user/update/${user?.id}`, {
+				id: user.id,
+				name: user.name,
+				lastName: user.lastName,
+				email: user.email != activeUser?.email ? user.email : null,
+			})
 			.then((res) => {
-				notify.success("Sala editada com sucesso!");
+				console.log(res);
+				notify.success("Usuário editado com sucesso!");
 			})
 			.catch((err) => {
-				console.log(err);
+				notify.error(err.response.data.errorMessage || "Erro!");
 			})
 			.finally(() => {
 				setEditVisible(false);
@@ -78,44 +81,58 @@ export default function RoomList() {
 			});
 	};
 
-	const columns: ColumnsType<RoomInterface> = [
+	const columns: ColumnsType<UserInterface> = [
 		{
-			key: "room_name",
+			key: "user_name",
 			title: "Name",
 			dataIndex: "name",
 		},
 		{
-			key: "room_capacity",
-			title: "Room capacity",
-			dataIndex: "capacity",
-			align: "right",
+			key: "user_lastName",
+			title: "Last name",
+			dataIndex: "lastName",
 		},
 		{
-			key: "room_creationDate",
+			key: "user_email",
+			title: "Email",
+			dataIndex: "email",
+		},
+		{
+			key: "user_statusDesc",
+			title: "Status",
+			dataIndex: "statusDesc",
+		},
+		{
+			key: "user_roleDesc",
+			title: "Papel",
+			dataIndex: "roleDesc",
+		},
+		{
+			key: "user_creationDate",
 			title: "Created at",
 			dataIndex: "creationDate",
 			align: "right",
 		},
 		{
-			key: "room_lastUpdate",
+			key: "user_lastUpdate",
 			title: "Last updated at",
 			dataIndex: "lastUpdate",
 			align: "right",
 		},
 		{
-			key: "room_opt",
+			key: "user_opt",
 			title: <SettingOutlined />,
 			align: "center",
 			width: 60,
 			dataIndex: "operation",
-			render: (_, room: RoomInterface) => (
+			render: (_, user: UserInterface) => (
 				<TableOptions
 					handleDelete={() => {
 						setDeleteVisible(true);
-						setActiveRoom(room);
+						setActiveUser(user);
 					}}
 					handleEdit={() => {
-						setActiveRoom(room);
+						setActiveUser(user);
 						setEditVisible(true);
 					}}
 				/>
@@ -126,9 +143,9 @@ export default function RoomList() {
 	return (
 		<>
 			<TableList
-				panelTitle="Salas disponíveis"
+				panelTitle="Usuários"
 				editChildren={
-					<RoomEditForm saveForm={saveEdit} form={form} text={activeRoom?.name || "Room"} room={activeRoom} loading={editLoading} setLoading={setEditLoading} />
+					<UserEditForm saveForm={saveEdit} form={form} text={activeUser?.name || "user"} user={activeUser} loading={editLoading} setLoading={setEditLoading} />
 				}
 				form={form}
 				handleDeleteOk={() => handleDelete()}
@@ -140,9 +157,9 @@ export default function RoomList() {
 				deleteLoading={deleteLoading}
 				setDeleteLoading={setDeleteLoading}
 				fetchData={fetchData}
-				dataSource={rooms}
+				dataSource={users}
 				loading={loading}
-				deleteModalName={activeRoom?.name}
+				deleteModalName={activeUser?.name}
 				visibleDelete={visibleDelete}
 				setDeleteVisible={setDeleteVisible}
 			/>

@@ -1,4 +1,5 @@
 import LayoutComp from "../../components/layout/layoutComp";
+import UserList from "../../components/user/userList";
 import { AuthProvider } from "../../contexts/AuthContext";
 
 export default function UserDashboard() {
@@ -6,7 +7,7 @@ export default function UserDashboard() {
 		<>
 			<AuthProvider>
 				<LayoutComp>
-					<h1>User</h1>
+					<UserList />
 				</LayoutComp>
 			</AuthProvider>
 		</>
