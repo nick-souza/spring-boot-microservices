@@ -1,14 +1,14 @@
-import type { ColumnsType } from "antd/es/table";
+import { SettingOutlined } from "@ant-design/icons";
 import { Form } from "antd";
+import type { ColumnsType } from "antd/es/table";
 import { useEffect, useState } from "react";
 import { useNotifications } from "../../hooks/useNotifications";
 import { UserInterface } from "../../interfaces/userInterface";
 import { api } from "../../service/api";
-import { SettingOutlined } from "@ant-design/icons";
-import TableOptions from "../table/tableOptions";
-import TableList from "../table/table";
-import UserEditForm from "./userEditForm";
 import DeleteItemModal from "../table/deleteItemModal";
+import TableList from "../table/table";
+import TableOptions from "../table/tableOptions";
+import UserForm from "./userForm";
 
 export default function UserList() {
 	const [users, setUsers] = useState<UserInterface[]>();
@@ -155,7 +155,7 @@ export default function UserList() {
 				dataSource={users}
 				loading={loading}
 			>
-				<UserEditForm saveForm={saveEdit} form={form} text={activeUser?.name || "user"} user={activeUser} loading={editLoading} setLoading={setEditLoading} />
+				<UserForm saveForm={saveEdit} form={form} text={activeUser?.name || "user"} user={activeUser} loading={editLoading} setLoading={setEditLoading} />
 			</TableList>
 			<DeleteItemModal
 				name={activeUser?.name}

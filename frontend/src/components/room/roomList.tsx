@@ -8,7 +8,8 @@ import { api } from "../../service/api";
 import DeleteItemModal from "../table/deleteItemModal";
 import TableList from "../table/table";
 import TableOptions from "../table/tableOptions";
-import RoomEditForm from "./roomEditForm";
+import CreateRoom from "./createRoom";
+import RoomForm from "./roomForm";
 
 export default function RoomList() {
 	const [rooms, setRooms] = useState<RoomInterface[]>();
@@ -135,8 +136,9 @@ export default function RoomList() {
 				fetchData={fetchData}
 				dataSource={rooms}
 				loading={loading}
+				addButton={<CreateRoom fetchTable={fetchData} />}
 			>
-				<RoomEditForm saveForm={saveEdit} form={form} text={activeRoom?.name || "Room"} room={activeRoom} loading={editLoading} setLoading={setEditLoading} />
+				<RoomForm saveForm={saveEdit} form={form} text={activeRoom?.name || "Room"} room={activeRoom} loading={editLoading} setLoading={setEditLoading} />
 			</TableList>
 			<DeleteItemModal
 				name={activeRoom?.name}

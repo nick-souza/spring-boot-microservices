@@ -9,7 +9,7 @@ import { api } from "../../service/api";
 import DeleteItemModal from "../table/deleteItemModal";
 import TableList from "../table/table";
 import TableOptions from "../table/tableOptions";
-import CreateSchedule from "./addSchedule";
+import CreateSchedule from "./createSchedule";
 import ScheduleForm, { dateTimeFormat } from "./scheduleForm";
 
 export interface ScheduleFormResponse {

@@ -1,3 +1,4 @@
+import { PlusOutlined } from "@ant-design/icons";
 import { Button, Drawer, Form } from "antd";
 import { useState } from "react";
 import { useNotifications } from "../../hooks/useNotifications";
@@ -6,11 +7,11 @@ import RightDrawer from "../table/rightDrawer";
 import ScheduleForm, { dateTimeFormat } from "./scheduleForm";
 import { ScheduleFormResponse } from "./scheduleList";
 
-interface CreateScheduleProps {
+export interface CreateEntityProps {
 	fetchTable: () => void;
 }
 
-export default function CreateSchedule({ fetchTable }: CreateScheduleProps) {
+export default function CreateSchedule({ fetchTable }: CreateEntityProps) {
 	const [visible, setVisible] = useState(false);
 	const [loading, setLoading] = useState(false);
 
@@ -46,7 +47,9 @@ export default function CreateSchedule({ fetchTable }: CreateScheduleProps) {
 
 	return (
 		<>
-			<Button onClick={() => setVisible(true)}>Criar agendamento</Button>
+			<Button onClick={() => setVisible(true)} icon={<PlusOutlined />}>
+				Criar agendamento
+			</Button>
 
 			<RightDrawer title="Criar agendamento" visible={visible} setVisible={setVisible} loading={loading} setLoading={setLoading} handleOk={() => form.submit()}>
 				<ScheduleForm saveForm={saveAdd} form={form} loading={loading} setLoading={setLoading} />

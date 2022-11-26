@@ -11,18 +11,23 @@ interface RoomEditFormProps {
 	setLoading?: (loading: boolean) => void;
 }
 
-export default function RoomEditForm({ room, text, form, saveForm, loading, setLoading }: RoomEditFormProps) {
+export default function RoomForm({ room, text, form, saveForm, loading, setLoading }: RoomEditFormProps) {
 	const [title, setTitle] = useState(room?.name);
 
 	useEffect(() => {
-		form.setFieldsValue({
-			id: room?.id,
-			name: room?.name,
-			capacity: room?.capacity,
-			creationDate: room?.creationDate,
-			lastUpdate: room?.lastUpdate,
-		});
+		if (room)
+			form.setFieldsValue({
+				id: room?.id,
+				name: room?.name,
+				capacity: room?.capacity,
+				creationDate: room?.creationDate,
+				lastUpdate: room?.lastUpdate,
+			});
 	}, [room]);
+
+	useEffect(() => {
+		handleName();
+	}, []);
 
 	const handleName = () => {
 		if (form.getFieldValue("name")) setTitle(form.getFieldValue("name"));
@@ -36,13 +41,20 @@ export default function RoomEditForm({ room, text, form, saveForm, loading, setL
 		<>
 			<h1>{title}</h1>
 			<Form form={form} layout="vertical" onFinish={(values) => saveForm(values)} disabled={loading}>
-				<Form.Item name="id" label="Id">
-					<Input disabled />
-				</Form.Item>
+				{room && (
+					<Form.Item name="id" label="Id">
+						<Input disabled />
+					</Form.Item>
+				)}
+
 				<Form.Item
 					name="name"
 					label="Nome"
 					rules={[
+						{
+							required: true,
+							message: "Nome é obrigatório",
+						},
 						{
 							min: 4,
 							message: "Name must contain at least 4 characters",
@@ -51,15 +63,31 @@ export default function RoomEditForm({ room, text, form, saveForm, loading, setL
 				>
 					<Input placeholder="Nome" onChange={handleName} value={room?.name} />
 				</Form.Item>
-				<Form.Item name="capacity" label={"Capacidade"}>
+
+				<Form.Item
+					name="capacity"
+					label={"Capacidade"}
+					rules={[
+						{
+							required: true,
+							message: "Capacidade é obrigatório",
+						},
+					]}
+				>
 					<Input placeholder="Capacity" type="number" />
 				</Form.Item>
-				<Form.Item name="creationDate" label="Data de criação">
-					<Input disabled />
-				</Form.Item>
-				<Form.Item name="lastUpdate" label="Última atualização">
-					<Input disabled />
-				</Form.Item>
+
+				{room && (
+					<Form.Item name="creationDate" label="Data de criação">
+						<Input disabled />
+					</Form.Item>
+				)}
+
+				{room && (
+					<Form.Item name="lastUpdate" label="Última atualização">
+						<Input disabled />
+					</Form.Item>
+				)}
 			</Form>
 		</>
 	);
