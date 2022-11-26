@@ -19,17 +19,17 @@ export default function NavMenu() {
 				{
 					key: "nav_1",
 					className: `${path == "/schedule" ? "navbar-item-active" : ""}`,
-					label: <MenuItem link="/schedule" icon="uil-schedule" text="Schedules" />,
+					label: <MenuItem link="/schedule" icon="uil-schedule" text="Agendamentos" />,
 				},
 				{
 					key: "nav_2",
 					className: `${path == "/room" ? "navbar-item-active" : ""}`,
-					label: <MenuItem link="/room" icon="uil-home" text="Rooms" />,
+					label: <MenuItem link="/room" icon="uil-home" text="Salas" />,
 				},
 				{
 					key: "nav_3",
 					className: `${path == "/user" ? "navbar-item-active" : ""}`,
-					label: <MenuItem link="/user" icon="uil-users-alt" text="Users" />,
+					label: <MenuItem link="/user" icon="uil-users-alt" text="Usuários" />,
 				},
 			]}
 		/>

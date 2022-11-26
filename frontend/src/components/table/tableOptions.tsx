@@ -1,6 +1,9 @@
 import { DeleteOutlined, EditOutlined, MoreOutlined } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { Button, Dropdown } from "antd";
+import { useContext } from "react";
+import { AuthContext } from "../../contexts/AuthContext";
+import { UserRole } from "../../enums/UserRole";
 import style from "./style.module.css";
 
 interface TableOptionsProps {
@@ -9,14 +12,31 @@ interface TableOptionsProps {
 }
 
 export default function TableOptions({ handleDelete, handleEdit }: TableOptionsProps) {
+	const { isAdmin } = useContext(AuthContext);
+
 	const items: MenuProps["items"] = [
 		{
 			key: "opt_1",
-			label: <EditOption onClick={handleEdit} />,
+			label: (
+				<EditOption
+					onClick={() => {
+						if (isAdmin()) handleEdit();
+					}}
+				/>
+			),
+			disabled: !isAdmin(),
 		},
 		{
 			key: "opt_2",
-			label: <DeleteOption onClick={handleDelete} />,
+			label: (
+				<DeleteOption
+					onClick={() => {
+						if (isAdmin()) handleDelete();
+					}}
+					isAdmin={isAdmin()}
+				/>
+			),
+			disabled: !isAdmin(),
 		},
 	];
 
@@ -31,6 +51,7 @@ export default function TableOptions({ handleDelete, handleEdit }: TableOptionsP
 
 interface OptionBtnProps {
 	onClick: () => void;
+	isAdmin?: boolean;
 }
 
 function EditOption({ onClick }: OptionBtnProps) {
@@ -42,9 +63,13 @@ function EditOption({ onClick }: OptionBtnProps) {
 	);
 }
 
-function DeleteOption({ onClick }: OptionBtnProps) {
+function DeleteOption({ onClick, isAdmin }: OptionBtnProps) {
 	return (
-		<div style={{ paddingRight: 6, paddingLeft: 6, paddingTop: 2, paddingBottom: 2, color: "var(--danger)" }} onClick={onClick}>
+		<div
+			className={!isAdmin ? "btn_disabled" : ""}
+			style={{ paddingRight: 6, paddingLeft: 6, paddingTop: 2, paddingBottom: 2, color: "var(--danger)" }}
+			onClick={onClick}
+		>
 			<DeleteOutlined />
 			<span style={{ marginLeft: 8 }}>Excluir</span>
 		</div>

@@ -139,7 +139,7 @@ export default function ScheduleList() {
 	return (
 		<>
 			<TableList
-				panelTitle="Usuários"
+				panelTitle="Agendamentos"
 				form={form}
 				setEditLoading={setEditLoading}
 				visibleEdit={visibleEdit}

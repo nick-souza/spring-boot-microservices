@@ -1,7 +1,9 @@
 import { SettingOutlined } from "@ant-design/icons";
 import { Form } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../../contexts/AuthContext";
+import { UserRole } from "../../enums/UserRole";
 import { useNotifications } from "../../hooks/useNotifications";
 import { UserInterface } from "../../interfaces/userInterface";
 import { api } from "../../service/api";
@@ -12,14 +14,14 @@ import UserForm from "./userForm";
 
 export default function UserList() {
 	const [users, setUsers] = useState<UserInterface[]>();
-	const [loading, setLoading] = useState(false);
 	const [activeUser, setActiveUser] = useState<UserInterface>();
+	const [loading, setLoading] = useState(false);
 	const [visibleDelete, setDeleteVisible] = useState(false);
 	const [visibleEdit, setEditVisible] = useState(false);
 	const [deleteLoading, setDeleteLoading] = useState(false);
 	const [editLoading, setEditLoading] = useState(false);
-	const notify = useNotifications();
 
+	const notify = useNotifications();
 	const [form] = Form.useForm();
 
 	useEffect(() => {
@@ -85,7 +87,7 @@ export default function UserList() {
 	const columns: ColumnsType<UserInterface> = [
 		{
 			key: "user_name",
-			title: "Name",
+			title: "Nome",
 			dataIndex: "name",
 		},
 		{
@@ -110,13 +112,13 @@ export default function UserList() {
 		},
 		{
 			key: "user_creationDate",
-			title: "Created at",
+			title: "Criado em",
 			dataIndex: "creationDate",
 			align: "right",
 		},
 		{
 			key: "user_lastUpdate",
-			title: "Last updated at",
+			title: "Ultima atualização",
 			dataIndex: "lastUpdate",
 			align: "right",
 		},

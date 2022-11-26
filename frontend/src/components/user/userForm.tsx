@@ -51,6 +51,10 @@ export default function UserForm({ user, text, form, saveForm, loading, setLoadi
 					label="Nome"
 					rules={[
 						{
+							required: true,
+							message: "Nome é obrigatório",
+						},
+						{
 							min: 4,
 							message: "Name must contain at least 4 characters",
 						},

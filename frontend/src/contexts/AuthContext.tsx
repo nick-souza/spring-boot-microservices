@@ -5,6 +5,7 @@ import { useNotifications } from "../hooks/useNotifications";
 import { LoginCredentials, SignUpCredentials, UserLoggedIn, UserLoginResponse } from "../interfaces/loginInterfaces";
 import { api, TokenResponse, validateToken } from "../service/api";
 import { UserInterface } from "../interfaces/userInterface";
+import { UserRole } from "../enums/UserRole";
 
 interface AuthContextType {
 	isAuthenticated: boolean;
@@ -12,6 +13,7 @@ interface AuthContextType {
 	signIn: (data: LoginCredentials) => Promise<void>;
 	signUp: (data: SignUpCredentials) => Promise<void>;
 	logout: () => Promise<void>;
+	isAdmin: () => boolean;
 }
 
 interface AuthProviderProps {
@@ -38,10 +40,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
 		if (token) {
 			validateToken(token).then((res: TokenResponse) => {
 				console.log("USER DATA: ", res.data);
+
 				if (res.success) setUser(res.data);
 				if (!res.success) Router.push("/");
 			});
-			// .catch((err) => console.error(err));
 		} else {
 			Router.push("/");
 		}
@@ -70,7 +72,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 				} as UserLoggedIn;
 
 				setCookie(undefined, "auth.token", token, {
-					maxAge: 60 * 60 * 1, // 1 hour
+					maxAge: 60 * 60 * 1, // 1 hora
 				});
 
 				api.defaults.headers["Authorization"] = `Bearer ${token}`;
@@ -105,5 +107,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 		Router.push("/");
 	}
 
-	return <AuthContext.Provider value={{ user, isAuthenticated, signIn, signUp, logout }}>{children}</AuthContext.Provider>;
+	function isAdmin() {
+		return user?.role == UserRole.Admin;
+	}
+
+	return <AuthContext.Provider value={{ user, isAuthenticated, signIn, signUp, logout, isAdmin }}>{children}</AuthContext.Provider>;
 }
