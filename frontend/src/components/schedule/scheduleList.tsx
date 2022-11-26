@@ -1,13 +1,23 @@
 import { SettingOutlined } from "@ant-design/icons";
 import { Form } from "antd";
 import type { ColumnsType } from "antd/es/table";
+import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { useNotifications } from "../../hooks/useNotifications";
 import { ScheduleInterface } from "../../interfaces/scheduleInterface";
 import { api } from "../../service/api";
+import DeleteItemModal from "../table/deleteItemModal";
 import TableList from "../table/table";
 import TableOptions from "../table/tableOptions";
-import ScheduleEditForm from "./scheduleEditForm";
+import ScheduleEditForm, { dateTimeFormat } from "./scheduleEditForm";
+
+interface FormResponse {
+	id: number;
+	roomId: number;
+	responsibleId: number;
+	bookingStart: dayjs.Dayjs;
+	bookingEnd: dayjs.Dayjs;
+}
 
 export default function ScheduleList() {
 	const [schedules, setSchedules] = useState<ScheduleInterface[]>();
@@ -57,28 +67,29 @@ export default function ScheduleList() {
 			});
 	};
 
-	const saveEdit = async (schedule: ScheduleInterface) => {
+	const saveEdit = async (schedule: FormResponse) => {
 		setEditLoading(true);
 		console.log(schedule);
-		// await api
-		// 	.put(`/schedule/update/${schedule?.id}`, {
-		// 		id: schedule.id,
-		// 		name: schedule.name,
-		// 		lastName: schedule.lastName,
-		// 		email: schedule.email != activeSchedule?.email ? schedule.email : null,
-		// 	})
-		// 	.then((res) => {
-		// 		console.log(res);
-		// 		notify.success("Usuário editado com sucesso!");
-		// 	})
-		// 	.catch((err) => {
-		// 		notify.error(err.response.data.errorMessage || "Erro!");
-		// 	})
-		// 	.finally(() => {
-		// 		setEditVisible(false);
-		// 		setEditLoading(false);
-		// 		fetchData();
-		// 	});
+		await api
+			.put(`/schedule/${schedule?.id}`, {
+				scheduleId: schedule.id,
+				roomId: schedule.roomId,
+				responsibleId: schedule.responsibleId,
+				bookingStart: schedule.bookingStart.format(dateTimeFormat),
+				bookingEnd: schedule.bookingEnd.format(dateTimeFormat),
+			})
+			.then((res) => {
+				console.log(res);
+				notify.success("Agendamento editado com sucesso!");
+			})
+			.catch((err) => {
+				notify.error(err.response.data.errorMessage || "Erro!");
+			})
+			.finally(() => {
+				setEditVisible(false);
+				setEditLoading(false);
+				fetchData();
+			});
 	};
 
 	const columns: ColumnsType<ScheduleInterface> = [
@@ -129,22 +140,26 @@ export default function ScheduleList() {
 		<>
 			<TableList
 				panelTitle="Usuários"
-				editChildren={<ScheduleEditForm saveForm={saveEdit} form={form} schedule={activeSchedule} loading={editLoading} setLoading={setEditLoading} />}
 				form={form}
-				handleDeleteOk={() => handleDelete()}
 				setEditLoading={setEditLoading}
 				visibleEdit={visibleEdit}
 				columns={columns}
 				editLoading={editLoading}
 				setEditVisible={setEditVisible}
-				deleteLoading={deleteLoading}
-				setDeleteLoading={setDeleteLoading}
 				fetchData={fetchData}
 				dataSource={schedules}
 				loading={loading}
-				deleteModalName={"Agendamento"}
-				visibleDelete={visibleDelete}
-				setDeleteVisible={setDeleteVisible}
+			>
+				<ScheduleEditForm saveForm={saveEdit} form={form} schedule={activeSchedule} loading={editLoading} setLoading={setEditLoading} />
+			</TableList>
+
+			<DeleteItemModal
+				name={"Agendamento"}
+				handleOk={handleDelete}
+				visible={visibleDelete}
+				setVisible={setDeleteVisible}
+				loading={deleteLoading}
+				setLoading={setDeleteLoading}
 			/>
 		</>
 	);

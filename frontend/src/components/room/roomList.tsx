@@ -48,7 +48,8 @@ export default function RoomList() {
 		await api
 			.delete(`/room/delete/${activeRoom?.id}`)
 			.then((res) => {
-				notify.success("Sala excluída com sucesso!");
+				if (res.data.success) notify.success("Sala excluída com sucesso!");
+				else notify.error(res.data.errorMessage);
 			})
 			.catch((err) => {
 				console.log(err);
@@ -62,11 +63,11 @@ export default function RoomList() {
 
 	const saveEdit = async (room: RoomInterface) => {
 		setEditLoading(true);
-		console.log(room);
 		await api
 			.put(`/room/update/${room?.id}`, room)
 			.then((res) => {
-				notify.success("Sala editada com sucesso!");
+				if (res.data.success) notify.success("Sala editada com sucesso!");
+				else notify.error(res.data.errorMessage);
 			})
 			.catch((err) => {
 				console.log(err);
@@ -127,24 +128,25 @@ export default function RoomList() {
 		<>
 			<TableList
 				panelTitle="Salas disponíveis"
-				editChildren={
-					<RoomEditForm saveForm={saveEdit} form={form} text={activeRoom?.name || "Room"} room={activeRoom} loading={editLoading} setLoading={setEditLoading} />
-				}
 				form={form}
-				handleDeleteOk={() => handleDelete()}
 				setEditLoading={setEditLoading}
 				visibleEdit={visibleEdit}
 				columns={columns}
 				editLoading={editLoading}
 				setEditVisible={setEditVisible}
-				deleteLoading={deleteLoading}
-				setDeleteLoading={setDeleteLoading}
 				fetchData={fetchData}
 				dataSource={rooms}
 				loading={loading}
-				deleteModalName={activeRoom?.name}
-				visibleDelete={visibleDelete}
-				setDeleteVisible={setDeleteVisible}
+			>
+				<RoomEditForm saveForm={saveEdit} form={form} text={activeRoom?.name || "Room"} room={activeRoom} loading={editLoading} setLoading={setEditLoading} />
+			</TableList>
+			<DeleteItemModal
+				name={activeRoom?.name}
+				handleOk={handleDelete}
+				visible={visibleDelete}
+				setVisible={setDeleteVisible}
+				loading={deleteLoading}
+				setLoading={setDeleteLoading}
 			/>
 		</>
 	);

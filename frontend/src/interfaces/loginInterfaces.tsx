@@ -1,3 +1,5 @@
+import { UserInterface } from "./userInterface";
+
 export interface LoginCredentials {
 	email: string;
 	password: string;
@@ -18,9 +20,11 @@ export interface UserLoginResponse {
 	// avatar_url: string;
 }
 
-export interface UserLoggedIn {
-	id: number;
+export interface UserLoggedIn extends UserInterface {
+	// id: number;
 	// name: string;
-	email: string;
+	// lastName: string;
+	// email: string;
+	token: string;
 	// avatar_url: string;
 }

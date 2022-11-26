@@ -8,6 +8,7 @@ import { SettingOutlined } from "@ant-design/icons";
 import TableOptions from "../table/tableOptions";
 import TableList from "../table/table";
 import UserEditForm from "./userEditForm";
+import DeleteItemModal from "../table/deleteItemModal";
 
 export default function UserList() {
 	const [users, setUsers] = useState<UserInterface[]>();
@@ -45,7 +46,8 @@ export default function UserList() {
 		await api
 			.delete(`/user/delete/${activeUser?.id}`)
 			.then((res) => {
-				notify.success("Usuário excluído com sucesso!");
+				if (res.data.success) notify.success("Usuário excluído com sucesso!");
+				else notify.error(res?.data?.errorMessage);
 			})
 			.catch((err) => {
 				console.log(err);
@@ -59,7 +61,6 @@ export default function UserList() {
 
 	const saveEdit = async (user: UserInterface) => {
 		setEditLoading(true);
-		console.log(user);
 		await api
 			.put(`/user/update/${user?.id}`, {
 				id: user.id,
@@ -68,8 +69,8 @@ export default function UserList() {
 				email: user.email != activeUser?.email ? user.email : null,
 			})
 			.then((res) => {
-				console.log(res);
-				notify.success("Usuário editado com sucesso!");
+				if (res.data.success) notify.success("Usuário editado com sucesso!");
+				else notify.error(res?.data?.errorMessage);
 			})
 			.catch((err) => {
 				notify.error(err.response.data.errorMessage || "Erro!");
@@ -144,24 +145,25 @@ export default function UserList() {
 		<>
 			<TableList
 				panelTitle="Usuários"
-				editChildren={
-					<UserEditForm saveForm={saveEdit} form={form} text={activeUser?.name || "user"} user={activeUser} loading={editLoading} setLoading={setEditLoading} />
-				}
 				form={form}
-				handleDeleteOk={() => handleDelete()}
 				setEditLoading={setEditLoading}
 				visibleEdit={visibleEdit}
 				columns={columns}
 				editLoading={editLoading}
 				setEditVisible={setEditVisible}
-				deleteLoading={deleteLoading}
-				setDeleteLoading={setDeleteLoading}
 				fetchData={fetchData}
 				dataSource={users}
 				loading={loading}
-				deleteModalName={activeUser?.name}
-				visibleDelete={visibleDelete}
-				setDeleteVisible={setDeleteVisible}
+			>
+				<UserEditForm saveForm={saveEdit} form={form} text={activeUser?.name || "user"} user={activeUser} loading={editLoading} setLoading={setEditLoading} />
+			</TableList>
+			<DeleteItemModal
+				name={activeUser?.name}
+				handleOk={handleDelete}
+				visible={visibleDelete}
+				setVisible={setDeleteVisible}
+				loading={deleteLoading}
+				setLoading={setDeleteLoading}
 			/>
 		</>
 	);

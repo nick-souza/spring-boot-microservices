@@ -1,4 +1,5 @@
 import { FormInstance, Table } from "antd";
+import { GetRowKey } from "antd/es/table/interface";
 import { ReactNode } from "react";
 import style from "../../pages/room/style.module.css";
 import DeleteItemModal from "../table/deleteItemModal";
@@ -10,39 +11,33 @@ interface TableListProps {
 	columns: any; // FIXME:
 	loading: boolean;
 	dataSource: any;
-	deleteModalName?: string;
-	visibleDelete: boolean;
-	setDeleteVisible: (visibleDelete: boolean) => void;
-	deleteLoading: boolean;
-	setDeleteLoading: (deleteLoading: boolean) => void;
+	// deleteModalName?: string;
+	// visibleDelete: boolean;
+	// setDeleteVisible: (visibleDelete: boolean) => void;
+	// deleteLoading: boolean;
+	// setDeleteLoading: (deleteLoading: boolean) => void;
 	visibleEdit: boolean;
 	setEditVisible: (visibleEdit: boolean) => void;
 	editLoading: boolean;
 	setEditLoading: (editLoading: boolean) => void;
-	handleDeleteOk: () => void;
+	// handleDeleteOk: () => void;
 	form: FormInstance;
-	editChildren: ReactNode;
+	children: ReactNode;
 	panelTitle: string;
 }
 
 export default function TableList({
 	panelTitle,
-	editChildren,
+	children,
 	form,
-	handleDeleteOk,
 	setEditLoading,
 	visibleEdit,
 	dataSource,
 	editLoading,
 	setEditVisible,
-	deleteLoading,
-	setDeleteLoading,
 	fetchData,
 	columns,
 	loading,
-	deleteModalName,
-	visibleDelete,
-	setDeleteVisible,
 }: TableListProps) {
 	return (
 		<>
@@ -50,19 +45,20 @@ export default function TableList({
 				<div onDoubleClick={fetchData} className={style.title}>
 					<h3>{panelTitle}</h3>
 				</div>
-				<Table bordered columns={columns} loading={loading} dataSource={dataSource} size="middle" />
+				<Table
+					bordered
+					columns={columns}
+					loading={loading}
+					dataSource={dataSource}
+					size="middle"
+					rowKey={function (record): string {
+						return record.id;
+					}}
+				/>
 			</div>
-			<DeleteItemModal
-				name={deleteModalName}
-				handleOk={() => handleDeleteOk()}
-				visible={visibleDelete}
-				setVisible={setDeleteVisible}
-				loading={deleteLoading}
-				setLoading={setDeleteLoading}
-			/>
+
 			<EditDrawer visible={visibleEdit} setVisible={setEditVisible} loading={editLoading} setLoading={setEditLoading} handleOk={() => form.submit()}>
-				{editChildren}
-				{/* <RoomEditForm saveForm={saveEdit} form={form} text={activeRoom?.name || "Room"} room={activeRoom} loading={editLoading} setLoading={setEditLoading} /> */}
+				{children}
 			</EditDrawer>
 		</>
 	);

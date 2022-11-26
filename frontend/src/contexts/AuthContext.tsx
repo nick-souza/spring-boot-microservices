@@ -1,15 +1,17 @@
 import Router from "next/router";
-import { parseCookies, setCookie } from "nookies";
+import { parseCookies, setCookie, destroyCookie } from "nookies";
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { useNotifications } from "../hooks/useNotifications";
 import { LoginCredentials, SignUpCredentials, UserLoggedIn, UserLoginResponse } from "../interfaces/loginInterfaces";
 import { api, TokenResponse, validateToken } from "../service/api";
+import { UserInterface } from "../interfaces/userInterface";
 
 interface AuthContextType {
 	isAuthenticated: boolean;
 	user: UserLoggedIn | null;
 	signIn: (data: LoginCredentials) => Promise<void>;
 	signUp: (data: SignUpCredentials) => Promise<void>;
+	logout: () => Promise<void>;
 }
 
 interface AuthProviderProps {
@@ -35,6 +37,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 		// Caso exista, call API para pegar os dados:
 		if (token) {
 			validateToken(token).then((res: TokenResponse) => {
+				console.log("USER DATA: ", res.data);
 				if (res.success) setUser(res.data);
 				if (!res.success) Router.push("/");
 			});
@@ -53,11 +56,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
 			.then((res) => {
 				notify.success("Successfully logged in!");
 
-				const { id, email, token } = res.data.data as UserLoginResponse;
+				const { id, email, name, lastName, creationDate, lastUpdate, roleDesc, statusDesc, token } = res.data.data as UserLoggedIn;
 
 				const user = {
 					id,
 					email,
+					name,
+					statusDesc,
+					roleDesc,
+					lastName,
+					creationDate,
+					lastUpdate,
 				} as UserLoggedIn;
 
 				setCookie(undefined, "auth.token", token, {
@@ -90,5 +99,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
 			});
 	}
 
-	return <AuthContext.Provider value={{ user, isAuthenticated, signIn, signUp }}>{children}</AuthContext.Provider>;
+	async function logout() {
+		destroyCookie(undefined, "auth.token");
+		Router.push("/");
+	}
+
+	return <AuthContext.Provider value={{ user, isAuthenticated, signIn, signUp, logout }}>{children}</AuthContext.Provider>;
 }

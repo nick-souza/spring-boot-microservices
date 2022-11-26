@@ -1,12 +1,13 @@
 import { Form, FormInstance, Input } from "antd";
 import { useEffect, useState } from "react";
+import { UserLoggedIn } from "../../interfaces/loginInterfaces";
 import { UserInterface } from "../../interfaces/userInterface";
 import room from "../../pages/room";
 
 interface UserEditFormProps {
 	text: string;
 	form: FormInstance;
-	user?: UserInterface;
+	user?: any | null;
 	saveForm: (values: UserInterface) => void;
 	loading?: boolean;
 	setLoading?: (loading: boolean) => void;
