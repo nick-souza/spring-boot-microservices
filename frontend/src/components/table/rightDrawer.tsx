@@ -3,7 +3,7 @@ import { Button, Drawer } from "antd";
 import { ReactNode } from "react";
 
 interface EditDrawerProps {
-	text?: string;
+	title: string;
 	children: ReactNode;
 	visible: boolean;
 	setVisible: (visible: boolean) => void;
@@ -12,12 +12,12 @@ interface EditDrawerProps {
 	handleOk: () => void;
 }
 
-export default function EditDrawer({ text, children, visible, setVisible, loading, setLoading, handleOk }: EditDrawerProps) {
+export default function RightDrawer({ title, children, visible, setVisible, loading, setLoading, handleOk }: EditDrawerProps) {
 	const onClose = () => setVisible(false);
 
 	return (
 		<Drawer
-			title="Editar"
+			title={title}
 			width={620}
 			onClose={onClose}
 			open={visible}

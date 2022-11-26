@@ -1,13 +1,11 @@
 import { SettingOutlined } from "@ant-design/icons";
-import { Form, Table } from "antd";
+import { Form } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useEffect, useState } from "react";
 import { useNotifications } from "../../hooks/useNotifications";
 import { RoomInterface } from "../../interfaces/roomInterface";
-import style from "../../pages/room/style.module.css";
 import { api } from "../../service/api";
 import DeleteItemModal from "../table/deleteItemModal";
-import EditDrawer from "../table/editDrawer";
 import TableList from "../table/table";
 import TableOptions from "../table/tableOptions";
 import RoomEditForm from "./roomEditForm";

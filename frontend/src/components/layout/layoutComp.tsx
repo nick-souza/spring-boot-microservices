@@ -7,7 +7,7 @@ import { AuthContext } from "../../contexts/AuthContext";
 import { useNotifications } from "../../hooks/useNotifications";
 import { UserInterface } from "../../interfaces/userInterface";
 import { api } from "../../service/api";
-import EditDrawer from "../table/editDrawer";
+import EditDrawer from "../table/rightDrawer";
 import UserEditForm from "../user/userEditForm";
 import NavMenu from "./navMenu";
 import style from "./style.module.css";
@@ -79,7 +79,7 @@ export default function LayoutComp({ children }: LayoutCompProps) {
 					{children}
 				</Content>
 			</Layout>
-			<EditDrawer visible={visibleEdit} setVisible={setEditVisible} loading={loading} setLoading={setLoading} handleOk={() => form.submit()}>
+			<EditDrawer title="Editar" visible={visibleEdit} setVisible={setEditVisible} loading={loading} setLoading={setLoading} handleOk={() => form.submit()}>
 				<UserEditForm saveForm={saveEdit} form={form} text={user?.name || "user"} user={user} loading={loading} setLoading={setLoading} />
 			</EditDrawer>
 		</>

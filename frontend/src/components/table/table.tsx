@@ -1,29 +1,22 @@
-import { FormInstance, Table } from "antd";
-import { GetRowKey } from "antd/es/table/interface";
-import { ReactNode } from "react";
+import { Button, FormInstance, Table } from "antd";
+import { ReactNode, useContext } from "react";
+import { AuthContext } from "../../contexts/AuthContext";
 import style from "../../pages/room/style.module.css";
-import DeleteItemModal from "../table/deleteItemModal";
-import EditDrawer from "../table/editDrawer";
-// import RoomEditForm from "./roomEditForm";
+import EditDrawer from "./rightDrawer";
 
 interface TableListProps {
 	fetchData: () => void;
 	columns: any; // FIXME:
 	loading: boolean;
 	dataSource: any;
-	// deleteModalName?: string;
-	// visibleDelete: boolean;
-	// setDeleteVisible: (visibleDelete: boolean) => void;
-	// deleteLoading: boolean;
-	// setDeleteLoading: (deleteLoading: boolean) => void;
 	visibleEdit: boolean;
 	setEditVisible: (visibleEdit: boolean) => void;
 	editLoading: boolean;
 	setEditLoading: (editLoading: boolean) => void;
-	// handleDeleteOk: () => void;
 	form: FormInstance;
 	children: ReactNode;
 	panelTitle: string;
+	addButton?: ReactNode;
 }
 
 export default function TableList({
@@ -38,12 +31,16 @@ export default function TableList({
 	fetchData,
 	columns,
 	loading,
+	addButton,
 }: TableListProps) {
+	const { user } = useContext(AuthContext);
+
 	return (
 		<>
 			<div className={style.list_wrapper}>
 				<div onDoubleClick={fetchData} className={style.title}>
 					<h3>{panelTitle}</h3>
+					{addButton}
 				</div>
 				<Table
 					bordered
@@ -51,13 +48,21 @@ export default function TableList({
 					loading={loading}
 					dataSource={dataSource}
 					size="middle"
+					rowClassName={(record) => ((record.id == user?.id || record.responsibleId == user?.id) && !record?.capacity ? "active-row" : "")}
 					rowKey={function (record): string {
 						return record.id;
 					}}
 				/>
 			</div>
 
-			<EditDrawer visible={visibleEdit} setVisible={setEditVisible} loading={editLoading} setLoading={setEditLoading} handleOk={() => form.submit()}>
+			<EditDrawer
+				title="Editar"
+				visible={visibleEdit}
+				setVisible={setEditVisible}
+				loading={editLoading}
+				setLoading={setEditLoading}
+				handleOk={() => form.submit()}
+			>
 				{children}
 			</EditDrawer>
 		</>

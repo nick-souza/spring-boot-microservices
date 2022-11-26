@@ -100,6 +100,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 	}
 
 	async function logout() {
+		notify.success("Successfully logged out!");
 		destroyCookie(undefined, "auth.token");
 		Router.push("/");
 	}

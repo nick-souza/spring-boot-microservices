@@ -118,6 +118,15 @@ body {
 	border-color: var(--success) !important;
 }
 
+.active-row {
+	background-color: var(--blueGrotto) !important;
+	color: #fff !important;
+}
+
+.active-row:hover td {
+	background: var(--blueGrotto) !important;
+}
+
 /* .ant-drawer-close {
 	margin-inline-end: 0 !important;
 	float: right !important;

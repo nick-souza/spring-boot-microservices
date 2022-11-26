@@ -16,22 +16,23 @@ interface ScheduleEditFormProps {
 	setLoading?: (loading: boolean) => void;
 }
 
-export const dateTimeFormat = "DD/MM/YYYY HH:mm";
+export const dateTimeFormat = "DD/MM/YYYY HH:00";
 
-export default function ScheduleEditForm({ schedule, form, saveForm, loading, setLoading }: ScheduleEditFormProps) {
+export default function ScheduleForm({ schedule, form, saveForm, loading, setLoading }: ScheduleEditFormProps) {
 	const [userFetching, setUserFetching] = useState(false);
 	const [roomFetching, setRoomFetching] = useState(false);
 	const [userOptions, setUserOptions] = useState<UserInterface[]>();
 	const [roomOptions, setRoomOptions] = useState<RoomInterface[]>();
 
 	useEffect(() => {
-		form.setFieldsValue({
-			id: schedule?.id,
-			roomId: schedule?.roomId,
-			responsibleId: schedule?.responsibleId,
-			bookingStart: dayjs(schedule?.bookingStart, dateTimeFormat),
-			bookingEnd: dayjs(schedule?.bookingEnd, dateTimeFormat),
-		});
+		if (schedule)
+			form.setFieldsValue({
+				id: schedule?.id,
+				roomId: schedule?.roomId,
+				responsibleId: schedule?.responsibleId,
+				bookingStart: dayjs(schedule?.bookingStart, dateTimeFormat),
+				bookingEnd: dayjs(schedule?.bookingEnd, dateTimeFormat),
+			});
 	}, [schedule]);
 
 	useEffect(() => {
@@ -72,34 +73,35 @@ export default function ScheduleEditForm({ schedule, form, saveForm, loading, se
 	};
 
 	const disabledDateTime = () => ({
-		disabledHours: () => range(0, 8).concat(range(19, 23)),
+		disabledHours: () => range(0, 8).concat(range(19, 24)),
 		disabledMinutes: () => range(0, 60),
 	});
 
-	// FIXME: Check how to extract the date from date picker::
-	const onChange = (value: DatePickerProps["value"], dateString: [string, string] | string) => {
-		console.log("Selected Time: ", value);
-		console.log("Formatted Selected Time: ", dateString);
-	};
-
-	const onOk = (value: DatePickerProps["value"] | RangePickerProps["value"]) => {
-		const date = dayjs(value?.toString(), dateTimeFormat);
-		console.log("OnOK", date);
-	};
-
-	const ok = (date: dayjs.Dayjs) => {
-		console.log(date.format(dateTimeFormat));
+	const onOk = (value: dayjs.Dayjs) => {
+		var newValue = value.add(1, "h");
+		form.setFieldValue("bookingEnd", newValue);
 	};
 
 	return (
 		<>
 			<h1>{"Agendamento"}</h1>
 			<Form form={form} layout="vertical" onFinish={(values) => saveForm(values)} disabled={loading}>
-				<Form.Item name="id" label="Id">
-					<Input disabled />
-				</Form.Item>
+				{schedule && (
+					<Form.Item name="id" label="Id">
+						<Input disabled />
+					</Form.Item>
+				)}
 
-				<Form.Item label="Responsável" name={"responsibleId"}>
+				<Form.Item
+					label="Responsável"
+					name={"responsibleId"}
+					rules={[
+						{
+							required: true,
+							message: "Responsável é obrigatório",
+						},
+					]}
+				>
 					<Select loading={userFetching} filterOption={false} showSearch>
 						{userOptions?.map((item, index) => (
 							<Select.Option key={`${item.id}_${index}`} value={item.id} label={item.name} data={item}>
@@ -114,7 +116,16 @@ export default function ScheduleEditForm({ schedule, form, saveForm, loading, se
 					</Select>
 				</Form.Item>
 
-				<Form.Item label="Sala" name={"roomId"}>
+				<Form.Item
+					label="Sala"
+					name={"roomId"}
+					rules={[
+						{
+							required: true,
+							message: "Sala é obrigatório",
+						},
+					]}
+				>
 					<Select loading={roomFetching} filterOption={false} showSearch>
 						{roomOptions?.map((item, index) => (
 							<Select.Option key={`${item.id}_${index}`} value={item.id} label={item.name} data={item}>
@@ -131,27 +142,44 @@ export default function ScheduleEditForm({ schedule, form, saveForm, loading, se
 
 				<Row gutter={[16, 16]}>
 					<Col span={12}>
-						<Form.Item name="bookingStart" label="Começa em">
+						<Form.Item
+							name="bookingStart"
+							label="Começa em"
+							rules={[
+								{
+									required: true,
+									message: "Data de início é obrigatório",
+								},
+							]}
+						>
 							<DatePicker
 								className={style.date_picker}
 								showTime
+								allowClear={false}
 								disabledTime={disabledDateTime}
 								disabledDate={disabledDate}
-								onChange={onChange}
-								onOk={(dayjs) => ok(dayjs)}
+								onOk={(dayjs) => onOk(dayjs)}
 								format={dateTimeFormat}
 							/>
 						</Form.Item>
 					</Col>
 					<Col span={12}>
-						<Form.Item name="bookingEnd" label="Termina em">
+						<Form.Item
+							name="bookingEnd"
+							label="Termina em"
+							rules={[
+								{
+									required: true,
+									message: "Data de término é obrigatório",
+								},
+							]}
+						>
 							<DatePicker
 								className={style.date_picker}
 								showTime
+								allowClear={false}
 								disabledTime={disabledDateTime}
 								disabledDate={disabledDate}
-								onChange={onChange}
-								onOk={onOk}
 								format={dateTimeFormat}
 							/>
 						</Form.Item>

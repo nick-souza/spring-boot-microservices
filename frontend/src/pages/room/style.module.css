@@ -1,5 +1,9 @@
 .title {
 	margin-left: 4px;
+	align-content: flex-end !important;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
 }
 
 .title h3 {

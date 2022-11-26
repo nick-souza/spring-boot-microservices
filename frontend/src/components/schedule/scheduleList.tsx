@@ -1,5 +1,5 @@
 import { SettingOutlined } from "@ant-design/icons";
-import { Form } from "antd";
+import { Button, Form } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
@@ -9,10 +9,11 @@ import { api } from "../../service/api";
 import DeleteItemModal from "../table/deleteItemModal";
 import TableList from "../table/table";
 import TableOptions from "../table/tableOptions";
-import ScheduleEditForm, { dateTimeFormat } from "./scheduleEditForm";
+import CreateSchedule from "./addSchedule";
+import ScheduleForm, { dateTimeFormat } from "./scheduleForm";
 
-interface FormResponse {
-	id: number;
+export interface ScheduleFormResponse {
+	id?: number;
 	roomId: number;
 	responsibleId: number;
 	bookingStart: dayjs.Dayjs;
@@ -67,9 +68,8 @@ export default function ScheduleList() {
 			});
 	};
 
-	const saveEdit = async (schedule: FormResponse) => {
+	const saveEdit = async (schedule: ScheduleFormResponse) => {
 		setEditLoading(true);
-		console.log(schedule);
 		await api
 			.put(`/schedule/${schedule?.id}`, {
 				scheduleId: schedule.id,
@@ -149,8 +149,9 @@ export default function ScheduleList() {
 				fetchData={fetchData}
 				dataSource={schedules}
 				loading={loading}
+				addButton={<CreateSchedule fetchTable={fetchData} />}
 			>
-				<ScheduleEditForm saveForm={saveEdit} form={form} schedule={activeSchedule} loading={editLoading} setLoading={setEditLoading} />
+				<ScheduleForm saveForm={saveEdit} form={form} schedule={activeSchedule} loading={editLoading} setLoading={setEditLoading} />
 			</TableList>
 
 			<DeleteItemModal
