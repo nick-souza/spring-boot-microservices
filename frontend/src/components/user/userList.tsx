@@ -146,6 +146,8 @@ export default function UserList() {
 			dataIndex: "operation",
 			render: (_, user: UserInterface) => (
 				<TableOptions
+					applyPermissions={true}
+					isSelf={user?.id == loggedUser?.id}
 					handleDelete={() => {
 						setDeleteVisible(true);
 						setActiveUser(user);

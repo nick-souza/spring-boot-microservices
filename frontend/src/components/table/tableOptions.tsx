@@ -7,12 +7,19 @@ import { UserRole } from "../../enums/UserRole";
 import style from "./style.module.css";
 
 interface TableOptionsProps {
+	isSelf: boolean;
 	handleEdit: () => void;
 	handleDelete: () => void;
+	applyPermissions: boolean;
 }
 
-export default function TableOptions({ handleDelete, handleEdit }: TableOptionsProps) {
+export default function TableOptions({ handleDelete, handleEdit, applyPermissions, isSelf }: TableOptionsProps) {
 	const { isAdmin } = useContext(AuthContext);
+
+	const disableEdit = () => {
+		if ((applyPermissions && isAdmin()) || isSelf || !applyPermissions) return false;
+		else return true;
+	};
 
 	const items: MenuProps["items"] = [
 		{
@@ -20,23 +27,25 @@ export default function TableOptions({ handleDelete, handleEdit }: TableOptionsP
 			label: (
 				<EditOption
 					onClick={() => {
-						if (isAdmin()) handleEdit();
+						if ((applyPermissions && isAdmin()) || isSelf || !applyPermissions) handleEdit();
 					}}
 				/>
 			),
-			disabled: !isAdmin(),
+			disabled: disableEdit(),
 		},
 		{
 			key: "opt_2",
 			label: (
 				<DeleteOption
 					onClick={() => {
-						if (isAdmin()) handleDelete();
+						// if (isAdmin()) handleDelete();
+						if ((applyPermissions && isAdmin()) || isSelf) handleDelete();
 					}}
 					isAdmin={isAdmin()}
+					isSelf={isSelf}
 				/>
 			),
-			disabled: !isAdmin(),
+			disabled: disableEdit(), //applyPermissions ? !isAdmin() : false,
 		},
 	];
 
@@ -52,6 +61,7 @@ export default function TableOptions({ handleDelete, handleEdit }: TableOptionsP
 interface OptionBtnProps {
 	onClick: () => void;
 	isAdmin?: boolean;
+	isSelf?: boolean;
 }
 
 function EditOption({ onClick }: OptionBtnProps) {
@@ -63,10 +73,10 @@ function EditOption({ onClick }: OptionBtnProps) {
 	);
 }
 
-function DeleteOption({ onClick, isAdmin }: OptionBtnProps) {
+function DeleteOption({ onClick, isAdmin, isSelf }: OptionBtnProps) {
 	return (
 		<div
-			className={!isAdmin ? "btn_disabled" : ""}
+			className={isAdmin || isSelf ? "" : "btn_disabled"}
 			style={{ paddingRight: 6, paddingLeft: 6, paddingTop: 2, paddingBottom: 2, color: "var(--danger)" }}
 			onClick={onClick}
 		>

@@ -7,7 +7,8 @@ import { AuthContext } from "../../contexts/AuthContext";
 import { useNotifications } from "../../hooks/useNotifications";
 import { UserInterface } from "../../interfaces/userInterface";
 import { api } from "../../service/api";
-import EditDrawer from "../table/rightDrawer";
+import UserSchedules from "../schedule/userScheduleList";
+import RightDrawer from "../table/rightDrawer";
 import UserForm from "../user/userForm";
 import NavMenu from "./navMenu";
 import style from "./style.module.css";
@@ -22,6 +23,7 @@ export default function LayoutComp({ children }: LayoutCompProps) {
 
 	const [loading, setLoading] = useState(false);
 	const [visibleEdit, setEditVisible] = useState(false);
+	const [visibleScheduleList, setVisibleScheduleList] = useState(false);
 
 	const [form] = Form.useForm();
 	const notify = useNotifications();
@@ -58,8 +60,12 @@ export default function LayoutComp({ children }: LayoutCompProps) {
 			label: <span onClick={() => setEditVisible(true)}>{user?.name}</span>,
 		},
 		{
+			icon: <i className="uil-schedule"></i>,
+			label: <span onClick={() => setVisibleScheduleList(true)}>Meus agendamentos</span>,
+		},
+		{
 			icon: <i className="uil-sign-out-alt"></i>,
-			label: <span onClick={logout}>Log out</span>,
+			label: <span onClick={() => logout()}>Log out</span>,
 		},
 	] as any[];
 
@@ -83,9 +89,18 @@ export default function LayoutComp({ children }: LayoutCompProps) {
 					{children}
 				</Content>
 			</Layout>
-			<EditDrawer title="Editar" visible={visibleEdit} setVisible={setEditVisible} loading={loading} setLoading={setLoading} handleOk={() => form.submit()}>
-				<UserForm saveForm={saveEdit} form={form} text={user?.name || "user"} user={user} loading={loading} setLoading={setLoading} />
-			</EditDrawer>
+			<RightDrawer
+				title={visibleEdit ? "Editar" : "Meus agendamentos"}
+				visible={visibleEdit || visibleScheduleList}
+				setVisible={visibleEdit ? setEditVisible : setVisibleScheduleList}
+				loading={loading}
+				setLoading={setLoading}
+				handleOk={() => form.submit()}
+				drawerWidth={visibleEdit ? 620 : 720}
+			>
+				{visibleEdit && <UserForm saveForm={saveEdit} form={form} text={user?.name || "user"} user={user} loading={loading} setLoading={setLoading} />}
+				{visibleScheduleList && <UserSchedules user={user} />}
+			</RightDrawer>
 		</>
 	);
 }

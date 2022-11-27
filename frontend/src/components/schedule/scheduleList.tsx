@@ -135,6 +135,8 @@ export default function ScheduleList() {
 			dataIndex: "operation",
 			render: (_, schedule: ScheduleInterface) => (
 				<TableOptions
+					applyPermissions={true}
+					isSelf={schedule?.responsibleId == loggedUser?.id}
 					handleDelete={() => {
 						setDeleteVisible(true);
 						setActiveSchedule(schedule);

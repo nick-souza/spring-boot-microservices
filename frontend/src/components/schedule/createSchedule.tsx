@@ -27,8 +27,6 @@ export default function CreateSchedule({ fetchTable }: CreateEntityProps) {
 	}, [loggedUser]);
 
 	const saveAdd = async (schedule: ScheduleFormResponse) => {
-		console.log(schedule);
-
 		setLoading(true);
 
 		await api

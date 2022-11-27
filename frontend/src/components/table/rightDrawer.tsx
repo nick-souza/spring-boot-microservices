@@ -10,15 +10,16 @@ interface EditDrawerProps {
 	loading: boolean;
 	setLoading: (loading: boolean) => void;
 	handleOk: () => void;
+	drawerWidth?: number;
 }
 
-export default function RightDrawer({ title, children, visible, setVisible, loading, setLoading, handleOk }: EditDrawerProps) {
+export default function RightDrawer({ title, children, visible, setVisible, loading, setLoading, handleOk, drawerWidth }: EditDrawerProps) {
 	const onClose = () => setVisible(false);
 
 	return (
 		<Drawer
 			title={title}
-			width={620}
+			width={drawerWidth ? drawerWidth : 620}
 			onClose={onClose}
 			open={visible}
 			destroyOnClose

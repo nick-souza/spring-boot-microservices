@@ -18,18 +18,18 @@ export default function MenuItem(item: MenuItem) {
 
 			<span className={`navbar-item-title `}>
 				{item.text}
-				<PermissionIcon permission={item.permission} />
+				{/* <PermissionIcon permission={item.permission} /> */}
 			</span>
 		</NextLink>
 	);
 }
 
-type PermissionIconProps = {
-	permission?: boolean;
-};
+// type PermissionIconProps = {
+// 	permission?: boolean;
+// };
 
-export function PermissionIcon({ permission }: PermissionIconProps) {
-	const print = useMemo(() => permission === false, [permission]);
+// export function PermissionIcon({ permission }: PermissionIconProps) {
+// 	const print = useMemo(() => permission === false, [permission]);
 
-	return <>{print && <span style={{ marginLeft: "5px" }}>{permission === false && <LockFilled style={{ color: "var(--danger)" }} />}</span>}</>;
-}
+// 	return <>{print && <span style={{ marginLeft: "5px" }}>{permission === false && <LockFilled style={{ color: "var(--danger)" }} />}</span>}</>;
+// }

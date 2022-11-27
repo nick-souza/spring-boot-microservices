@@ -110,13 +110,15 @@ export default function RoomList() {
 			dataIndex: "operation",
 			render: (_, room: RoomInterface) => (
 				<TableOptions
+					isSelf={false}
+					applyPermissions={false}
 					handleDelete={() => {
 						setDeleteVisible(true);
 						setActiveRoom(room);
 					}}
 					handleEdit={() => {
-						setActiveRoom(room);
 						setEditVisible(true);
+						setActiveRoom(room);
 					}}
 				/>
 			),
