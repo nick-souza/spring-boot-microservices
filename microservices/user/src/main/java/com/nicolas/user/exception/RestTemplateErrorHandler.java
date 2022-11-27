@@ -1,7 +1,7 @@
-package com.nicolas.room.exception;
+package com.nicolas.user.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nicolas.room.utils.GenericResponse;
+import com.nicolas.user.utils.GenericResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;

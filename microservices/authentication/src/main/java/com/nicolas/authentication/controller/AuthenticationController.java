@@ -4,6 +4,7 @@ import com.nicolas.authentication.dto.incoming.LogInDTO;
 import com.nicolas.authentication.dto.incoming.SignInDTO;
 import com.nicolas.authentication.dto.outgoing.LogInResponseDTO;
 import com.nicolas.authentication.dto.outgoing.SignInResponseDTO;
+import com.nicolas.authentication.dto.outgoing.UserDTO;
 import com.nicolas.authentication.service.AuthenticationService;
 import com.nicolas.authentication.utils.GenericResponse;
 import org.springframework.beans.factory.annotation.Autowired;

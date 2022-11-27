@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter;
 @NoArgsConstructor
 public class UserDTO {
     @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
-    protected DateTimeFormatter DateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm");
+    protected DateTimeFormatter DateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     private Long id;
     private String name;

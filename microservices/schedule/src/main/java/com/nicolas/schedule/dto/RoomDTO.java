@@ -12,4 +12,6 @@ public class RoomDTO {
     private Long id;
     private String name;
     private Long capacity;
+    private String creationDate;
+    private String lastUpdate;
 }

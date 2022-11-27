@@ -1,8 +1,10 @@
 package com.nicolas.user.utils;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class GenericResponse<T> {
     private boolean success;
     private int statusCode;
@@ -14,6 +16,11 @@ public class GenericResponse<T> {
         this.errorMessage = errorMessage;
         this.statusCode = statusCode;
         this.data = data;
+    }
+
+    public GenericResponse(int statusCode, boolean success) {
+        this.statusCode = statusCode;
+        this.success = success;
     }
 
     public GenericResponse(boolean success, int statusCode, T data) {

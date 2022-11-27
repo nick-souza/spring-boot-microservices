@@ -1,5 +1,8 @@
 package com.nicolas.room.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nicolas.room.dto.AddRoomDTO;
 import com.nicolas.room.dto.RoomDTO;
 import com.nicolas.room.dto.UpdateRoomDTO;
@@ -12,6 +15,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,11 +24,14 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class RoomService {
+    protected final String SCHEDULE_URI = "http://SCHEDULE/schedule/";
+
     private final RoomRepository roomRepository;
     private final RoomProfile roomProfile;
+    private final RestTemplate restTemplate;
 
     public ResponseEntity<GenericResponse<List<RoomDTO>>> findAll() {
-        var rooms = roomRepository.findAll().stream().map(room -> roomProfile.toRoomDTO().map(room)).collect(Collectors.toList());
+        var rooms = roomRepository.findAllByOrderByIdAsc().stream().map(room -> roomProfile.toRoomDTO().map(room)).collect(Collectors.toList());
 
         if (rooms.isEmpty())
             throw new RecordNotFoundException("No room found");
@@ -84,16 +91,35 @@ public class RoomService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ResponseEntity<HttpStatus> deleteRoom(Long id) {
+    public ResponseEntity<GenericResponse> deleteRoom(Long id) {
         if (id < 0)
             throw new BadRequestException("Invalid id");
 
         var _room = roomRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Room not found"));
 
-        // TODO: Check if the room has any appointments before deleting it:
+        var hasAppointments = checkAppointments(id);
+
+        if (hasAppointments)
+            return new ResponseEntity<>(new GenericResponse<>(200, "Essa sala possui agendamentos. Para excluir, primeiro cancele esses agendamentos"), HttpStatus.OK);
 
         roomRepository.delete(_room);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(new GenericResponse<>(200, true), HttpStatus.OK);
+    }
+
+    private boolean checkAppointments(Long roomId) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+
+            var scheduleResponse = restTemplate.getForObject(SCHEDULE_URI + "room/{roomId}", GenericResponse.class, roomId).getData();
+
+            var jsonStr = mapper.writeValueAsString(scheduleResponse);
+
+            var list = mapper.readValue(jsonStr, new TypeReference<List<Object>>(){});
+
+            return !list.isEmpty();
+        } catch (Exception ex) {
+            return true;
+        }
     }
 }

@@ -92,7 +92,16 @@ public class AuthenticationService {
             var logInDTO = new LogInResponseDTO();
 
             logInDTO.setId(user.getId());
+            logInDTO.setName(user.getName());
+            logInDTO.setLastName(user.getLastName());
             logInDTO.setEmail(user.getEmail());
+            logInDTO.setStatus(user.getStatus());
+            logInDTO.setRole(user.getRole());
+            logInDTO.setCreationDate(user.getCreationDate());
+            logInDTO.setRoleDesc(user.getRoleDesc());
+            logInDTO.setStatusDesc(user.getStatusDesc());
+            logInDTO.setLastUpdate(user.getLastUpdate());
+
             logInDTO.setToken(createToken(user.getEmail()));
 
             return logInDTO;

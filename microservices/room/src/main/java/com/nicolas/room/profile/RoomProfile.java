@@ -25,11 +25,14 @@ public class RoomProfile {
             mapper.map(Room::getId, RoomDTO::setId);
             mapper.map(Room::getName, RoomDTO::setName);
             mapper.map(Room::getCapacity, RoomDTO::setCapacity);
+            mapper.map(Room::getCreatedAt, RoomDTO::setCreationDate);
+            mapper.map(Room::getLastUpdateAt, RoomDTO::setLastUpdate);
         });
     }
 
     // Add
     public TypeMap<AddRoomDTO, Room> addToRoom() {
+        modelMapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
         return modelMapper.typeMap(AddRoomDTO.class, Room.class).addMappings(mapper -> {
             mapper.map(AddRoomDTO::getName, Room::setName);
             mapper.map(AddRoomDTO::getCapacity, Room::setCapacity);

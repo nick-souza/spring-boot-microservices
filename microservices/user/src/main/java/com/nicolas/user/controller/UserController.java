@@ -47,7 +47,7 @@ public class UserController {
     }
 
     @GetMapping("email/{email}")
-    public ResponseEntity<GenericResponse<Optional<User>>> findByEmailOptional(@PathVariable String email) {
+    public ResponseEntity<GenericResponse<UserDTO>> findByEmailOptional(@PathVariable String email) {
         return userService.findUserByEmailOptional(email);
     }
 
@@ -57,7 +57,7 @@ public class UserController {
     }
 
     @DeleteMapping("delete/{id}")
-    public ResponseEntity<HttpStatus> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<GenericResponse> deleteUser(@PathVariable Long id) {
         return userService.deleteUser(id);
     }
 }

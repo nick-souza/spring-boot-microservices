@@ -1,4 +1,4 @@
-package com.nicolas.schedule.exception;
+package com.nicolas.schedule.utils.exception;
 
 import com.nicolas.schedule.utils.GenericResponse;
 import org.springframework.http.HttpHeaders;

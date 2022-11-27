@@ -7,8 +7,8 @@ import com.nicolas.schedule.model.Schedule;
 import com.nicolas.schedule.profile.ScheduleProfile;
 import com.nicolas.schedule.repository.ScheduleRepository;
 import com.nicolas.schedule.utils.GenericResponse;
-import com.nicolas.schedule.exception.BadRequestException;
-import com.nicolas.schedule.exception.RecordNotFoundException;
+import com.nicolas.schedule.utils.exception.BadRequestException;
+import com.nicolas.schedule.utils.exception.RecordNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,15 +25,15 @@ import java.util.stream.Collectors;
 public class ScheduleService {
     protected final String USER_URI = "http://USER/user/";
     protected final String ROOM_URI = "http://ROOM/room/";
-    protected final Integer DAY_STARTS_AT = 8;
-    protected final Integer DAY_ENDS_AT = 18;
+    protected final Integer DAY_STARTS_AT = 7;
+    protected final Integer DAY_ENDS_AT = 19;
 
     private final ScheduleRepository scheduleRepository;
     private final ScheduleProfile scheduleProfile;
     private final RestTemplate restTemplate;
 
     public ResponseEntity<GenericResponse<List<ScheduleDTO>>> findAll() {
-        var schedules = scheduleRepository.findAll().stream().map(schedule -> {
+        var schedules = scheduleRepository.findAllByOrderByBookingStartAsc().stream().map(schedule -> {
             var _schedule = scheduleProfile.toScheduleDTO().map(schedule);
 
             _schedule.setResponsible(getUserDTO(_schedule.getResponsibleId()).getName());
@@ -72,7 +72,7 @@ public class ScheduleService {
             _schedule.setRoom(getRoomDTO(_schedule.getRoomId()).getName());
 
             return _schedule;
-        }).collect(Collectors.toList());;
+        }).collect(Collectors.toList());
 
         var response = new GenericResponse<>(true, 200, scheduleList);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -106,14 +106,13 @@ public class ScheduleService {
 
     public ResponseEntity<GenericResponse<ScheduleDTO>> addSchedule(AddScheduleDTO model) {
         try {
-            if (model == null)
-                throw new BadRequestException("Invalid body");
+            if (model == null) throw new BadRequestException("Invalid body");
 
             // Validations:
             validateUser(model.getResponsibleId());
             validateRoom(model.getRoomId());
             validateAppointmentHours(model.getBookingStart(), model.getBookingEnd());
-            validateConflicts(model.getRoomId(), model.getBookingStart(), model.getBookingEnd());
+            validateConflicts(model.getRoomId(), model.getBookingStart(), model.getBookingEnd(), (long) -1);
 
             var _schedule = scheduleProfile.toSchedule().map(model);
 
@@ -136,24 +135,33 @@ public class ScheduleService {
 
     public ResponseEntity<GenericResponse<ScheduleDTO>> updateSchedule(Long id, UpdateScheduleDTO model) {
         try {
-            if (model == null)
-                throw new BadRequestException("Invalid body");
+            if (model == null) throw new BadRequestException("Invalid body");
 
             if (!model.getScheduleId().equals(id))
                 throw new BadRequestException("Route and DTO identifiers do not match");
 
             var _schedule = scheduleRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Schedule not found"));
 
+            Long roomId;
+            if (model.getRoomId() != null) roomId = model.getRoomId();
+            else roomId = _schedule.getRoomId();
+
             if (model.getBookingStart() != null && model.getBookingEnd() != null) {
                 var start = model.getBookingStart();
                 var end = model.getBookingEnd();
+
                 validateAppointmentHours(start, end);
+                validateConflicts(roomId, start, end, _schedule.getId());
             } else if (model.getBookingStart() != null){
                 var start = model.getBookingStart();
+
                 validateAppointmentHours(start, _schedule.getBookingEnd());
+                validateConflicts(roomId, start, _schedule.getBookingEnd(), _schedule.getId());
             } else if (model.getBookingEnd() != null){
                 var end = model.getBookingEnd();
+
                 validateAppointmentHours(_schedule.getBookingStart(), end);
+                validateConflicts(roomId, _schedule.getBookingStart(), end, _schedule.getId());
             }
 
             scheduleProfile.updateToSchedule().map(model, _schedule);
@@ -174,12 +182,10 @@ public class ScheduleService {
         }
     }
 
-    private void validateConflicts(Long roomId, LocalDateTime bookingStart, LocalDateTime bookingEnd) {
-        var _schedule = scheduleRepository
-                .findByRoomIdAndBookingStartAndBookingEnd(roomId, bookingStart, bookingEnd);
+    private void validateConflicts(Long roomId, LocalDateTime bookingStart, LocalDateTime bookingEnd, Long excludeId) {
+        var _schedule = scheduleRepository.validateConflicts(roomId, bookingStart, bookingEnd, excludeId);
 
-        if (_schedule.isPresent())
-            throw new BadRequestException("The room is not available at that time");
+        if (_schedule.size() >= 1) throw new BadRequestException("The room is not available at that time");
     }
 
     private void validateAppointmentHours(LocalDateTime start, LocalDateTime end) {
