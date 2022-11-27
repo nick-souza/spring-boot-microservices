@@ -1,5 +1,5 @@
 import { SettingOutlined } from "@ant-design/icons";
-import { Form } from "antd";
+import { Form, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
@@ -13,6 +13,7 @@ import TableOptions from "../table/tableOptions";
 import UserForm from "./userForm";
 
 export default function UserList() {
+	const { user: loggedUser } = useContext(AuthContext);
 	const [users, setUsers] = useState<UserInterface[]>();
 	const [activeUser, setActiveUser] = useState<UserInterface>();
 	const [loading, setLoading] = useState(false);
@@ -44,21 +45,26 @@ export default function UserList() {
 	};
 
 	const handleDelete = async () => {
-		setDeleteLoading(true);
-		await api
-			.delete(`/user/delete/${activeUser?.id}`)
-			.then((res) => {
-				if (res.data.success) notify.success("Usuário excluído com sucesso!");
-				else notify.error(res?.data?.errorMessage);
-			})
-			.catch((err) => {
-				console.log(err);
-			})
-			.finally(() => {
-				setDeleteVisible(false);
-				setDeleteLoading(false);
-				fetchData();
-			});
+		if (activeUser?.id != loggedUser?.id) {
+			setDeleteLoading(true);
+			await api
+				.delete(`/user/delete/${activeUser?.id}`)
+				.then((res) => {
+					if (res.data.success) notify.success("Usuário excluído com sucesso!");
+					else notify.error(res?.data?.errorMessage);
+				})
+				.catch((err) => {
+					console.log(err);
+				})
+				.finally(() => {
+					setDeleteVisible(false);
+					setDeleteLoading(false);
+					fetchData();
+				});
+		} else {
+			setDeleteVisible(false);
+			notify.error("Você não pode se excluir!");
+		}
 	};
 
 	const saveEdit = async (user: UserInterface) => {
@@ -89,6 +95,16 @@ export default function UserList() {
 			key: "user_name",
 			title: "Nome",
 			dataIndex: "name",
+			render: (_, user: UserInterface) => (
+				<span>
+					{user.name}
+					{user?.id == loggedUser?.id && (
+						<Tag className="user-tag" color="geekblue">
+							Você
+						</Tag>
+					)}
+				</span>
+			),
 		},
 		{
 			key: "user_lastName",

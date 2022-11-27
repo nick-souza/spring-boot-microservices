@@ -48,7 +48,9 @@ export default function TableList({
 					loading={loading}
 					dataSource={dataSource}
 					size="middle"
-					rowClassName={(record) => ((record.id == user?.id || record.responsibleId == user?.id) && !record?.capacity ? "active-row" : "")}
+					rowClassName={(record) =>
+						(record.status && record.id == user?.id) || (record.bookingStart && record.responsibleId == user?.id && !record?.capacity) ? "active-row" : ""
+					}
 					rowKey={function (record): string {
 						return record.id;
 					}}

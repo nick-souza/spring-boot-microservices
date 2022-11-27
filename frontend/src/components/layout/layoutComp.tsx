@@ -1,4 +1,4 @@
-import { DownOutlined, UserOutlined } from "@ant-design/icons";
+import { CalendarOutlined, DownOutlined, UserOutlined } from "@ant-design/icons";
 import { Avatar, Dropdown, Form, Layout, Menu, Space, Tooltip } from "antd";
 import { time } from "console";
 import Link from "next/link";
@@ -67,7 +67,11 @@ export default function LayoutComp({ children }: LayoutCompProps) {
 		<>
 			<Layout className="layout">
 				<Header className="navbar-bg navbar-header">
-					<div className={style.logo} />
+					<div className={style.logo}>
+						<CalendarOutlined className={style.icon} />
+						<span className={style.title}>Agendamentos</span>
+					</div>
+
 					<div className="navbar-actions">
 						<NavMenu />
 						<Dropdown trigger={["click"]} overlay={<Menu className="custom-scrollbar" style={{ overflow: "auto", maxHeight: "80vh" }} items={items} />}>

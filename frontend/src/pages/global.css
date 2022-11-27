@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap");
+
 :root {
 	--navyBlue: #05445e;
 	--blueGrotto: #189ab4;
@@ -5,6 +7,17 @@
 	--babyBlue: #d4f1f4;
 
 	--blueGrottoHover: #147b90;
+	--blueGrottoActive: #189ab466;
+
+	--gray-background-login: #e1e5ea54;
+	--gray-background: #e1e5eac2;
+
+	--navBar: #434446;
+	--navBar-item: #ffffff4d;
+	--navBar-item-hover: #bbb2b24d;
+
+	--active-row: #adc6ff3b;
+	--active-row-hover: #adc6ff5c;
 
 	--warning: #ffa940;
 	--link: #1890ff;
@@ -14,6 +27,8 @@
 
 	--success: #52c41a;
 	--success-hover: #73d13d;
+
+	--gray-bg: #fff;
 }
 
 html,
@@ -25,7 +40,17 @@ body,
 }
 
 body {
-	background-color: var(--babyBlue) !important;
+	/* background-color: var(--babyBlue) !important; */
+	background-color: var(--gray-background-login) !important;
+}
+
+.ant-layout .layout {
+	background-color: inherit !important;
+}
+
+.layout-content {
+	/* background-color: var(--babyBlue); */
+	background-color: inherit !important;
 }
 
 .form {
@@ -38,7 +63,7 @@ body {
 }
 
 .navbar-bg {
-	background-color: var(--blueGrotto) !important;
+	background-color: var(--navBar) !important;
 }
 
 .navbar-bg ul {
@@ -54,10 +79,6 @@ body {
 	display: flex !important;
 }
 
-.layout-content {
-	background-color: var(--babyBlue);
-}
-
 .navbar-item-icon {
 	margin-right: 4px;
 }
@@ -66,20 +87,34 @@ body {
 	background-color: none !important;
 }
 
-.navbar-item-active {
-	background-color: var(--blueGrottoHover) !important;
+.navbar-item-title {
+	background-color: inherit !important;
+}
+
+.navbar-item-active span {
+	/* background-color: var(--blueGrottoHover) !important; */
+	background-color: var(--navBar-item);
+}
+
+.ant-menu-item span {
+	padding: 10px;
+	border-radius: 5px;
+}
+
+.ant-menu-item span:hover {
+	background-color: var(--navBar-item-hover) !important;
 }
 
 .ant-menu-item:hover::after {
 	border: 0 !important;
 }
 
-.ant-menu-item:hover {
-	background-color: var(--blueGrottoHover) !important;
-}
-
 .ant-menu-item-selected::after {
 	border: 0 !important;
+}
+
+.ant-table-wrapper .ant-table-thead > tr > th {
+	background: #e1e5ead6 !important;
 }
 
 .spinner-div {
@@ -119,14 +154,18 @@ body {
 }
 
 .active-row {
-	background-color: var(--blueGrotto) !important;
-	color: #fff !important;
+	/* background-color: var(--blueGrottoActive) !important; */
+	background-color: var(--active-row) !important;
 }
 
 .active-row:hover td {
-	background: var(--blueGrotto) !important;
+	background: var(--active-row-hover) !important;
 }
 
 .btn_disabled {
 	color: rgba(0, 0, 0, 0.25) !important;
+}
+
+.user-tag {
+	margin-left: 5px !important;
 }

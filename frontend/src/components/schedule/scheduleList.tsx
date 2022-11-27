@@ -1,8 +1,9 @@
 import { SettingOutlined } from "@ant-design/icons";
-import { Button, Form } from "antd";
+import { Button, Form, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../../contexts/AuthContext";
 import { useNotifications } from "../../hooks/useNotifications";
 import { ScheduleInterface } from "../../interfaces/scheduleInterface";
 import { api } from "../../service/api";
@@ -21,6 +22,7 @@ export interface ScheduleFormResponse {
 }
 
 export default function ScheduleList() {
+	const { user: loggedUser } = useContext(AuthContext);
 	const [schedules, setSchedules] = useState<ScheduleInterface[]>();
 	const [loading, setLoading] = useState(false);
 	const [activeSchedule, setActiveSchedule] = useState<ScheduleInterface>();
@@ -102,6 +104,16 @@ export default function ScheduleList() {
 			key: "schedule_responsible",
 			title: "Responsável",
 			dataIndex: "responsible",
+			render: (_, schedule: ScheduleInterface) => (
+				<span>
+					{schedule?.responsible}
+					{schedule?.responsibleId == loggedUser?.id && (
+						<Tag className="user-tag" color="geekblue">
+							Você
+						</Tag>
+					)}
+				</span>
+			),
 		},
 		{
 			key: "schedule_bookingStart",
