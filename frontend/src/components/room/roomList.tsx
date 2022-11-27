@@ -6,21 +6,28 @@ import { useNotifications } from "../../hooks/useNotifications";
 import { RoomInterface } from "../../interfaces/roomInterface";
 import { api } from "../../service/api";
 import DeleteItemModal from "../table/deleteItemModal";
+import RightDrawer from "../table/rightDrawer";
 import TableList from "../table/table";
 import TableOptions from "../table/tableOptions";
 import CreateRoom from "./createRoom";
 import RoomForm from "./roomForm";
+import RoomSchedulesList from "./roomSchedules";
 
 export default function RoomList() {
-	const [rooms, setRooms] = useState<RoomInterface[]>();
-	const [loading, setLoading] = useState(false);
+	const [visibleSchedules, setVisibleSchedules] = useState(false);
 	const [activeRoom, setActiveRoom] = useState<RoomInterface>();
+	const [rooms, setRooms] = useState<RoomInterface[]>();
+
 	const [visibleDelete, setDeleteVisible] = useState(false);
 	const [visibleEdit, setEditVisible] = useState(false);
+
+	// FIXME: Check if this extra loading are necessary:
 	const [deleteLoading, setDeleteLoading] = useState(false);
 	const [editLoading, setEditLoading] = useState(false);
-	const notify = useNotifications();
 
+	const [loading, setLoading] = useState(false);
+
+	const notify = useNotifications();
 	const [form] = Form.useForm();
 
 	useEffect(() => {
@@ -49,9 +56,6 @@ export default function RoomList() {
 			.then((res) => {
 				if (res.data.success) notify.success("Sala excluída com sucesso!");
 				else notify.error(res.data.errorMessage);
-			})
-			.catch((err) => {
-				console.log(err);
 			})
 			.finally(() => {
 				setDeleteVisible(false);
@@ -120,6 +124,11 @@ export default function RoomList() {
 						setEditVisible(true);
 						setActiveRoom(room);
 					}}
+					handleSchedules={() => {
+						setVisibleSchedules(true);
+						setActiveRoom(room);
+						// findSchedulesByRoom(room?.id);
+					}}
 				/>
 			),
 		},
@@ -150,6 +159,19 @@ export default function RoomList() {
 				loading={deleteLoading}
 				setLoading={setDeleteLoading}
 			/>
+
+			<RightDrawer
+				title={"Agendamentos"}
+				visible={visibleSchedules}
+				setVisible={setVisibleSchedules}
+				loading={loading}
+				setLoading={setLoading}
+				handleOk={() => setVisibleSchedules(false)}
+				drawerWidth={720}
+				okBtnName={"Ok"}
+			>
+				<RoomSchedulesList visible={visibleSchedules} setVisible={setVisibleSchedules} room={activeRoom} />
+			</RightDrawer>
 		</>
 	);
 }

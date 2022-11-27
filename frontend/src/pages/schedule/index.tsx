@@ -21,7 +21,6 @@ export default function ScheduleDashboard() {
 	);
 }
 
-// To avoid flashing on unauthorized pages:
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
 	const { ["auth.token"]: token } = parseCookies(ctx);
 
@@ -37,14 +36,3 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 		props: {},
 	};
 };
-
-// FIXME: TODO:
-// export const getServerSideProps: GetServerSideProps = async () => {
-//     return {
-//         props: {},
-//         redirect: {
-//             permanent: true,
-//             destination: "/sales/pipeline"
-//         }
-//     };
-// };

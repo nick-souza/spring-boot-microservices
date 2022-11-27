@@ -3,8 +3,8 @@ import type { ColumnsType } from "antd/es/table";
 import { useEffect, useState } from "react";
 import { UserLoggedIn } from "../../interfaces/loginInterfaces";
 import { ScheduleInterface } from "../../interfaces/scheduleInterface";
-import { api } from "../../service/api";
 import style from "../../pages/schedule/style.module.css";
+import { api } from "../../service/api";
 
 interface UserSchedulesProps {
 	user: UserLoggedIn | null;
@@ -18,31 +18,6 @@ export default function UserSchedules({ user }: UserSchedulesProps) {
 		if (user) fetchData(user?.id);
 	}, []);
 
-	const columns: ColumnsType<ScheduleInterface> = [
-		{
-			key: "schedule_room",
-			title: "Sala",
-			dataIndex: "room",
-		},
-		{
-			key: "schedule_responsible",
-			title: "Responsável",
-			dataIndex: "responsible",
-		},
-		{
-			key: "schedule_bookingStart",
-			title: "Começa em",
-			dataIndex: "bookingStart",
-			align: "right",
-		},
-		{
-			key: "schedule_bookingEnd",
-			title: "Termina em",
-			dataIndex: "bookingEnd",
-			align: "right",
-		},
-	];
-
 	const fetchData = async (id: number) => {
 		setLoading(true);
 
@@ -50,9 +25,6 @@ export default function UserSchedules({ user }: UserSchedulesProps) {
 			.get(`/schedule/user/${id}`)
 			.then((res) => {
 				if (res.data.success) setSchedules(res.data.data);
-			})
-			.catch((err) => {
-				console.log(err);
 			})
 			.finally(() => {
 				setLoading(false);
@@ -64,7 +36,7 @@ export default function UserSchedules({ user }: UserSchedulesProps) {
 			<h1 className={style.user_schedule_title}>Agendamentos de {user?.name}</h1>
 			<Table
 				bordered
-				columns={columns}
+				columns={schedulesColumns}
 				loading={loading}
 				dataSource={schedules}
 				size="middle"
@@ -75,3 +47,28 @@ export default function UserSchedules({ user }: UserSchedulesProps) {
 		</>
 	);
 }
+
+export const schedulesColumns: ColumnsType<ScheduleInterface> = [
+	{
+		key: "schedule_room",
+		title: "Sala",
+		dataIndex: "room",
+	},
+	{
+		key: "schedule_responsible",
+		title: "Responsável",
+		dataIndex: "responsible",
+	},
+	{
+		key: "schedule_bookingStart",
+		title: "Começa em",
+		dataIndex: "bookingStart",
+		align: "right",
+	},
+	{
+		key: "schedule_bookingEnd",
+		title: "Termina em",
+		dataIndex: "bookingEnd",
+		align: "right",
+	},
+];

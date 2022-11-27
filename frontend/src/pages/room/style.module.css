@@ -9,3 +9,7 @@
 .title h3 {
 	font-size: 1.3rem;
 }
+
+.room_schedule_title {
+	margin-top: 0px !important;
+}

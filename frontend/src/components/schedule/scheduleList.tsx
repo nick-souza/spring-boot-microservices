@@ -1,5 +1,5 @@
 import { SettingOutlined } from "@ant-design/icons";
-import { Button, Form, Tag } from "antd";
+import { Form, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
 import { useContext, useEffect, useState } from "react";
@@ -46,9 +46,10 @@ export default function ScheduleList() {
 			.get("/schedule/")
 			.then((res) => {
 				if (res.data.success) setSchedules(res.data.data);
+				else notify.error(res.data.errorMessage);
 			})
 			.catch((err) => {
-				console.log(err);
+				notify.error(err.response.data.errorMessage || "Erro");
 			})
 			.finally(() => {
 				setLoading(false);
@@ -60,10 +61,11 @@ export default function ScheduleList() {
 		await api
 			.delete(`/schedule/${activeSchedule?.id}`)
 			.then((res) => {
-				notify.success("Agendamento excluído com sucesso!");
+				if (res.data.success) notify.success("Agendamento excluído com sucesso!");
+				else notify.error(res.data.errorMessage);
 			})
 			.catch((err) => {
-				console.log(err);
+				notify.error(err.response.data.errorMessage || "Erro");
 			})
 			.finally(() => {
 				setDeleteVisible(false);
@@ -83,11 +85,13 @@ export default function ScheduleList() {
 				bookingEnd: schedule.bookingEnd.format(dateTimeFormat),
 			})
 			.then((res) => {
-				notify.success("Agendamento editado com sucesso!");
-				fetchData();
+				if (res.data.success) {
+					notify.success("Agendamento editado com sucesso!");
+					fetchData();
+				} else notify.error(res.data.errorMessage);
 			})
 			.catch((err) => {
-				notify.error(err.response.data.errorMessage || "Erro!");
+				notify.error(err.response.data.errorMessage || "Erro");
 			})
 			.finally(() => {
 				setEditVisible(false);

@@ -1,8 +1,7 @@
-import { KeyOutlined, LockOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
-import { Form, Input, Button } from "antd";
+import { LockOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
+import { Button, Form, Input } from "antd";
 import Router from "next/router";
 import { useContext, useState } from "react";
-import { useForm } from "react-hook-form/dist/useForm";
 import { AuthContext } from "../../contexts/AuthContext";
 import { useNotifications } from "../../hooks/useNotifications";
 import { SignUpCredentials } from "../../interfaces/loginInterfaces";
@@ -16,11 +15,7 @@ export default function SignUpForm() {
 
 	async function onFinish({ name, email, password, confirmPassword }: SignUpCredentials) {
 		if (password != confirmPassword) return notify.error("Passwords do not match");
-
-		// form.
-
 		setLoading(true);
-
 		await signUp({ name, email, password, confirmPassword }).finally(() => setLoading(false));
 	}
 

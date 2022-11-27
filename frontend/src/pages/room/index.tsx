@@ -16,7 +16,6 @@ export default function RoomDashboard() {
 	);
 }
 
-// To avoid flashing on unauthorized pages:
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
 	const { ["auth.token"]: token } = parseCookies(ctx);
 

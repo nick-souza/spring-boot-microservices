@@ -1,8 +1,4 @@
 import { message } from "antd";
-import { ReactNode } from "react";
-
-type NotificationType = "success" | "error" | "info" | "warning" | "exception";
-type MessageType = string[] | string | ReactNode[] | ReactNode;
 
 export const useNotifications = () => {
 	const success = (msg?: string) => {

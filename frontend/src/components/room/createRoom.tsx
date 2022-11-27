@@ -18,8 +18,6 @@ export default function CreateRoom({ fetchTable }: CreateEntityProps) {
 	const notify = useNotifications();
 
 	const saveAdd = async (room: RoomInterface) => {
-		console.log(room);
-
 		setLoading(true);
 
 		await api
@@ -28,10 +26,11 @@ export default function CreateRoom({ fetchTable }: CreateEntityProps) {
 				capacity: room.capacity,
 			})
 			.then((res) => {
-				notify.success("Sala criada com sucesso!");
+				if (res.data.success) notify.success("Sala criada com sucesso!");
+				else notify.error(res.data.errorMessage || "Erro");
 			})
 			.catch((err) => {
-				notify.error(err.response.data.errorMessage || "Erro!");
+				notify.error(err.response.data.errorMessage || "Erro");
 			})
 			.finally(() => {
 				setVisible(false);

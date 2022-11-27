@@ -1,24 +1,35 @@
-import { DeleteOutlined, EditOutlined, MoreOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, MoreOutlined, SearchOutlined } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { Button, Dropdown } from "antd";
 import { useContext } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
-import { UserRole } from "../../enums/UserRole";
 import style from "./style.module.css";
 
 interface TableOptionsProps {
 	isSelf: boolean;
 	handleEdit: () => void;
 	handleDelete: () => void;
+	handleSchedules?: () => void;
 	applyPermissions: boolean;
 }
 
-export default function TableOptions({ handleDelete, handleEdit, applyPermissions, isSelf }: TableOptionsProps) {
+export default function TableOptions({ handleDelete, handleEdit, applyPermissions, isSelf, handleSchedules }: TableOptionsProps) {
 	const { isAdmin } = useContext(AuthContext);
 
 	const disableEdit = () => {
 		if ((applyPermissions && isAdmin()) || isSelf || !applyPermissions) return false;
 		else return true;
+	};
+
+	const findScheduleOption = {
+		key: "opt_3",
+		label: (
+			<FindSchedulesOption
+				onClick={() => {
+					if (handleSchedules) handleSchedules();
+				}}
+			/>
+		),
 	};
 
 	const items: MenuProps["items"] = [
@@ -33,12 +44,15 @@ export default function TableOptions({ handleDelete, handleEdit, applyPermission
 			),
 			disabled: disableEdit(),
 		},
+
+		// Adicionando condicionalmente a opção de visualizar os agendamentos:
+		...(handleSchedules ? [findScheduleOption] : []),
+
 		{
 			key: "opt_2",
 			label: (
 				<DeleteOption
 					onClick={() => {
-						// if (isAdmin()) handleDelete();
 						if ((applyPermissions && isAdmin()) || isSelf) handleDelete();
 					}}
 					isAdmin={isAdmin()}
@@ -46,7 +60,7 @@ export default function TableOptions({ handleDelete, handleEdit, applyPermission
 				/>
 			),
 
-			disabled: disableEdit(), //applyPermissions ? !isAdmin() : false,
+			disabled: disableEdit(),
 		},
 	];
 
@@ -83,6 +97,15 @@ function DeleteOption({ onClick, isAdmin, isSelf }: OptionBtnProps) {
 		>
 			<DeleteOutlined />
 			<span style={{ marginLeft: 8 }}>Excluir</span>
+		</div>
+	);
+}
+
+function FindSchedulesOption({ onClick }: OptionBtnProps) {
+	return (
+		<div style={{ paddingRight: 6, paddingLeft: 6, paddingTop: 2, paddingBottom: 2 }} onClick={onClick}>
+			<SearchOutlined />
+			<span style={{ marginLeft: 8 }}>Agendamentos</span>
 		</div>
 	);
 }

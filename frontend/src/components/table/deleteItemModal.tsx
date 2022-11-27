@@ -1,6 +1,5 @@
 import { DeleteOutlined } from "@ant-design/icons";
 import { Modal } from "antd";
-import { useState } from "react";
 
 interface DeleteModalProps {
 	name?: string;

@@ -11,9 +11,10 @@ interface EditDrawerProps {
 	setLoading: (loading: boolean) => void;
 	handleOk: () => void;
 	drawerWidth?: number;
+	okBtnName?: string;
 }
 
-export default function RightDrawer({ title, children, visible, setVisible, loading, setLoading, handleOk, drawerWidth }: EditDrawerProps) {
+export default function RightDrawer({ title, children, visible, setVisible, loading, setLoading, handleOk, drawerWidth, okBtnName }: EditDrawerProps) {
 	const onClose = () => setVisible(false);
 
 	return (
@@ -29,7 +30,7 @@ export default function RightDrawer({ title, children, visible, setVisible, load
 						Cancelar
 					</Button>
 					<Button disabled={loading} className="btn-success" onClick={handleOk} icon={<CheckOutlined />} color="var(--success)" loading={loading}>
-						Salvar
+						{okBtnName ? okBtnName : "Salvar"}
 					</Button>
 				</div>
 			}

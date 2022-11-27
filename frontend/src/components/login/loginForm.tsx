@@ -23,7 +23,6 @@ export default function LoginForm() {
 
 	return (
 		<Form name="login" className="login-form" onFinish={handleClick}>
-			{/*onFinishFailed={onFinishFailed}*/}
 			<Form.Item
 				style={{ minWidth: "100%" }}
 				name="email"

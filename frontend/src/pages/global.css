@@ -91,6 +91,11 @@ body {
 	background-color: inherit !important;
 }
 
+/* .top-navbar-item {
+	padding-left: 15px !important;
+	padding-right: 15px !important;
+} */
+
 .navbar-item-active span {
 	/* background-color: var(--blueGrottoHover) !important; */
 	background-color: var(--navBar-item);

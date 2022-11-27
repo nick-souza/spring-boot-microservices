@@ -1,11 +1,10 @@
 import Router from "next/router";
-import { parseCookies, setCookie, destroyCookie } from "nookies";
+import { destroyCookie, parseCookies, setCookie } from "nookies";
 import { createContext, ReactNode, useEffect, useState } from "react";
-import { useNotifications } from "../hooks/useNotifications";
-import { LoginCredentials, SignUpCredentials, UserLoggedIn, UserLoginResponse } from "../interfaces/loginInterfaces";
-import { api, TokenResponse, validateToken } from "../service/api";
-import { UserInterface } from "../interfaces/userInterface";
 import { UserRole } from "../enums/UserRole";
+import { useNotifications } from "../hooks/useNotifications";
+import { LoginCredentials, SignUpCredentials, UserLoggedIn } from "../interfaces/loginInterfaces";
+import { api, TokenResponse, validateToken } from "../service/api";
 
 interface AuthContextType {
 	isAuthenticated: boolean;
@@ -23,15 +22,11 @@ interface AuthProviderProps {
 export const AuthContext = createContext({} as AuthContextType);
 
 export function AuthProvider({ children }: AuthProviderProps) {
-	// const [messageApi, contextHolder] = message.useMessage();
 	const [user, setUser] = useState<UserLoggedIn | null>(null);
-	const [loading, setLoading] = useState(false);
 	const notify = useNotifications();
 
 	const isAuthenticated = !!user;
 
-	// Use effect para toda vez que uma pagina for recarregada, ele verifica se existe o token,
-	// Caso exista, faz uma call para api para pegar os dados do user:
 	useEffect(() => {
 		// Usando parseCookies para pegar todos os cookies:
 		const { "auth.token": token } = parseCookies();
@@ -39,8 +34,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
 		// Caso exista, call API para pegar os dados:
 		if (token) {
 			validateToken(token).then((res: TokenResponse) => {
-				console.log("USER DATA: ", res.data);
-
 				if (res.success) setUser(res.data);
 				if (!res.success) Router.push("/");
 			});
@@ -83,7 +76,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
 			})
 			.catch((err) => {
 				notify.error(err.response?.data?.errorMessage);
-				console.log(err);
 			});
 	}
 

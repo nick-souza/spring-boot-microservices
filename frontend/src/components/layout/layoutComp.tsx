@@ -1,7 +1,5 @@
-import { CalendarOutlined, DownOutlined, UserOutlined } from "@ant-design/icons";
-import { Avatar, Dropdown, Form, Layout, Menu, Space, Tooltip } from "antd";
-import { time } from "console";
-import Link from "next/link";
+import { CalendarOutlined, UserOutlined } from "@ant-design/icons";
+import { Avatar, Dropdown, Form, Layout, Menu, Tooltip } from "antd";
 import { ReactNode, useContext, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import { useNotifications } from "../../hooks/useNotifications";
@@ -95,8 +93,12 @@ export default function LayoutComp({ children }: LayoutCompProps) {
 				setVisible={visibleEdit ? setEditVisible : setVisibleScheduleList}
 				loading={loading}
 				setLoading={setLoading}
-				handleOk={() => form.submit()}
+				handleOk={() => {
+					if (visibleEdit) form.submit();
+					else if (visibleScheduleList) setVisibleScheduleList(false);
+				}}
 				drawerWidth={visibleEdit ? 620 : 720}
+				okBtnName={"Ok"}
 			>
 				{visibleEdit && <UserForm saveForm={saveEdit} form={form} text={user?.name || "user"} user={user} loading={loading} setLoading={setLoading} />}
 				{visibleScheduleList && <UserSchedules user={user} />}

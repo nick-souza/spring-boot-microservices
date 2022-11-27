@@ -18,8 +18,8 @@ export async function validateToken(token: string): Promise<TokenResponse> {
 				} as TokenResponse);
 			})
 			.catch((err) => {
-				// TODO:
-				console.log(err);
+				console.error(err);
+
 				resolve({
 					success: false,
 					data: null,

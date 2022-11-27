@@ -37,7 +37,7 @@ export default function UserList() {
 				if (res.data.success) setUsers(res.data.data);
 			})
 			.catch((err) => {
-				console.log(err);
+				notify.error(err.response.data.errorMessage || "Erro");
 			})
 			.finally(() => {
 				setLoading(false);
@@ -54,7 +54,7 @@ export default function UserList() {
 					else notify.error(res?.data?.errorMessage);
 				})
 				.catch((err) => {
-					console.log(err);
+					notify.error(err.response.data.errorMessage || "Erro");
 				})
 				.finally(() => {
 					setDeleteVisible(false);
@@ -81,7 +81,7 @@ export default function UserList() {
 				else notify.error(res?.data?.errorMessage);
 			})
 			.catch((err) => {
-				notify.error(err.response.data.errorMessage || "Erro!");
+				notify.error(err.response.data.errorMessage || "Erro");
 			})
 			.finally(() => {
 				setEditVisible(false);

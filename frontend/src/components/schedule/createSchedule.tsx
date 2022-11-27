@@ -1,7 +1,6 @@
 import { PlusOutlined } from "@ant-design/icons";
-import { Button, Drawer, Form } from "antd";
-import { useEffect } from "react";
-import { useContext, useState } from "react";
+import { Button, Form } from "antd";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import { useNotifications } from "../../hooks/useNotifications";
 import { api } from "../../service/api";
@@ -37,12 +36,13 @@ export default function CreateSchedule({ fetchTable }: CreateEntityProps) {
 				bookingEnd: schedule.bookingEnd.format(dateTimeFormat),
 			})
 			.then((res) => {
-				console.log(res);
-				notify.success("Agendamento criado com sucesso!");
-				fetchTable();
+				if (res.data.success) {
+					notify.success("Agendamento criado com sucesso!");
+					fetchTable();
+				} else notify.error(res.data.errorMessage || "Erro");
 			})
 			.catch((err) => {
-				notify.error(err.response.data.errorMessage || "Erro!");
+				notify.error(err.response.data.errorMessage || "Erro");
 			})
 			.finally(() => {
 				setVisible(false);
