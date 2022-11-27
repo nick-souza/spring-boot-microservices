@@ -23,16 +23,18 @@ export interface ScheduleFormResponse {
 
 export default function ScheduleList() {
 	const { user: loggedUser } = useContext(AuthContext);
+	const notify = useNotifications();
+	const [form] = Form.useForm();
+
 	const [schedules, setSchedules] = useState<ScheduleInterface[]>();
-	const [loading, setLoading] = useState(false);
 	const [activeSchedule, setActiveSchedule] = useState<ScheduleInterface>();
+
 	const [visibleDelete, setDeleteVisible] = useState(false);
 	const [visibleEdit, setEditVisible] = useState(false);
+
+	const [loading, setLoading] = useState(false);
 	const [deleteLoading, setDeleteLoading] = useState(false);
 	const [editLoading, setEditLoading] = useState(false);
-	const notify = useNotifications();
-
-	const [form] = Form.useForm();
 
 	useEffect(() => {
 		fetchData();
@@ -81,8 +83,8 @@ export default function ScheduleList() {
 				bookingEnd: schedule.bookingEnd.format(dateTimeFormat),
 			})
 			.then((res) => {
-				console.log(res);
 				notify.success("Agendamento editado com sucesso!");
+				fetchData();
 			})
 			.catch((err) => {
 				notify.error(err.response.data.errorMessage || "Erro!");
@@ -90,7 +92,6 @@ export default function ScheduleList() {
 			.finally(() => {
 				setEditVisible(false);
 				setEditLoading(false);
-				fetchData();
 			});
 	};
 

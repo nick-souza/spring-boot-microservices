@@ -45,6 +45,7 @@ export default function TableOptions({ handleDelete, handleEdit, applyPermission
 					isSelf={isSelf}
 				/>
 			),
+
 			disabled: disableEdit(), //applyPermissions ? !isAdmin() : false,
 		},
 	];

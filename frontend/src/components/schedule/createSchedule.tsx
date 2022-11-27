@@ -39,6 +39,7 @@ export default function CreateSchedule({ fetchTable }: CreateEntityProps) {
 			.then((res) => {
 				console.log(res);
 				notify.success("Agendamento criado com sucesso!");
+				fetchTable();
 			})
 			.catch((err) => {
 				notify.error(err.response.data.errorMessage || "Erro!");
@@ -46,7 +47,6 @@ export default function CreateSchedule({ fetchTable }: CreateEntityProps) {
 			.finally(() => {
 				setVisible(false);
 				setLoading(false);
-				fetchTable();
 			});
 	};
 
