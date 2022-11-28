@@ -38,13 +38,15 @@ export default function ScheduleForm({ schedule, form, saveForm, loading, setLoa
 	}, [schedule]);
 
 	useEffect(() => {
-		const startFormat = defaultDate?.format("DD/MM/YYYY 08:00");
-		const endFormat = defaultDate?.format("DD/MM/YYYY 09:00");
+		if (defaultDate) {
+			const startFormat = defaultDate?.format("DD/MM/YYYY 08:00");
+			const endFormat = defaultDate?.format("DD/MM/YYYY 09:00");
 
-		form.setFieldsValue({
-			bookingStart: dayjs(startFormat, "DD/MM/YYYY HH:00"),
-			bookingEnd: dayjs(endFormat, "DD/MM/YYYY HH:00"),
-		});
+			form.setFieldsValue({
+				bookingStart: dayjs(startFormat, "DD/MM/YYYY HH:00"),
+				bookingEnd: dayjs(endFormat, "DD/MM/YYYY HH:00"),
+			});
+		}
 
 		fetchUserOptions();
 		fetchRoomOptions();
