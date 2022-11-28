@@ -273,6 +273,14 @@
   "resolved" "https://registry.npmjs.org/@types/prop-types/-/prop-types-15.7.5.tgz"
   "version" "15.7.5"
 
+"@types/react-big-calendar@^0.38.2":
+  "integrity" "sha512-YbJ88I6QOEt1JEb1U5nvJsIy47zgBbXcyPRYaT3n4AJLv49AZsdsIk6akEIuuGouosfMEwUAUktjL8R0Y63yTA=="
+  "resolved" "https://registry.npmjs.org/@types/react-big-calendar/-/react-big-calendar-0.38.2.tgz"
+  "version" "0.38.2"
+  dependencies:
+    "@types/prop-types" "*"
+    "@types/react" "*"
+
 "@types/react-dom@^18.0.0", "@types/react-dom@^18.0.9":
   "integrity" "sha512-qnVvHxASt/H7i+XG1U1xMiY5t+IHcPGUK7TDMDzom08xa7e86eCeKOiLZezwCKVxJn6NEiiy2ekgX8aQssjIKg=="
   "resolved" "https://registry.npmjs.org/@types/react-dom/-/react-dom-18.0.9.tgz"

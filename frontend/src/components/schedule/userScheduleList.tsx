@@ -50,6 +50,11 @@ export default function UserSchedules({ user }: UserSchedulesProps) {
 
 export const schedulesColumns: ColumnsType<ScheduleInterface> = [
 	{
+		key: "schedule_name",
+		title: "Nome",
+		dataIndex: "name",
+	},
+	{
 		key: "schedule_room",
 		title: "Sala",
 		dataIndex: "room",

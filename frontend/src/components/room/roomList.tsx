@@ -41,9 +41,9 @@ export default function RoomList() {
 			.then((res) => {
 				if (res.data.success) setRooms(res.data.data);
 			})
-			.catch((err) => {
-				console.log(err);
-			})
+			// .catch((err) => {
+			// 	console.log(err);
+			// })
 			.finally(() => {
 				setLoading(false);
 			});
@@ -53,11 +53,12 @@ export default function RoomList() {
 		setDeleteLoading(true);
 		await api
 			.delete(`/room/delete/${activeRoom?.id}`)
-			.then((res) => {
-				if (res.data.success) notify.success("Sala excluída com sucesso!");
-				else notify.error(res.data.errorMessage);
-			})
+			// .then((res) => {
+			// 	if (res.data.success) notify.success("Sala excluída com sucesso!");
+			// 	else notify.error(res.data.errorMessage);
+			// })
 			.finally(() => {
+				notify.success("Sala excluída com sucesso!");
 				setDeleteVisible(false);
 				setDeleteLoading(false);
 				fetchData();
@@ -72,9 +73,9 @@ export default function RoomList() {
 				if (res.data.success) notify.success("Sala editada com sucesso!");
 				else notify.error(res.data.errorMessage);
 			})
-			.catch((err) => {
-				console.log(err);
-			})
+			// .catch((err) => {
+			// 	console.log(err);
+			// })
 			.finally(() => {
 				setEditVisible(false);
 				setEditLoading(false);

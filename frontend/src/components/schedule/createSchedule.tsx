@@ -7,12 +7,14 @@ import { api } from "../../service/api";
 import RightDrawer from "../table/rightDrawer";
 import ScheduleForm, { dateTimeFormat } from "./scheduleForm";
 import { ScheduleFormResponse } from "./scheduleList";
+import dayjs from "dayjs";
 
 export interface CreateEntityProps {
 	fetchTable: () => void;
+	date?: dayjs.Dayjs;
 }
 
-export default function CreateSchedule({ fetchTable }: CreateEntityProps) {
+export default function CreateSchedule({ fetchTable, date }: CreateEntityProps) {
 	const { user: loggedUser } = useContext(AuthContext);
 	const [visible, setVisible] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -31,6 +33,7 @@ export default function CreateSchedule({ fetchTable }: CreateEntityProps) {
 		await api
 			.post("/schedule/add/", {
 				roomId: schedule?.roomId,
+				name: schedule?.name,
 				responsibleId: schedule?.responsibleId,
 				bookingStart: schedule.bookingStart.format(dateTimeFormat),
 				bookingEnd: schedule.bookingEnd.format(dateTimeFormat),
@@ -57,7 +60,7 @@ export default function CreateSchedule({ fetchTable }: CreateEntityProps) {
 			</Button>
 
 			<RightDrawer title="Criar agendamento" visible={visible} setVisible={setVisible} loading={loading} setLoading={setLoading} handleOk={() => form.submit()}>
-				<ScheduleForm saveForm={saveAdd} form={form} loading={loading} setLoading={setLoading} />
+				<ScheduleForm defaultDate={date} saveForm={saveAdd} form={form} loading={loading} setLoading={setLoading} />
 			</RightDrawer>
 		</>
 	);

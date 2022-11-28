@@ -14,11 +14,12 @@ interface ScheduleEditFormProps {
 	saveForm: (values: any) => void;
 	loading?: boolean;
 	setLoading?: (loading: boolean) => void;
+	defaultDate?: dayjs.Dayjs;
 }
 
 export const dateTimeFormat = "DD/MM/YYYY HH:00";
 
-export default function ScheduleForm({ schedule, form, saveForm, loading, setLoading }: ScheduleEditFormProps) {
+export default function ScheduleForm({ schedule, form, saveForm, loading, setLoading, defaultDate }: ScheduleEditFormProps) {
 	const [userFetching, setUserFetching] = useState(false);
 	const [roomFetching, setRoomFetching] = useState(false);
 	const [userOptions, setUserOptions] = useState<UserInterface[]>();
@@ -28,6 +29,7 @@ export default function ScheduleForm({ schedule, form, saveForm, loading, setLoa
 		if (schedule)
 			form.setFieldsValue({
 				id: schedule?.id,
+				name: schedule?.name,
 				roomId: schedule?.roomId,
 				responsibleId: schedule?.responsibleId,
 				bookingStart: dayjs(schedule?.bookingStart, dateTimeFormat),
@@ -36,6 +38,14 @@ export default function ScheduleForm({ schedule, form, saveForm, loading, setLoa
 	}, [schedule]);
 
 	useEffect(() => {
+		const startFormat = defaultDate?.format("DD/MM/YYYY 08:00");
+		const endFormat = defaultDate?.format("DD/MM/YYYY 09:00");
+
+		form.setFieldsValue({
+			bookingStart: dayjs(startFormat, "DD/MM/YYYY HH:00"),
+			bookingEnd: dayjs(endFormat, "DD/MM/YYYY HH:00"),
+		});
+
 		fetchUserOptions();
 		fetchRoomOptions();
 	}, []);
@@ -91,6 +101,19 @@ export default function ScheduleForm({ schedule, form, saveForm, loading, setLoa
 						<Input disabled />
 					</Form.Item>
 				)}
+
+				<Form.Item
+					name="name"
+					label="Nome"
+					rules={[
+						{
+							required: true,
+							message: "Nome é obrigatório",
+						},
+					]}
+				>
+					<Input type="text" placeholder="Nome" />
+				</Form.Item>
 
 				<Form.Item
 					label="Responsável"

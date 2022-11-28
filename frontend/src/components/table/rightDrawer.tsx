@@ -3,25 +3,29 @@ import { Button, Drawer } from "antd";
 import { ReactNode } from "react";
 
 interface EditDrawerProps {
-	title: string;
+	title?: string;
 	children: ReactNode;
 	visible: boolean;
 	setVisible: (visible: boolean) => void;
 	loading: boolean;
 	setLoading: (loading: boolean) => void;
+	onDrawerClose?: () => void;
 	handleOk: () => void;
 	drawerWidth?: number;
 	okBtnName?: string;
 }
 
-export default function RightDrawer({ title, children, visible, setVisible, loading, setLoading, handleOk, drawerWidth, okBtnName }: EditDrawerProps) {
-	const onClose = () => setVisible(false);
+export default function RightDrawer({ title, children, visible, setVisible, loading, handleOk, drawerWidth, okBtnName, onDrawerClose }: EditDrawerProps) {
+	const onCloseThis = () => {
+		if (onDrawerClose) onDrawerClose();
+		setVisible(false);
+	};
 
 	return (
 		<Drawer
 			title={title}
 			width={drawerWidth ? drawerWidth : 620}
-			onClose={onClose}
+			onClose={onCloseThis}
 			open={visible}
 			destroyOnClose
 			footer={

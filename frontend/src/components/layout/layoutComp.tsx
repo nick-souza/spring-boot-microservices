@@ -72,7 +72,7 @@ export default function LayoutComp({ children }: LayoutCompProps) {
 			<Layout className="layout">
 				<Header className="navbar-bg navbar-header">
 					<div className={style.logo}>
-						<CalendarOutlined className={style.icon} />
+						{/* <CalendarOutlined className={style.icon} /> */}
 						<span className={style.title}>Agendamentos</span>
 					</div>
 

@@ -11,10 +11,10 @@ export default function ScheduleDashboard() {
 		<>
 			<AuthProvider>
 				<LayoutComp>
-					<ScheduleList />
-					{/* <div className={style.calendar_wrapper}>
+					{/* <ScheduleList /> */}
+					<div className={style.calendar_wrapper}>
 						<Calendar1 />
-					</div> */}
+					</div>
 				</LayoutComp>
 			</AuthProvider>
 		</>

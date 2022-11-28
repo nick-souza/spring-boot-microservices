@@ -9,3 +9,37 @@
 .user_schedule_title {
 	margin-top: 0px !important;
 }
+
+.calendar_div {
+	padding-bottom: 50px !important;
+}
+
+.calendar_event {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.calendar_header {
+	background-color: var(--gray-background-login) !important;
+	display: grid;
+	margin-top: 1rem;
+	padding-bottom: 1rem !important;
+}
+
+.calendar_header h1 {
+	margin: 0;
+	grid-column: 1/2 !important;
+}
+
+.calendar_select {
+	justify-self: end;
+	width: 30%;
+	margin-right: -7px;
+	grid-column: 2/2 !important;
+	margin-top: 5px !important;
+}
+
+.calendar_header .calendar_header .ant-select-arrow {
+	margin-top: -8px !important;
+}

@@ -15,7 +15,7 @@ interface TableListProps {
 	setEditLoading: (editLoading: boolean) => void;
 	form: FormInstance;
 	children: ReactNode;
-	panelTitle: string;
+	panelTitle?: string;
 	addButton?: ReactNode;
 }
 
@@ -39,7 +39,7 @@ export default function TableList({
 		<>
 			<div className={style.list_wrapper}>
 				<div onDoubleClick={fetchData} className={style.title}>
-					<h3>{panelTitle}</h3>
+					<h3>{panelTitle ? panelTitle : ""}</h3>
 					{addButton}
 				</div>
 				<Table

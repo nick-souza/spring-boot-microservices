@@ -1,8 +1,7 @@
 import { SettingOutlined } from "@ant-design/icons";
 import { Form, Tag } from "antd";
-import type { ColumnsType } from "antd/es/table";
-import dayjs from "dayjs";
-import { useContext, useEffect, useState } from "react";
+import { ColumnsType } from "antd/es/table";
+import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import { useNotifications } from "../../hooks/useNotifications";
 import { ScheduleInterface } from "../../interfaces/scheduleInterface";
@@ -12,17 +11,14 @@ import TableList from "../table/table";
 import TableOptions from "../table/tableOptions";
 import CreateSchedule from "./createSchedule";
 import ScheduleForm, { dateTimeFormat } from "./scheduleForm";
+import { ScheduleFormResponse } from "./scheduleList";
+import dayjs from "dayjs";
 
-export interface ScheduleFormResponse {
-	id?: number;
-	name: string;
-	roomId: number;
-	responsibleId: number;
-	bookingStart: dayjs.Dayjs;
-	bookingEnd: dayjs.Dayjs;
+interface CalendarListingProps {
+	date: dayjs.Dayjs;
 }
 
-export default function ScheduleList() {
+export default function CalendarListing({ date }: CalendarListingProps) {
 	const { user: loggedUser } = useContext(AuthContext);
 	const notify = useNotifications();
 	const [form] = Form.useForm();
@@ -43,8 +39,12 @@ export default function ScheduleList() {
 
 	const fetchData = async () => {
 		setLoading(true);
+
+		const dateFormat = "YYYY-MM-DD";
+		let formattedDate = date.format(dateFormat);
+
 		await api
-			.get("/schedule/")
+			.get(`/schedule/date/${formattedDate}`)
 			.then((res) => {
 				if (res.data.success) setSchedules(res.data.data);
 				else notify.error(res.data.errorMessage);
@@ -157,7 +157,7 @@ export default function ScheduleList() {
 	return (
 		<>
 			<TableList
-				panelTitle="Agendamentos"
+				panelTitle={"Agendamentos para " + date.format("DD/MM/YYYY")}
 				form={form}
 				setEditLoading={setEditLoading}
 				visibleEdit={visibleEdit}
@@ -167,7 +167,7 @@ export default function ScheduleList() {
 				fetchData={fetchData}
 				dataSource={schedules}
 				loading={loading}
-				addButton={<CreateSchedule fetchTable={fetchData} />}
+				addButton={<CreateSchedule date={date} fetchTable={fetchData} />}
 			>
 				<ScheduleForm saveForm={saveEdit} form={form} schedule={activeSchedule} loading={editLoading} setLoading={setEditLoading} />
 			</TableList>
