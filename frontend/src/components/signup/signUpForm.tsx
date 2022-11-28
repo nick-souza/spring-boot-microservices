@@ -28,11 +28,11 @@ export default function SignUpForm() {
 				rules={[
 					{
 						required: true,
-						message: "Name is required",
+						message: "Nome é obrigatório",
 					},
 					{
 						min: 4,
-						message: "Name must contain at least 4 characters",
+						message: "Nome deve conter pelo menos 4 caracteres",
 					},
 				]}
 			>
@@ -43,7 +43,7 @@ export default function SignUpForm() {
 				rules={[
 					{
 						required: true,
-						message: "Email is required",
+						message: "Email é obrigatório",
 					},
 				]}
 			>
@@ -54,11 +54,11 @@ export default function SignUpForm() {
 				rules={[
 					{
 						required: true,
-						message: "Password is required",
+						message: "Senha é obrigatório",
 					},
 					{
 						min: 5,
-						message: "Password must contain at least 5 characters",
+						message: "Senha deve conter pelo menos 5 caracteres",
 					},
 				]}
 			>
@@ -69,7 +69,7 @@ export default function SignUpForm() {
 				rules={[
 					{
 						required: true,
-						message: "Confirm password is required",
+						message: "Confirmação de senha é obrigatório",
 					},
 				]}
 			>

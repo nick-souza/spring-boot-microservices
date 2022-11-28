@@ -182,7 +182,7 @@ export default function ScheduleForm({ schedule, form, saveForm, loading, setLoa
 								showTime
 								allowClear={false}
 								disabledTime={disabledDateTime}
-								disabledDate={disabledDate}
+								// disabledDate={disabledDate}
 								onOk={(dayjs) => onOk(dayjs)}
 								format={dateTimeFormat}
 							/>
@@ -204,7 +204,7 @@ export default function ScheduleForm({ schedule, form, saveForm, loading, setLoa
 								showTime
 								allowClear={false}
 								disabledTime={disabledDateTime}
-								disabledDate={disabledDate}
+								// disabledDate={disabledDate}
 								format={dateTimeFormat}
 							/>
 						</Form.Item>

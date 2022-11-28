@@ -52,6 +52,8 @@ export default function Calendar1() {
 				return {
 					id: schedule?.id,
 					label: schedule?.name,
+					start: schedule?.bookingStart.substring(11, 13),
+					end: schedule?.bookingEnd.substring(11, 13),
 					type: loggedUser?.id == schedule?.responsibleId ? "success" : "warning",
 				} as CalendarEvent;
 			});
@@ -70,7 +72,7 @@ export default function Calendar1() {
 				<ul className={style.calendar_event}>
 					{listData?.map((item: any) => (
 						<li key={item?.id}>
-							<Badge status={item?.type as BadgeProps["status"]} text={item?.label} />
+							<Badge status={item?.type as BadgeProps["status"]} text={`${item?.label} (${item?.start}h - ${item?.end}h)`} />
 						</li>
 					))}
 				</ul>
@@ -158,7 +160,7 @@ export default function Calendar1() {
 						headerRender={header}
 						dateCellRender={dateCellRender}
 						onSelect={handleSelect}
-						disabledDate={disabledDate}
+						// disabledDate={disabledDate}
 					/>
 				)}
 			</div>

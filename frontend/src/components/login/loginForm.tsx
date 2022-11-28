@@ -29,7 +29,7 @@ export default function LoginForm() {
 				rules={[
 					{
 						required: true,
-						message: "Email is required",
+						message: "Email é obrigatório",
 					},
 				]}
 			>
@@ -41,7 +41,7 @@ export default function LoginForm() {
 				rules={[
 					{
 						required: true,
-						message: "Password is required",
+						message: "Senha é obrigatório",
 					},
 				]}
 			>
