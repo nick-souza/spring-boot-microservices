@@ -25,6 +25,7 @@ public class ScheduleProfile {
 
         return modelMapper.typeMap(Schedule.class, ScheduleDTO.class).addMappings(mapper -> {
             mapper.map(Schedule::getId, ScheduleDTO::setId);
+            mapper.map(Schedule::getName, ScheduleDTO::setName);
             mapper.map(Schedule::getRoomId, ScheduleDTO::setRoomId);
             mapper.map(Schedule::getResponsibleId, ScheduleDTO::setResponsibleId);
             mapper.map(Schedule::getBookingStart, ScheduleDTO::setBookingStart);
@@ -36,6 +37,7 @@ public class ScheduleProfile {
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
         return modelMapper.typeMap(AddScheduleDTO.class, Schedule.class).addMappings(mapper -> {
+            mapper.map(AddScheduleDTO::getName, Schedule::setName);
             mapper.map(AddScheduleDTO::getRoomId, Schedule::setRoomId);
             mapper.map(AddScheduleDTO::getResponsibleId, Schedule::setResponsibleId);
             mapper.map(AddScheduleDTO::getBookingStart, Schedule::setBookingStart);
@@ -48,6 +50,7 @@ public class ScheduleProfile {
         modelMapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
 
         return modelMapper.typeMap(UpdateScheduleDTO.class, Schedule.class).addMappings(mapper -> {
+            mapper.map(UpdateScheduleDTO::getName, Schedule::setName);
             mapper.map(UpdateScheduleDTO::getRoomId, Schedule::setRoomId);
             mapper.map(UpdateScheduleDTO::getResponsibleId, Schedule::setResponsibleId);
             mapper.map(UpdateScheduleDTO::getBookingStart, Schedule::setBookingStart);

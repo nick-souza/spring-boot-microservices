@@ -26,6 +26,7 @@ DROP TABLE IF EXISTS `tb_schedules`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tb_schedules` (
                                 `sch_id` int NOT NULL AUTO_INCREMENT,
+                                `name` varchar(50) NOT NULL ,
                                 `user_id` int NOT NULL,
                                 `room_id` int NOT NULL,
                                 `sch_booking_start` datetime NOT NULL,
@@ -43,7 +44,7 @@ CREATE TABLE `tb_schedules` (
 
 LOCK TABLES `tb_schedules` WRITE;
 /*!40000 ALTER TABLE `tb_schedules` DISABLE KEYS */;
-INSERT INTO `tb_schedules` VALUES (1,1,3,'2022-11-13 17:00:00','2022-11-13 18:00:00','2022-11-17 16:53:05','2022-11-17 16:53:05');
+INSERT INTO `tb_schedules` VALUES (1,'Reunião 1',1,3,'2022-11-13 17:00:00','2022-11-13 18:00:00','2022-11-17 16:53:05','2022-11-17 16:53:05');
 /*!40000 ALTER TABLE `tb_schedules` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

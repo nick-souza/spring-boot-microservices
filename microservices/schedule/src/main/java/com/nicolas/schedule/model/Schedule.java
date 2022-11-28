@@ -15,6 +15,9 @@ public class Schedule {
     @Column(name = "sch_id")
     private Long id;
 
+    @Column(name = "sch_name")
+    private String name;
+
     @Column(name = "user_id")
     private Long responsibleId;
 

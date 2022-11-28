@@ -17,6 +17,9 @@ public class AddScheduleDTO {
     @NotNull(message = "A booking must contain the room id")
     private Long roomId;
 
+    @NotNull(message = "A booking must contain the name")
+    private String name;
+
     @NotNull(message = "A booking must contain the responsible id")
     private Long responsibleId;
 

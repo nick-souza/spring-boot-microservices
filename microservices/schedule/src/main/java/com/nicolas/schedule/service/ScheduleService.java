@@ -15,8 +15,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeParseException;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,7 +67,7 @@ public class ScheduleService {
     }
 
     public ResponseEntity<GenericResponse<List<ScheduleDTO>>> findSchedulesByRoom(Long roomId) {
-        var scheduleList = scheduleRepository.findByRoomIdOrderByBookingStart(roomId).orElseThrow(() -> new RecordNotFoundException("No schedule found"))
+        var scheduleList = scheduleRepository.findByRoomIdOrderByBookingStart(roomId)//.orElseThrow(() -> new RecordNotFoundException("No schedule found"))
         .stream().map(schedule -> {
             var _schedule = scheduleProfile.toScheduleDTO().map(schedule);
 
@@ -79,7 +82,7 @@ public class ScheduleService {
     }
 
     public ResponseEntity<GenericResponse<List<ScheduleDTO>>> findSchedulesByResponsible(Long responsibleId) {
-        var scheduleList = scheduleRepository.findByResponsibleIdOrderByBookingStart(responsibleId).orElseThrow(() -> new RecordNotFoundException("No schedule found"))
+        var scheduleList = scheduleRepository.findByResponsibleIdOrderByBookingStart(responsibleId)//.orElseThrow(() -> new RecordNotFoundException("No schedule found"))
         .stream().map(schedule -> {
             var _schedule = scheduleProfile.toScheduleDTO().map(schedule);
 
@@ -91,6 +94,27 @@ public class ScheduleService {
 
         var response = new GenericResponse<>(true, 200, scheduleList);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    public ResponseEntity<GenericResponse<List<ScheduleDTO>>> findSchedulesByDate(String date) {
+        try {
+            var parsedDate = Date.from(LocalDate.parse(date).atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+            var scheduleList = scheduleRepository.findByDate(parsedDate)
+                    .stream().map(schedule -> {
+                        var _schedule = scheduleProfile.toScheduleDTO().map(schedule);
+
+                        _schedule.setResponsible(getUserDTO(_schedule.getResponsibleId()).getName());
+                        _schedule.setRoom(getRoomDTO(_schedule.getRoomId()).getName());
+
+                        return _schedule;
+                    }).collect(Collectors.toList());
+
+            var response = new GenericResponse<>(true, 200, scheduleList);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception ex) {
+            throw new BadRequestException("Not a valid date");
+        }
     }
 
     public ResponseEntity<HttpStatus> deleteSchedule(Long id) {

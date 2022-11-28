@@ -48,6 +48,11 @@ public class ScheduleController {
         return scheduleService.findSchedulesByResponsible(responsibleId);
     }
 
+    @GetMapping("date/{date}")
+    public ResponseEntity<GenericResponse<List<ScheduleDTO>>> findSchedulesByDate(@PathVariable String date) {
+        return scheduleService.findSchedulesByDate(date);
+    }
+
     @DeleteMapping("{id}")
     public ResponseEntity<HttpStatus> deleteSchedule(@PathVariable Long id) {
         return scheduleService.deleteSchedule(id);

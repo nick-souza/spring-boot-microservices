@@ -14,6 +14,7 @@ public class ScheduleDTO {
     protected DateTimeFormatter DateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm", Locale.US);
 
     private Long id;
+    private String name;
     private Long roomId;
     private String room;
     private Long responsibleId;

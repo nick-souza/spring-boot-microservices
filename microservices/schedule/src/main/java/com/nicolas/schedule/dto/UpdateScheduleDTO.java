@@ -16,6 +16,7 @@ public class UpdateScheduleDTO {
 
     @NotNull(message = "Schedule id cannot be empty")
     private Long scheduleId;
+    private String name;
     private Long roomId;
     private Long responsibleId;
 
