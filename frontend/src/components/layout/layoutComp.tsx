@@ -97,7 +97,7 @@ export default function LayoutComp({ children }: LayoutCompProps) {
 					if (visibleEdit) form.submit();
 					else if (visibleScheduleList) setVisibleScheduleList(false);
 				}}
-				drawerWidth={visibleEdit ? 620 : 720}
+				drawerWidth={visibleEdit ? 620 : 820}
 				okBtnName={"Ok"}
 			>
 				{visibleEdit && <UserForm saveForm={saveEdit} form={form} text={user?.name || "user"} user={user} loading={loading} setLoading={setLoading} />}

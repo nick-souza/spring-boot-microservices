@@ -1,6 +1,4 @@
 import { Badge, BadgeProps, Calendar, Select } from "antd";
-import dayjs from "dayjs";
-import "dayjs/locale/pt-br";
 import localeData from "dayjs/plugin/localeData";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
@@ -9,7 +7,10 @@ import style from "../../pages/schedule/style.module.css";
 import { api } from "../../service/api";
 import RightDrawer from "../table/rightDrawer";
 import CalendarListing from "./calendarListing";
-// import locale from "antd/lib/date-picker/locale/pt_BR";
+
+import dayjs from "dayjs";
+import "dayjs/locale/pt-br";
+import ptBr from "antd/locale/pt_BR";
 
 interface CalendarEvent {
 	id: number;
@@ -110,19 +111,21 @@ export default function Calendar1() {
 			);
 		}
 
-		const year = value.year();
 		const month = value.month();
-		const options = [];
-		for (let i = year - 10; i < year + 10; i += 1) {
-			options.push(
-				<Select.Option key={i} value={i} className="year-item">
-					{i}
-				</Select.Option>
-			);
-		}
+
+		// const year = value.year();
+		// const options = [];
+		// for (let i = year - 10; i < year + 10; i += 1) {
+		// 	options.push(
+		// 		<Select.Option key={i} value={i} className="year-item">
+		// 			{i}
+		// 		</Select.Option>
+		// 	);
+		// }
+
 		return (
 			<div style={{ padding: 8 }} className={style.calendar_header}>
-				<h1 onDoubleClick={fetchData}>Agendamentos</h1>
+				<h1 onDoubleClick={fetchData}>Calendário de agendamentos</h1>
 				<Select
 					className={style.calendar_select}
 					size="small"
@@ -145,22 +148,20 @@ export default function Calendar1() {
 
 	return (
 		<>
-			{loading ? (
-				<div className={style.calendar_div}>
-					<Calendar headerRender={header} />
-				</div>
-			) : (
-				<div className={style.calendar_div}>
+			<div className={style.calendar_div}>
+				{loading ? (
+					<Calendar disabledDate={disabledDate} locale={ptBr.DatePicker} className={style.calendar} headerRender={header} />
+				) : (
 					<Calendar
 						className={style.calendar}
-						// locale={locale} // FIXME: Fix the locale
+						locale={ptBr.DatePicker} // FIXME: Fix the locale
 						headerRender={header}
 						dateCellRender={dateCellRender}
 						onSelect={handleSelect}
 						disabledDate={disabledDate}
 					/>
-				</div>
-			)}
+				)}
+			</div>
 
 			<RightDrawer
 				title={"Agendamentos"}
