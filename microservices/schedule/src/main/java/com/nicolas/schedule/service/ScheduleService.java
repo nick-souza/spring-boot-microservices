@@ -45,9 +45,6 @@ public class ScheduleService {
             return _schedule;
         }).collect(Collectors.toList());
 
-        if (schedules.isEmpty())
-            throw new RecordNotFoundException("No schedule found");
-
         var response = new GenericResponse<>(true, 200, schedules);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -67,7 +64,7 @@ public class ScheduleService {
     }
 
     public ResponseEntity<GenericResponse<List<ScheduleDTO>>> findSchedulesByRoom(Long roomId) {
-        var scheduleList = scheduleRepository.findByRoomIdOrderByBookingStart(roomId)//.orElseThrow(() -> new RecordNotFoundException("No schedule found"))
+        var scheduleList = scheduleRepository.findByRoomIdOrderByBookingStart(roomId)
         .stream().map(schedule -> {
             var _schedule = scheduleProfile.toScheduleDTO().map(schedule);
 
@@ -82,7 +79,7 @@ public class ScheduleService {
     }
 
     public ResponseEntity<GenericResponse<List<ScheduleDTO>>> findSchedulesByResponsible(Long responsibleId) {
-        var scheduleList = scheduleRepository.findByResponsibleIdOrderByBookingStart(responsibleId)//.orElseThrow(() -> new RecordNotFoundException("No schedule found"))
+        var scheduleList = scheduleRepository.findByResponsibleIdOrderByBookingStart(responsibleId)
         .stream().map(schedule -> {
             var _schedule = scheduleProfile.toScheduleDTO().map(schedule);
 
@@ -101,14 +98,14 @@ public class ScheduleService {
             var parsedDate = Date.from(LocalDate.parse(date).atStartOfDay(ZoneId.systemDefault()).toInstant());
 
             var scheduleList = scheduleRepository.findByDate(parsedDate)
-                    .stream().map(schedule -> {
-                        var _schedule = scheduleProfile.toScheduleDTO().map(schedule);
+            .stream().map(schedule -> {
+                var _schedule = scheduleProfile.toScheduleDTO().map(schedule);
 
-                        _schedule.setResponsible(getUserDTO(_schedule.getResponsibleId()).getName());
-                        _schedule.setRoom(getRoomDTO(_schedule.getRoomId()).getName());
+                _schedule.setResponsible(getUserDTO(_schedule.getResponsibleId()).getName());
+                _schedule.setRoom(getRoomDTO(_schedule.getRoomId()).getName());
 
-                        return _schedule;
-                    }).collect(Collectors.toList());
+                return _schedule;
+            }).collect(Collectors.toList());
 
             var response = new GenericResponse<>(true, 200, scheduleList);
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -215,7 +212,7 @@ public class ScheduleService {
     private void validateAppointmentHours(LocalDateTime start, LocalDateTime end) {
         // Verificando se é hora cheia:
         if (start.getMinute() != 0 || end.getMinute() != 0)
-            throw new BadRequestException("Appointments must be made on full hours"); // TODO: Check translation
+            throw new BadRequestException("Appointments must be made on full hours");
 
         // Verificando se tem uma hora de duração, pela diferença das datas:
         var appointmentDuration = Duration.between(start, end).toSeconds();

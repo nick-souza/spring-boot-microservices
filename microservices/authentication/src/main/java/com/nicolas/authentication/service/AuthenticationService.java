@@ -9,6 +9,7 @@ import com.nicolas.authentication.dto.incoming.SignInDTO;
 import com.nicolas.authentication.dto.outgoing.LogInResponseDTO;
 import com.nicolas.authentication.dto.outgoing.SignInResponseDTO;
 import com.nicolas.authentication.dto.outgoing.UserDTO;
+import com.nicolas.authentication.dto.outgoing.UserValidatedDTO;
 import com.nicolas.authentication.model.User;
 import com.nicolas.authentication.utils.GenericResponse;
 import com.nicolas.authentication.exception.BadRequestException;
@@ -61,50 +62,56 @@ public class AuthenticationService {
         // Validando a senha encriptada e do model:
         var valid = passEncoder.matches(model.getPassword(), user.getPassword());
 
-        if (!valid)
-            throw new UnauthorizedRequestException("Invalid credentials");
+        if (!valid) throw new UnauthorizedRequestException("Invalid credentials");
+
+        var userDTO = getUserDTO(user);
 
         // Convertendo para a resposta, com o JWT:
         var logInDTO = new LogInResponseDTO();
 
+        // Criando o token:
+        logInDTO.setToken(createToken(user.getEmail()));
+
+
         logInDTO.setEmail(user.getEmail());
         logInDTO.setId(user.getId());
-        logInDTO.setToken(createToken(user.getEmail()));
+        logInDTO.setName(user.getName());
 
         var response = new GenericResponse<>(true, 200, logInDTO);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    // Used by the GatewayFilter to validate the JWT token:
-    public LogInResponseDTO validateToken(String token) {
+    public ResponseEntity<GenericResponse<UserValidatedDTO>> validateToken(String token) {
         try {
             // Pegando o email do JWT Claim para validar se existe:
             var email = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody().getSubject();
 
-            var response = findByEmailOptional(email);
+            var userResponse = findByEmailOptional(email);
 
-            if (response == null)
+            if (userResponse == null)
                 throw new RecordNotFoundException("User not found");
 
-            var user = getUserDTO(response);
+            var user = getUserDTO(userResponse);
 
-            var logInDTO = new LogInResponseDTO();
+            var validatedDTO =  new UserValidatedDTO();
 
-            logInDTO.setId(user.getId());
-            logInDTO.setName(user.getName());
-            logInDTO.setLastName(user.getLastName());
-            logInDTO.setEmail(user.getEmail());
-            logInDTO.setStatus(user.getStatus());
-            logInDTO.setRole(user.getRole());
-            logInDTO.setCreationDate(user.getCreationDate());
-            logInDTO.setRoleDesc(user.getRoleDesc());
-            logInDTO.setStatusDesc(user.getStatusDesc());
-            logInDTO.setLastUpdate(user.getLastUpdate());
+            validatedDTO.setId(user.getId());
+            validatedDTO.setName(user.getName());
+            validatedDTO.setLastName(user.getLastName());
+            validatedDTO.setEmail(user.getEmail());
+            validatedDTO.setStatus(user.getStatus());
+            validatedDTO.setRole(user.getRole());
+            validatedDTO.setCreationDate(user.getCreationDate());
+            validatedDTO.setRoleDesc(user.getRoleDesc());
+            validatedDTO.setStatusDesc(user.getStatusDesc());
+            validatedDTO.setLastUpdate(user.getLastUpdate());
 
-            logInDTO.setToken(createToken(user.getEmail()));
+            validatedDTO.setToken(createToken(user.getEmail()));
 
-            return logInDTO;
+            var response = new GenericResponse<>(true, 200, validatedDTO);
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException ex) {
             throw new UnauthorizedRequestException("Invalid JWT");
         }

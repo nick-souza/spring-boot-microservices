@@ -33,9 +33,6 @@ public class RoomService {
     public ResponseEntity<GenericResponse<List<RoomDTO>>> findAll() {
         var rooms = roomRepository.findAllByOrderByIdAsc().stream().map(room -> roomProfile.toRoomDTO().map(room)).collect(Collectors.toList());
 
-        if (rooms.isEmpty())
-            throw new RecordNotFoundException("No room found");
-
         var response = new GenericResponse<>(true, 200, rooms);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -92,9 +89,6 @@ public class RoomService {
     }
 
     public ResponseEntity<GenericResponse> deleteRoom(Long id) {
-        if (id < 0)
-            throw new BadRequestException("Invalid id");
-
         var _room = roomRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Room not found"));
 
         var hasAppointments = checkAppointments(id);

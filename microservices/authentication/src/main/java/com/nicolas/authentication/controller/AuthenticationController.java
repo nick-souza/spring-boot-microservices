@@ -5,6 +5,7 @@ import com.nicolas.authentication.dto.incoming.SignInDTO;
 import com.nicolas.authentication.dto.outgoing.LogInResponseDTO;
 import com.nicolas.authentication.dto.outgoing.SignInResponseDTO;
 import com.nicolas.authentication.dto.outgoing.UserDTO;
+import com.nicolas.authentication.dto.outgoing.UserValidatedDTO;
 import com.nicolas.authentication.service.AuthenticationService;
 import com.nicolas.authentication.utils.GenericResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("validateToken")
-    public ResponseEntity<LogInResponseDTO> validateToken(@RequestParam String token) {
-        return ResponseEntity.ok(authService.validateToken(token));
+    public ResponseEntity<GenericResponse<UserValidatedDTO>> validateToken(@RequestParam String token) {
+        return authService.validateToken(token);
     }
 }

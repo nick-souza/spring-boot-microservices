@@ -1,6 +1,5 @@
 server:
     port: 8080
-#    port: ${PORTA:8080}
 
 management:
     endpoint.gateway.enabled: true
@@ -50,6 +49,6 @@ eureka:
         hostname: localhost
     client:
         service-url:
-            defaultZone: http://localhost:8761/eureka
+            defaultZone: http://admin:password@localhost:8761/eureka
         register-with-eureka: true
         fetch-registry: true

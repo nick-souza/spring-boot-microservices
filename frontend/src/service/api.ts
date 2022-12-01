@@ -14,7 +14,7 @@ export async function validateToken(token: string): Promise<TokenResponse> {
 			.then((response) => {
 				resolve({
 					success: true,
-					data: response.data,
+					data: response.data.data,
 				} as TokenResponse);
 			})
 			.catch((err) => {

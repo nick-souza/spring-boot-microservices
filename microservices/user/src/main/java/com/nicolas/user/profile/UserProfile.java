@@ -1,7 +1,6 @@
 package com.nicolas.user.profile;
 
 import com.nicolas.user.dto.AddUserDTO;
-import com.nicolas.user.dto.UpdateUserAdminDTO;
 import com.nicolas.user.dto.UpdateUserDTO;
 import com.nicolas.user.dto.UserDTO;
 import com.nicolas.user.model.User;
@@ -52,17 +51,6 @@ public class UserProfile {
             mapper.map(UpdateUserDTO::getName, User::setName);
             mapper.map(UpdateUserDTO::getLastName, User::setLastName);
             mapper.map(UpdateUserDTO::getEmail, User::setEmail);
-        });
-    }
-
-    // Admin Update user:
-    public TypeMap<UpdateUserAdminDTO, User> updateAdminToUser() {
-        // Ignorando propriedades nulas, para atualizar apenas os campos que vierem da requisição:
-        modelMapper.getConfiguration().setPropertyCondition(Conditions.isNotNull());
-
-        return modelMapper.typeMap(UpdateUserAdminDTO.class, User.class).addMappings(mapper -> {
-            mapper.map(UpdateUserAdminDTO::getStatus, User::setStatus);
-            mapper.map(UpdateUserAdminDTO::getRole, User::setRole);
         });
     }
 }

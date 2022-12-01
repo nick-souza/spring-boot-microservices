@@ -26,6 +26,11 @@ public class UserController {
         this.userService = userService;
     }
 
+    @GetMapping("")
+    public ResponseEntity<GenericResponse<List<UserDTO>>> findAll() {
+        return userService.findAllActiveUsers();
+    }
+
     @GetMapping("{id}")
     public ResponseEntity<GenericResponse<UserDTO>> findUserById(@PathVariable Long id) {
         return userService.findActiveUserById(id);
@@ -36,17 +41,12 @@ public class UserController {
         return userService.addUser(model);
     }
 
-    @GetMapping("")
-    public ResponseEntity<GenericResponse<List<UserDTO>>> findAll() {
-        return userService.findAllActiveUsers();
-    }
-
-    @GetMapping("email-check/{email}")
+    @GetMapping("email-check/{email}") // Usado pelo módulo de autenticação:
     public ResponseEntity<GenericResponse<User>> findByEmail(@PathVariable String email) {
         return userService.findUserByEmail(email);
     }
 
-    @GetMapping("email/{email}")
+    @GetMapping("email/{email}") // Usado pelo módulo de autenticação:
     public ResponseEntity<GenericResponse<UserDTO>> findByEmailOptional(@PathVariable String email) {
         return userService.findUserByEmailOptional(email);
     }

@@ -34,9 +34,6 @@ public class UserService {
     public ResponseEntity<GenericResponse<List<UserDTO>>> findAllActiveUsers() {
         var users = userRepository.findAllByStatusOrderById(Status.Active).stream().map(user -> userProfile.toUserDTO().map(user)).collect(Collectors.toList());
 
-        if (users.isEmpty())
-            throw new RecordNotFoundException("No user found");
-
         var response = new GenericResponse<>(true, 200, users);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -80,11 +77,7 @@ public class UserService {
 
         _user.setCreatedAt(LocalDateTime.now());
         _user.setLastUpdateAt(LocalDateTime.now());
-
-        // TODO: Add logic to role based authentication:
         _user.setRole(Role.User);
-
-        // TODO: Send email verification here before setting the status to active:
         _user.setStatus(Status.Active);
 
         userRepository.save(_user);
@@ -137,25 +130,6 @@ public class UserService {
         userRepository.save(_user);
 
         return new ResponseEntity<>(new GenericResponse<>(200, true), HttpStatus.OK);
-    }
-
-    public ResponseEntity<GenericResponse<UserDTO>> updateUserAdmin(Long id, UpdateUserAdminDTO model) {
-        if (!model.getId().equals(id))
-            throw new BadRequestException("Route and DTO identifiers do not match");
-
-        var _user = userRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("User not found"));
-
-        userProfile.updateAdminToUser().map(model, _user);
-
-        _user.setLastUpdateAt(LocalDateTime.now());
-
-        userRepository.save(_user);
-
-        var user = userProfile.toUserDTO().map(_user);
-
-        var response = new GenericResponse<>(true, 200, user);
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     private boolean emailCheck(String email) {

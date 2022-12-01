@@ -33,11 +33,6 @@ public class ScheduleController {
         return scheduleService.findScheduleById(id);
     }
 
-    @PostMapping("add/")
-    public ResponseEntity<GenericResponse<ScheduleDTO>> addSchedule(@RequestBody @Valid AddScheduleDTO model) {
-        return scheduleService.addSchedule(model);
-    }
-
     @GetMapping("room/{roomId}")
     public ResponseEntity<GenericResponse<List<ScheduleDTO>>> findSchedulesByRoom(@PathVariable Long roomId) {
         return scheduleService.findSchedulesByRoom(roomId);
@@ -51,6 +46,11 @@ public class ScheduleController {
     @GetMapping("date/{date}")
     public ResponseEntity<GenericResponse<List<ScheduleDTO>>> findSchedulesByDate(@PathVariable String date) {
         return scheduleService.findSchedulesByDate(date);
+    }
+
+    @PostMapping("add/")
+    public ResponseEntity<GenericResponse<ScheduleDTO>> addSchedule(@RequestBody @Valid AddScheduleDTO model) {
+        return scheduleService.addSchedule(model);
     }
 
     @DeleteMapping("{id}")

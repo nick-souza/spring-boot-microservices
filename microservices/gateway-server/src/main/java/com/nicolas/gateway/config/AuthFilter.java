@@ -38,6 +38,7 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
             String[] parts = authHeader.split(" ");
 
             // Caso não tenha o Token ou não for do tipo Bearer:
+            // Bearer Token eyJhbGciOiJIUzI1NiJ9.....
             if (parts.length != 2 || !"Bearer".equals(parts[0]))
                 throw new UnauthorizedRequestException("Unauthorized");
 

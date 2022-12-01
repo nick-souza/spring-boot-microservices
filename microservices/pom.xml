@@ -13,9 +13,9 @@
     <module>room</module>
     <module>schedule</module>
     <module>eureka-server</module>
-      <module>config-server</module>
-      <module>gateway-server</module>
-      <module>authentication</module>
+    <module>config-server</module>
+    <module>gateway-server</module>
+    <module>authentication</module>
   </modules>
 
   <name>microservices</name>

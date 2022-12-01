@@ -23,8 +23,6 @@ public class AddScheduleDTO {
     @NotNull(message = "A booking must contain the responsible id")
     private Long responsibleId;
 
-    // TODO: Add how many people will attend the meeting; Maybe add all participants? Will maybe add unnecessary complexity
-
     @NotNull(message = "A booking must contain the start date time")
     @Getter(AccessLevel.NONE)
     private String bookingStart;

@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Data
-//@AllArgsConstructor
 @NoArgsConstructor
 public class GenericResponse<T> {
     private boolean success;

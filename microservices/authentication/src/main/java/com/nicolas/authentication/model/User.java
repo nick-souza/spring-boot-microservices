@@ -8,8 +8,6 @@ import java.time.format.DateTimeFormatter;
 @Data
 public class User {
 
-//    protected static final DateTimeFormatter FORMATO_DATA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
     private Long id;
     private String email;
     private String name;
