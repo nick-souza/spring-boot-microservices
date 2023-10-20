@@ -3,6 +3,7 @@ import { Form } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useEffect, useState } from "react";
 import { useNotifications } from "../../hooks/useNotifications";
+import { ResponseBoolInterface, ResponseInterface, ResponseListInterface } from "../../interfaces/responseInterface";
 import { RoomInterface } from "../../interfaces/roomInterface";
 import { api } from "../../service/api";
 import DeleteItemModal from "../table/deleteItemModal";
@@ -14,6 +15,9 @@ import RoomForm from "./roomForm";
 import RoomSchedulesList from "./roomSchedules";
 
 export default function RoomList() {
+	const notify = useNotifications();
+	const [form] = Form.useForm();
+
 	const [visibleSchedules, setVisibleSchedules] = useState(false);
 	const [activeRoom, setActiveRoom] = useState<RoomInterface>();
 	const [rooms, setRooms] = useState<RoomInterface[]>();
@@ -24,63 +28,61 @@ export default function RoomList() {
 	// FIXME: Check if this extra loading are necessary:
 	const [deleteLoading, setDeleteLoading] = useState(false);
 	const [editLoading, setEditLoading] = useState(false);
-
 	const [loading, setLoading] = useState(false);
 
-	const notify = useNotifications();
-	const [form] = Form.useForm();
-
 	useEffect(() => {
-		fetchData();
+		getRooms();
 	}, []);
 
-	const fetchData = async () => {
+	const getRooms = async () => {
 		setLoading(true);
-		await api
-			.get("/room/")
-			.then((res) => {
-				if (res.data.success) setRooms(res.data.data);
-			})
-			// .catch((err) => {
-			// 	console.log(err);
-			// })
-			.finally(() => {
-				setLoading(false);
-			});
+
+		try {
+			const { success, data } = await api.get<ResponseListInterface<RoomInterface>>(`/room/`);
+			if (success) setRooms(data);
+		} catch (error: any) {
+			notify.error(error.response?.data?.errorMessage);
+		}
+
+		setLoading(false);
 	};
 
 	const handleDelete = async () => {
 		setDeleteLoading(true);
-		await api
-			.delete(`/room/delete/${activeRoom?.id}`)
-			// .then((res) => {
-			// 	if (res.data.success) notify.success("Sala excluída com sucesso!");
-			// 	else notify.error(res.data.errorMessage);
-			// })
-			.finally(() => {
-				notify.success("Sala excluída com sucesso!");
-				setDeleteVisible(false);
-				setDeleteLoading(false);
-				fetchData();
-			});
+
+		try {
+			const { success } = await api.delete<ResponseBoolInterface>(`/room/delete/${activeRoom?.id}`);
+			if (!success) return;
+		} catch (error: any) {
+			notify.error(error.response?.data?.errorMessage);
+		}
+
+		notify.success("Sala excluída com sucesso!");
+		setDeleteVisible(false);
+		setDeleteLoading(false);
+		getRooms();
 	};
 
-	const saveEdit = async (room: RoomInterface) => {
+	const handleEdit = async (room: RoomInterface) => {
 		setEditLoading(true);
-		await api
-			.put(`/room/update/${room?.id}`, room)
-			.then((res) => {
-				if (res.data.success) notify.success("Sala editada com sucesso!");
-				else notify.error(res.data.errorMessage);
-			})
-			// .catch((err) => {
-			// 	console.log(err);
-			// })
-			.finally(() => {
-				setEditVisible(false);
-				setEditLoading(false);
-				fetchData();
-			});
+
+		try {
+			const { success, errorMessage } = await api.put<ResponseInterface<RoomInterface>>(`/room/update/${room?.id}`, room);
+
+			if (!success) {
+				setLoading(false);
+				notify.error(errorMessage);
+				return;
+			}
+		} catch (error: any) {
+			notify.error(error.response?.data?.errorMessage);
+			return;
+		}
+
+		notify.success("Sala editada com sucesso!");
+		setEditVisible(false);
+		setEditLoading(false);
+		getRooms();
 	};
 
 	const columns: ColumnsType<RoomInterface> = [
@@ -145,13 +147,13 @@ export default function RoomList() {
 				columns={columns}
 				editLoading={editLoading}
 				setEditVisible={setEditVisible}
-				fetchData={fetchData}
+				fetchData={getRooms}
 				dataSource={rooms}
 				loading={loading}
-				addButton={<CreateRoom fetchTable={fetchData} />}
+				addButton={<CreateRoom fetchTable={getRooms} />}
 			>
 				<RoomForm
-					saveForm={saveEdit}
+					saveForm={handleEdit}
 					form={form}
 					text={activeRoom?.name || "Room"}
 					room={activeRoom}

@@ -12,6 +12,7 @@ import TableList from "../table/table";
 import TableOptions from "../table/tableOptions";
 import CreateSchedule from "./createSchedule";
 import ScheduleForm, { dateTimeFormat } from "./scheduleForm";
+import { ResponseInterface, ResponseListInterface } from "../../interfaces/responseInterface";
 
 export interface ScheduleFormResponse {
 	id?: number;
@@ -23,9 +24,10 @@ export interface ScheduleFormResponse {
 }
 
 export default function ScheduleList() {
-	const { user: loggedUser } = useContext(AuthContext);
-	const notify = useNotifications();
 	const [form] = Form.useForm();
+	const notify = useNotifications();
+
+	const { user: loggedUser } = useContext(AuthContext);
 
 	const [schedules, setSchedules] = useState<ScheduleInterface[]>();
 	const [activeSchedule, setActiveSchedule] = useState<ScheduleInterface>();
@@ -38,23 +40,22 @@ export default function ScheduleList() {
 	const [editLoading, setEditLoading] = useState(false);
 
 	useEffect(() => {
-		fetchData();
+		getSchedules();
 	}, []);
 
-	const fetchData = async () => {
+	const getSchedules = async () => {
 		setLoading(true);
-		await api
-			.get("/schedule/")
-			.then((res) => {
-				if (res.data.success) setSchedules(res.data.data);
-				else notify.error(res.data.errorMessage);
-			})
-			.catch((err) => {
-				notify.error(err.response.data.errorMessage || "Erro");
-			})
-			.finally(() => {
-				setLoading(false);
-			});
+
+		try {
+			const { success, data, errorMessage } = await api.get<ResponseListInterface<ScheduleInterface>>(`/schedule/`);
+
+			if (success) setSchedules(data);
+			else notify.error(errorMessage);
+		} catch (error: any) {
+			notify.error(error.response?.data?.errorMessage);
+		}
+
+		setLoading(false);
 	};
 
 	const handleDelete = async () => {
@@ -63,34 +64,39 @@ export default function ScheduleList() {
 			notify.success("Agendamento excluído com sucesso!");
 			setDeleteVisible(false);
 			setDeleteLoading(false);
-			fetchData();
+			getSchedules();
 		});
 	};
 
-	const saveEdit = async (schedule: ScheduleFormResponse) => {
+	const handleEdit = async (schedule: ScheduleFormResponse) => {
 		setEditLoading(true);
-		await api
-			.put(`/schedule/${schedule?.id}`, {
-				scheduleId: schedule.id,
-				roomId: schedule.roomId,
-				name: schedule?.name,
-				responsibleId: schedule.responsibleId,
-				bookingStart: schedule.bookingStart.format(dateTimeFormat),
-				bookingEnd: schedule.bookingEnd.format(dateTimeFormat),
-			})
-			.then((res) => {
-				if (res.data.success) {
-					notify.success("Agendamento editado com sucesso!");
-					fetchData();
-				} else notify.error(res.data.errorMessage);
-			})
-			.catch((err) => {
-				notify.error(err.response.data.errorMessage || "Erro");
-			})
-			.finally(() => {
-				setEditVisible(false);
-				setEditLoading(false);
-			});
+
+		const data = {
+			scheduleId: schedule.id,
+			roomId: schedule.roomId,
+			name: schedule?.name,
+			responsibleId: schedule.responsibleId,
+			bookingStart: schedule.bookingStart.format(dateTimeFormat),
+			bookingEnd: schedule.bookingEnd.format(dateTimeFormat),
+		};
+
+		try {
+			const { success, errorMessage } = await api.put<ResponseInterface<ScheduleInterface>>(`/schedule/${schedule?.id}`, data);
+
+			if (!success) {
+				setLoading(false);
+				notify.error(errorMessage);
+				return;
+			}
+		} catch (error: any) {
+			notify.error(error.response?.data?.errorMessage);
+			return;
+		}
+
+		notify.success("Agendamento editado com sucesso!");
+		setEditVisible(false);
+		setEditLoading(false);
+		getSchedules();
 	};
 
 	const columns: ColumnsType<ScheduleInterface> = [
@@ -164,12 +170,18 @@ export default function ScheduleList() {
 				columns={columns}
 				editLoading={editLoading}
 				setEditVisible={setEditVisible}
-				fetchData={fetchData}
+				fetchData={getSchedules}
 				dataSource={schedules}
 				loading={loading}
-				addButton={<CreateSchedule fetchTable={fetchData} />}
+				addButton={<CreateSchedule fetchTable={getSchedules} />}
 			>
-				<ScheduleForm saveForm={saveEdit} form={form} schedule={activeSchedule} loading={editLoading} setLoading={setEditLoading} />
+				<ScheduleForm
+					saveForm={handleEdit}
+					form={form}
+					schedule={activeSchedule}
+					loading={editLoading}
+					setLoading={setEditLoading}
+				/>
 			</TableList>
 
 			<DeleteItemModal

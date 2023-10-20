@@ -19,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -98,7 +99,8 @@ public class UserService {
 
         var _user = userRepository.findByIdAndStatus(id, Status.Active).orElseThrow(() -> new RecordNotFoundException("User not found"));
 
-        if (model.getEmail() != null && emailCheck(model.getEmail()))
+        var hasChangedEmail = !Objects.equals(model.getEmail(), _user.getEmail());
+        if ((model.getEmail() != null && hasChangedEmail) && emailCheck(model.getEmail()))
             throw new BadRequestException("Email already taken");
 
         userProfile.updateToUser().map(model, _user);

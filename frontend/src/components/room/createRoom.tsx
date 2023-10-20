@@ -2,6 +2,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import { Button, Form } from "antd";
 import { useState } from "react";
 import { useNotifications } from "../../hooks/useNotifications";
+import { ResponseInterface } from "../../interfaces/responseInterface";
 import { RoomInterface } from "../../interfaces/roomInterface";
 import { api } from "../../service/api";
 import { CreateEntityProps } from "../schedule/createSchedule";
@@ -18,23 +19,27 @@ export default function CreateRoom({ fetchTable }: CreateEntityProps) {
 	const saveAdd = async (room: RoomInterface) => {
 		setLoading(true);
 
-		await api
-			.post("/room/add/", {
+		try {
+			const { success, errorMessage } = await api.post<ResponseInterface<RoomInterface>>("/room/add/", {
 				name: room?.name,
 				capacity: room.capacity,
-			})
-			.then((res) => {
-				if (res.data.success) notify.success("Sala criada com sucesso!");
-				else notify.error(res.data.errorMessage || "Erro");
-			})
-			.catch((err) => {
-				notify.error(err.response.data.errorMessage || "Erro");
-			})
-			.finally(() => {
-				setVisible(false);
-				setLoading(false);
-				fetchTable();
 			});
+
+			if (!success) {
+				setLoading(false);
+				notify.error(errorMessage);
+				return;
+			}
+
+			notify.success("Sala criada com sucesso!");
+		} catch (error: any) {
+			notify.error(error.response?.data?.errorMessage);
+			return;
+		}
+
+		setLoading(false);
+		setVisible(false);
+		fetchTable();
 	};
 
 	return (

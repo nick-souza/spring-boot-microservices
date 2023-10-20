@@ -8,6 +8,8 @@ import RightDrawer from "../table/rightDrawer";
 import ScheduleForm, { dateTimeFormat } from "./scheduleForm";
 import { ScheduleFormResponse } from "./scheduleList";
 import dayjs from "dayjs";
+import { ResponseInterface } from "../../interfaces/responseInterface";
+import { ScheduleInterface } from "../../interfaces/scheduleInterface";
 
 export interface CreateEntityProps {
 	fetchTable: () => void;
@@ -15,42 +17,46 @@ export interface CreateEntityProps {
 }
 
 export default function CreateSchedule({ fetchTable, date }: CreateEntityProps) {
-	const { user: loggedUser } = useContext(AuthContext);
+	const [form] = Form.useForm();
+	const notify = useNotifications();
+
+	const { user } = useContext(AuthContext);
+
 	const [visible, setVisible] = useState(false);
 	const [loading, setLoading] = useState(false);
 
-	const [form] = Form.useForm();
-
-	const notify = useNotifications();
-
 	useEffect(() => {
-		if (loggedUser) form.setFieldValue("responsibleId", loggedUser?.id);
-	}, [loggedUser]);
+		if (user) form.setFieldValue("responsibleId", user.id);
+	}, [user]);
 
 	const saveAdd = async (schedule: ScheduleFormResponse) => {
 		setLoading(true);
 
-		await api
-			.post("/schedule/add/", {
-				roomId: schedule?.roomId,
-				name: schedule?.name,
-				responsibleId: schedule?.responsibleId,
-				bookingStart: schedule.bookingStart.format(dateTimeFormat),
-				bookingEnd: schedule.bookingEnd.format(dateTimeFormat),
-			})
-			.then((res) => {
-				if (res.data.success) {
-					notify.success("Agendamento criado com sucesso!");
-					fetchTable();
-				} else notify.error(res.data.errorMessage || "Erro");
-			})
-			.catch((err) => {
-				notify.error(err.response.data.errorMessage || "Erro");
-			})
-			.finally(() => {
-				setVisible(false);
+		const data = {
+			roomId: schedule?.roomId,
+			name: schedule?.name,
+			responsibleId: schedule?.responsibleId,
+			bookingStart: schedule.bookingStart.format(dateTimeFormat),
+			bookingEnd: schedule.bookingEnd.format(dateTimeFormat),
+		};
+
+		try {
+			const { success, errorMessage } = await api.post<ResponseInterface<ScheduleInterface>>("/schedule/add/", data);
+
+			if (!success) {
 				setLoading(false);
-			});
+				notify.error(errorMessage);
+				return;
+			}
+		} catch (error: any) {
+			notify.error(error.response?.data?.errorMessage);
+			return;
+		}
+
+		notify.success("Agendamento criado com sucesso!");
+		setLoading(false);
+		setVisible(false);
+		fetchTable();
 	};
 
 	return (
@@ -59,7 +65,14 @@ export default function CreateSchedule({ fetchTable, date }: CreateEntityProps) 
 				Criar agendamento
 			</Button>
 
-			<RightDrawer title="Criar agendamento" visible={visible} setVisible={setVisible} loading={loading} setLoading={setLoading} handleOk={() => form.submit()}>
+			<RightDrawer
+				title="Criar agendamento"
+				visible={visible}
+				setVisible={setVisible}
+				loading={loading}
+				setLoading={setLoading}
+				handleOk={() => form.submit()}
+			>
 				<ScheduleForm defaultDate={date} saveForm={saveAdd} form={form} loading={loading} setLoading={setLoading} />
 			</RightDrawer>
 		</>

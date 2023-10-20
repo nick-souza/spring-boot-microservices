@@ -11,6 +11,8 @@ import CalendarListing from "./calendarListing";
 import ptBr from "antd/locale/pt_BR";
 import dayjs from "dayjs";
 import "dayjs/locale/pt-br";
+import { ResponseListInterface } from "../../interfaces/responseInterface";
+import { useNotifications } from "../../hooks/useNotifications";
 
 interface CalendarEvent {
 	id: number;
@@ -19,12 +21,14 @@ interface CalendarEvent {
 }
 
 export default function Calendar1() {
+	const notify = useNotifications();
+
+	const { user: loggedUser } = useContext(AuthContext);
+
 	const [schedules, setSchedules] = useState<ScheduleInterface[]>();
 	const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs>(dayjs());
 	const [listVisible, setListVisible] = useState(false);
 	const [loading, setLoading] = useState(false);
-
-	const { user: loggedUser } = useContext(AuthContext);
 
 	dayjs.extend(localeData);
 	dayjs.locale("pt-br");
@@ -36,14 +40,14 @@ export default function Calendar1() {
 	const fetchData = async () => {
 		setLoading(true);
 
-		await api
-			.get(`/schedule/`)
-			.then((res) => {
-				if (res.data.success) setSchedules(res.data.data);
-			})
-			.finally(() => {
-				setLoading(false);
-			});
+		try {
+			const { success, data } = await api.get<ResponseListInterface<ScheduleInterface>>(`/schedule/`);
+			if (success) setSchedules(data);
+		} catch (error: any) {
+			notify.error(error.response?.data?.errorMessage);
+		}
+
+		setLoading(false);
 	};
 
 	const filterByDate = (date: string) => {
@@ -152,9 +156,6 @@ export default function Calendar1() {
 	return (
 		<>
 			<div className={style.calendar_div}>
-				{/* {loading ? (
-					<Calendar disabledDate={disabledDate} locale={ptBr.DatePicker} className={style.calendar} headerRender={header} />
-				) : ( */}
 				<Calendar
 					className={style.calendar}
 					locale={ptBr.DatePicker} // FIXME: Fix the locale
@@ -163,7 +164,6 @@ export default function Calendar1() {
 					onSelect={handleSelect}
 					disabledDate={disabledDate}
 				/>
-				{/* )} */}
 			</div>
 
 			<RightDrawer

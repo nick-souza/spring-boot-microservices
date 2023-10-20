@@ -15,14 +15,15 @@ export default function RoomForm({ room, text, form, saveForm, loading, setLoadi
 	const [title, setTitle] = useState(room?.name);
 
 	useEffect(() => {
-		if (room)
-			form.setFieldsValue({
-				id: room?.id,
-				name: room?.name,
-				capacity: room?.capacity,
-				creationDate: room?.creationDate,
-				lastUpdate: room?.lastUpdate,
-			});
+		if (!room) return;
+
+		form.setFieldsValue({
+			id: room?.id,
+			name: room?.name,
+			capacity: room?.capacity,
+			creationDate: room?.creationDate,
+			lastUpdate: room?.lastUpdate,
+		});
 	}, [room]);
 
 	useEffect(() => {

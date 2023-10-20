@@ -4,7 +4,6 @@ import com.nicolas.authentication.dto.incoming.LogInDTO;
 import com.nicolas.authentication.dto.incoming.SignInDTO;
 import com.nicolas.authentication.dto.outgoing.LogInResponseDTO;
 import com.nicolas.authentication.dto.outgoing.SignInResponseDTO;
-import com.nicolas.authentication.dto.outgoing.UserDTO;
 import com.nicolas.authentication.dto.outgoing.UserValidatedDTO;
 import com.nicolas.authentication.service.AuthenticationService;
 import com.nicolas.authentication.utils.GenericResponse;
@@ -22,9 +21,9 @@ public class AuthenticationController {
         this.authService = authService;
     }
 
-    @PostMapping("sign-in")
+    @PostMapping("sign-up")
     public ResponseEntity<GenericResponse<SignInResponseDTO>> signIn(@RequestBody SignInDTO model) {
-        return authService.signIn(model);
+        return authService.signUp(model);
     }
 
     @PostMapping("login")

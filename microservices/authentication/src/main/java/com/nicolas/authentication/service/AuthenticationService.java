@@ -34,7 +34,7 @@ public class AuthenticationService {
     private final RestTemplate restTemplate;
     private final PasswordEncoder passEncoder;
 
-    public ResponseEntity<GenericResponse<SignInResponseDTO>> signIn(SignInDTO model) {
+    public ResponseEntity<GenericResponse<SignInResponseDTO>> signUp(SignInDTO model) {
         // Comparando as senhas:
         if (!model.getPassword().equals(model.getConfirmPassword()))
             throw new BadRequestException("Passwords do not match");
@@ -47,7 +47,7 @@ public class AuthenticationService {
         addUserDTO.setEncryptedPass(passEncoder.encode(model.getPassword()));
 
         // Mandando o DTO para o user service, que em caso de sucesso retorna um SignInResponseDTO:
-        var restResponse = restTemplate.postForObject(USER_URI + "sign-in", addUserDTO, GenericResponse.class);
+        var restResponse = restTemplate.postForObject(USER_URI + "sign-up", addUserDTO, GenericResponse.class);
 
         return new ResponseEntity<>(restResponse, HttpStatus.resolve(restResponse.getStatusCode()));
     }
@@ -71,7 +71,6 @@ public class AuthenticationService {
 
         // Criando o token:
         logInDTO.setToken(createToken(user.getEmail()));
-
 
         logInDTO.setEmail(user.getEmail());
         logInDTO.setId(user.getId());

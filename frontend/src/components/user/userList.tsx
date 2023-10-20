@@ -3,8 +3,8 @@ import { Form, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
-import { UserRole } from "../../enums/UserRole";
 import { useNotifications } from "../../hooks/useNotifications";
+import { ResponseListInterface } from "../../interfaces/responseInterface";
 import { UserInterface } from "../../interfaces/userInterface";
 import { api } from "../../service/api";
 import DeleteItemModal from "../table/deleteItemModal";
@@ -31,17 +31,28 @@ export default function UserList() {
 
 	const fetchData = async () => {
 		setLoading(true);
-		await api
-			.get("/user/")
-			.then((res) => {
-				if (res.data.success) setUsers(res.data.data);
-			})
-			.catch((err) => {
-				notify.error(err.response.data.errorMessage || "Erro");
-			})
-			.finally(() => {
-				setLoading(false);
-			});
+
+		try {
+			const { success, data } = await api.get<ResponseListInterface<UserInterface>>("/user/");
+
+			if (success) setUsers(data);
+		} catch {
+			notify.error();
+		}
+
+		setLoading(false);
+
+		// await api
+		// 	.get("/user/")
+		// 	.then((res) => {
+		// 		if (res.data.success) setUsers(res.data.data);
+		// 	})
+		// 	.catch((err) => {
+		// 		notify.error(err.response.data.errorMessage || "Erro");
+		// 	})
+		// 	.finally(() => {
+		// 		setLoading(false);
+		// 	});
 	};
 
 	const handleDelete = async () => {
@@ -69,11 +80,15 @@ export default function UserList() {
 
 	const saveEdit = async (user: UserInterface) => {
 		setEditLoading(true);
+
+		// try {
+
+
 		await api
 			.put(`/user/update/${user?.id}`, {
 				id: user.id,
 				name: user.name,
-				lastName: user.lastName,
+				lastName: user.las tName,
 				email: user.email != activeUser?.email ? user.email : null,
 			})
 			.then((res) => {
@@ -175,7 +190,14 @@ export default function UserList() {
 				dataSource={users}
 				loading={loading}
 			>
-				<UserForm saveForm={saveEdit} form={form} text={activeUser?.name || "user"} user={activeUser} loading={editLoading} setLoading={setEditLoading} />
+				<UserForm
+					saveForm={saveEdit}
+					form={form}
+					text={activeUser?.name || "user"}
+					user={activeUser}
+					loading={editLoading}
+					setLoading={setEditLoading}
+				/>
 			</TableList>
 			<DeleteItemModal
 				name={activeUser?.name}

@@ -36,7 +36,7 @@ public class UserController {
         return userService.findActiveUserById(id);
     }
 
-    @PostMapping("sign-in")
+    @PostMapping("sign-up")
     public ResponseEntity<GenericResponse<UserDTO>> addUser(@RequestBody @Valid AddUserDTO model) {
         return userService.addUser(model);
     }

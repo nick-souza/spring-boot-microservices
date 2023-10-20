@@ -7,6 +7,7 @@ import { ScheduleInterface } from "../../interfaces/scheduleInterface";
 import { UserInterface } from "../../interfaces/userInterface";
 import style from "../../pages/schedule/style.module.css";
 import { api } from "../../service/api";
+import { ResponseListInterface } from "../../interfaces/responseInterface";
 
 interface ScheduleEditFormProps {
 	form: FormInstance;
@@ -22,19 +23,21 @@ export const dateTimeFormat = "DD/MM/YYYY HH:00";
 export default function ScheduleForm({ schedule, form, saveForm, loading, setLoading, defaultDate }: ScheduleEditFormProps) {
 	const [userFetching, setUserFetching] = useState(false);
 	const [roomFetching, setRoomFetching] = useState(false);
+
 	const [userOptions, setUserOptions] = useState<UserInterface[]>();
 	const [roomOptions, setRoomOptions] = useState<RoomInterface[]>();
 
 	useEffect(() => {
-		if (schedule)
-			form.setFieldsValue({
-				id: schedule?.id,
-				name: schedule?.name,
-				roomId: schedule?.roomId,
-				responsibleId: schedule?.responsibleId,
-				bookingStart: dayjs(schedule?.bookingStart, dateTimeFormat),
-				bookingEnd: dayjs(schedule?.bookingEnd, dateTimeFormat),
-			});
+		if (!schedule) return;
+
+		form.setFieldsValue({
+			id: schedule?.id,
+			name: schedule?.name,
+			roomId: schedule?.roomId,
+			responsibleId: schedule?.responsibleId,
+			bookingStart: dayjs(schedule?.bookingStart, dateTimeFormat),
+			bookingEnd: dayjs(schedule?.bookingEnd, dateTimeFormat),
+		});
 	}, [schedule]);
 
 	useEffect(() => {
@@ -54,35 +57,37 @@ export default function ScheduleForm({ schedule, form, saveForm, loading, setLoa
 
 	const range = (start: number, end: number) => {
 		const result = [];
+
 		for (let i = start; i < end; i++) {
 			result.push(i);
 		}
+
 		return result;
 	};
 
-	const fetchUserOptions = () => {
+	const fetchUserOptions = async () => {
 		setUserFetching(true);
-		api
-			.get("/user/")
-			.then((res) => {
-				if (res.data.success) setUserOptions(res?.data?.data);
-			})
-			.finally(() => setUserFetching(false));
+
+		try {
+			const { success, data } = await api.get<ResponseListInterface<UserInterface>>("/user/");
+			if (success) setUserOptions(data);
+		} catch {}
+
+		setUserFetching(false);
 	};
 
-	const fetchRoomOptions = () => {
+	const fetchRoomOptions = async () => {
 		setRoomFetching(true);
-		api
-			.get("/room/")
-			.then((res) => {
-				if (res.data.success) setRoomOptions(res.data.data);
-			})
-			.finally(() => setRoomFetching(false));
+
+		try {
+			const { success, data } = await api.get<ResponseListInterface<RoomInterface>>("/room/");
+			if (success) setRoomOptions(data);
+		} catch {}
+
+		setRoomFetching(false);
 	};
 
-	const disabledDate: RangePickerProps["disabledDate"] = (current) => {
-		return current.add(1, "day") <= dayjs().endOf("day");
-	};
+	const disabledDate: RangePickerProps["disabledDate"] = (current) => current.add(1, "day") <= dayjs().endOf("day");
 
 	const disabledDateTime = () => ({
 		disabledHours: () => range(0, 8).concat(range(19, 24)),
@@ -96,7 +101,8 @@ export default function ScheduleForm({ schedule, form, saveForm, loading, setLoa
 
 	return (
 		<>
-			<h1>{"Agendamento"}</h1>
+			<h1>Agendamento</h1>
+
 			<Form form={form} layout="vertical" onFinish={(values) => saveForm(values)} disabled={loading}>
 				{schedule && (
 					<Form.Item name="id" label="Id">
@@ -133,6 +139,7 @@ export default function ScheduleForm({ schedule, form, saveForm, loading, setLoa
 								{item.name}
 							</Select.Option>
 						))}
+
 						{userFetching && (
 							<Select.Option value={""} disabled>
 								{"Carregando"}
@@ -157,6 +164,7 @@ export default function ScheduleForm({ schedule, form, saveForm, loading, setLoa
 								{item.name}
 							</Select.Option>
 						))}
+
 						{roomFetching && (
 							<Select.Option value={""} disabled>
 								{"Carregando"}
@@ -188,6 +196,7 @@ export default function ScheduleForm({ schedule, form, saveForm, loading, setLoa
 							/>
 						</Form.Item>
 					</Col>
+
 					<Col span={12}>
 						<Form.Item
 							name="bookingEnd"
@@ -204,7 +213,7 @@ export default function ScheduleForm({ schedule, form, saveForm, loading, setLoa
 								showTime
 								allowClear={false}
 								disabledTime={disabledDateTime}
-								// disabledDate={disabledDate}
+								disabledDate={disabledDate}
 								format={dateTimeFormat}
 							/>
 						</Form.Item>

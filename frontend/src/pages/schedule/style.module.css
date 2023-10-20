@@ -7,7 +7,7 @@
 }
 
 .user_schedule_title {
-	margin-top: 0px !important;
+	margin-top: 0 !important;
 }
 
 .calendar_div {
@@ -42,4 +42,8 @@
 
 .calendar_header .calendar_header .ant-select-arrow {
 	margin-top: -8px !important;
+}
+
+.calendar_root {
+	width: 100%;
 }

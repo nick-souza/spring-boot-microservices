@@ -8,18 +8,16 @@ export interface TokenResponse {
 }
 
 export async function validateToken(token: string): Promise<TokenResponse> {
-	return new Promise(function (resolve, reject) {
+	return new Promise((resolve, reject) => {
 		getAPIClient()
-			.post(`/auth/validateToken?token=${token}`)
+			.post<any>(`/auth/validateToken?token=${token}`)
 			.then((response) => {
 				resolve({
 					success: true,
-					data: response.data.data,
+					data: response.data,
 				} as TokenResponse);
 			})
 			.catch((err) => {
-				console.error(err);
-
 				resolve({
 					success: false,
 					data: null,
