@@ -5,6 +5,7 @@ import { UserLoggedIn } from "../../interfaces/loginInterfaces";
 import { ScheduleInterface } from "../../interfaces/scheduleInterface";
 import style from "../../pages/schedule/style.module.css";
 import { api } from "../../service/api";
+import { ResponseListInterface } from "../../interfaces/responseInterface";
 
 interface UserSchedulesProps {
 	user: UserLoggedIn | null;
@@ -15,34 +16,31 @@ export default function UserSchedules({ user }: UserSchedulesProps) {
 	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
-		if (user) fetchData(user?.id);
+		if (user) getSchedules(user?.id);
 	}, []);
 
-	const fetchData = async (id: number) => {
+	const getSchedules = async (id: number) => {
 		setLoading(true);
 
-		await api
-			.get(`/schedule/user/${id}`)
-			.then((res) => {
-				if (res.data.success) setSchedules(res.data.data);
-			})
-			.finally(() => {
-				setLoading(false);
-			});
+		try {
+			const { success, data } = await api.get<ResponseListInterface<ScheduleInterface>>(`/schedule/user/${id}`);
+			if (success) setSchedules(data);
+		} catch {}
+
+		setLoading(false);
 	};
 
 	return (
 		<>
 			<h1 className={style.user_schedule_title}>Agendamentos de {user?.name}</h1>
+
 			<Table
 				bordered
 				columns={schedulesColumns}
 				loading={loading}
 				dataSource={schedules}
 				size="middle"
-				rowKey={function (record): any {
-					return record.id;
-				}}
+				rowKey={(record): any => record.id}
 			/>
 		</>
 	);

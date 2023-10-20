@@ -4,6 +4,7 @@ import { MenuItemType } from "antd/es/menu/hooks/useItems";
 import { ReactNode, useContext, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import { useNotifications } from "../../hooks/useNotifications";
+import { ResponseInterface } from "../../interfaces/responseInterface";
 import { UserInterface } from "../../interfaces/userInterface";
 import { api } from "../../service/api";
 import UserSchedules from "../schedule/userScheduleList";
@@ -17,7 +18,7 @@ interface LayoutCompProps {
 }
 
 export default function LayoutComp({ children }: LayoutCompProps) {
-	const { user, logout } = useContext(AuthContext);
+	const { user, refreshUser, logout } = useContext(AuthContext);
 	const { Header, Content } = Layout;
 
 	const [loading, setLoading] = useState(false);
@@ -27,26 +28,37 @@ export default function LayoutComp({ children }: LayoutCompProps) {
 	const [form] = Form.useForm();
 	const notify = useNotifications();
 
-	const saveEdit = async (userForm: UserInterface) => {
+	const handleEdit = async (userForm: UserInterface) => {
 		setLoading(true);
-		await api
-			.put(`/user/update/${userForm?.id}`, {
-				id: userForm.id,
-				name: userForm.name,
-				lastName: userForm.lastName,
-				email: userForm.email != user?.email ? userForm.email : null,
-			})
-			.then((res) => {
-				if (res.data.success) notify.success("Usuário editado com sucesso!");
-				else notify.error(res?.data?.errorMessage);
-			})
-			.catch((err) => {
-				notify.error(err.response.data.errorMessage || "Erro!");
-			})
-			.finally(() => {
-				setEditVisible(false);
+
+		const payload = {
+			id: userForm?.id,
+			name: userForm?.name,
+			lastName: userForm?.lastName,
+			email: userForm?.email,
+		};
+
+		try {
+			const { success, data, errorMessage } = await api.put<ResponseInterface<UserInterface>>(
+				`/user/update/${userForm?.id}`,
+				payload
+			);
+
+			if (!success) {
+				notify.error(errorMessage);
 				setLoading(false);
-			});
+				return;
+			}
+		} catch (error: any) {
+			notify.error(error.response?.data?.errorMessage);
+			return;
+		}
+
+		notify.success("Usuário editado com sucesso!");
+
+		setLoading(false);
+		setEditVisible(false);
+		refreshUser();
 	};
 
 	const items: MenuItemType[] = [
@@ -84,6 +96,7 @@ export default function LayoutComp({ children }: LayoutCompProps) {
 						<div style={{ width: "445px" }}>
 							<NavMenu />
 						</div>
+
 						<Dropdown trigger={["click"]} menu={{ items }}>
 							<Avatar className={style.user_profile} icon={<UserOutlined />} />
 						</Dropdown>
@@ -110,7 +123,7 @@ export default function LayoutComp({ children }: LayoutCompProps) {
 			>
 				{visibleEdit && (
 					<UserForm
-						saveForm={saveEdit}
+						saveForm={handleEdit}
 						form={form}
 						text={user?.name || "user"}
 						user={user}

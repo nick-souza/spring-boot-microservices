@@ -15,22 +15,24 @@ export default function UserForm({ user, text, form, saveForm, loading, setLoadi
 	const [title, setTitle] = useState(user?.name);
 
 	useEffect(() => {
-		if (user)
-			form.setFieldsValue({
-				id: user?.id,
-				name: user?.name,
-				lastName: user?.lastName,
-				email: user?.email,
-				statusDesc: user?.statusDesc,
-				roleDesc: user?.roleDesc,
-				creationDate: user?.creationDate,
-				lastUpdate: user?.lastUpdate,
-			});
+		if (!user) return;
+
+		form.setFieldsValue({
+			id: user?.id,
+			name: user?.name,
+			lastName: user?.lastName,
+			email: user?.email,
+			statusDesc: user?.statusDesc,
+			roleDesc: user?.roleDesc,
+			creationDate: user?.creationDate,
+			lastUpdate: user?.lastUpdate,
+		});
 	}, [user]);
 
 	const handleName = () => {
-		if (form.getFieldValue("name")) setTitle(form.getFieldValue("name"));
-		else {
+		if (form.getFieldValue("name")) {
+			setTitle(form.getFieldValue("name"));
+		} else {
 			form.setFieldValue("name", null);
 			setTitle(text);
 		}

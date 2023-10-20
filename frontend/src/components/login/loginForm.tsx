@@ -7,18 +7,16 @@ import { LoginCredentials } from "../../interfaces/loginInterfaces";
 import style from "../../pages/login/styles.module.css";
 
 export default function LoginForm() {
+	const { login } = useContext(AuthContext);
 	const [loading, setLoading] = useState(false);
-	const { signIn } = useContext(AuthContext);
-	// const notify = useNotifications();
 
-	async function handleClick({ email, password }: LoginCredentials) {
+	const handleClick = async ({ email, password }: LoginCredentials) => {
 		setLoading(true);
-		await signIn({ email: email, password: password }).finally(() => setLoading(false));
-	}
 
-	const handleSignUp = () => {
-		Router.push("/signup");
+		await login({ email: email, password: password }).finally(() => setLoading(false));
 	};
+
+	const handleSignUp = () => Router.push("/signup");
 
 	return (
 		<Form name="login" className="login-form" onFinish={handleClick}>

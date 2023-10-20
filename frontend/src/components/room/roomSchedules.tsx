@@ -5,6 +5,7 @@ import { ScheduleInterface } from "../../interfaces/scheduleInterface";
 import style from "../../pages/room/style.module.css";
 import { api } from "../../service/api";
 import { schedulesColumns } from "../schedule/userScheduleList";
+import { ResponseListInterface } from "../../interfaces/responseInterface";
 
 interface RoomSchedulesListProps {
 	setVisible: (visible: boolean) => void;
@@ -23,28 +24,27 @@ export default function RoomSchedulesList({ visible, setVisible, room }: RoomSch
 
 	const findSchedulesByRoom = async (roomId: number) => {
 		setLoading(true);
-		await api
-			.get(`/schedule/room/${roomId}`)
-			.then((res) => {
-				if (res.data.success) setSchedules(res.data.data);
-			})
-			.finally(() => {
-				setLoading(false);
-			});
+
+		try {
+			const { success, data } = await api.get<ResponseListInterface<ScheduleInterface>>(`/schedule/room/${roomId}`);
+
+			if (success) setSchedules(data);
+		} catch {}
+
+		setLoading(false);
 	};
 
 	return (
 		<>
 			<h1 className={style.room_schedule_title}>{room?.name}</h1>
+
 			<Table
 				bordered
 				columns={schedulesColumns}
 				loading={loading}
 				dataSource={schedules}
 				size="middle"
-				rowKey={function (record): any {
-					return record.id;
-				}}
+				rowKey={(record): any => record.id}
 			/>
 		</>
 	);
