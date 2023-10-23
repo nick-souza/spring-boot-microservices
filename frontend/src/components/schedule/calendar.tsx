@@ -2,6 +2,8 @@ import { Badge, BadgeProps, Calendar, Select } from "antd";
 import localeData from "dayjs/plugin/localeData";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
+import { useNotifications } from "../../hooks/useNotifications";
+import { ResponseListInterface } from "../../interfaces/responseInterface";
 import { ScheduleInterface } from "../../interfaces/scheduleInterface";
 import style from "../../pages/schedule/style.module.css";
 import { api } from "../../service/api";
@@ -11,8 +13,6 @@ import CalendarListing from "./calendarListing";
 import ptBr from "antd/locale/pt_BR";
 import dayjs from "dayjs";
 import "dayjs/locale/pt-br";
-import { ResponseListInterface } from "../../interfaces/responseInterface";
-import { useNotifications } from "../../hooks/useNotifications";
 
 interface CalendarEvent {
 	id: number;
@@ -132,7 +132,7 @@ export default function Calendar1() {
 
 		return (
 			<div style={{ padding: 8 }} className={style.calendar_header}>
-				<h1 onDoubleClick={fetchData}>Calendário de agendamentos</h1>
+				<h1 onDoubleClick={fetchData}>Agendamentos</h1>
 				<Select
 					size="small"
 					value={month}

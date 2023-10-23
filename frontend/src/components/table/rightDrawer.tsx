@@ -1,6 +1,7 @@
-import { CheckOutlined } from "@ant-design/icons";
+import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { Button, Drawer } from "antd";
 import { ReactNode } from "react";
+import style from "./style.module.css";
 
 interface EditDrawerProps {
 	title?: string;
@@ -15,7 +16,17 @@ interface EditDrawerProps {
 	okBtnName?: string;
 }
 
-export default function RightDrawer({ title, children, visible, setVisible, loading, handleOk, drawerWidth, okBtnName, onDrawerClose }: EditDrawerProps) {
+export default function RightDrawer({
+	title,
+	children,
+	visible,
+	setVisible,
+	loading,
+	handleOk,
+	drawerWidth,
+	okBtnName,
+	onDrawerClose,
+}: EditDrawerProps) {
 	const onCloseThis = () => {
 		if (onDrawerClose) onDrawerClose();
 		setVisible(false);
@@ -23,17 +34,31 @@ export default function RightDrawer({ title, children, visible, setVisible, load
 
 	return (
 		<Drawer
-			title={title}
-			width={drawerWidth ? drawerWidth : 620}
-			onClose={onCloseThis}
-			open={visible}
 			destroyOnClose
+			open={visible}
+			closeIcon={null}
+			onClose={onCloseThis}
+			width={drawerWidth ? drawerWidth : 620}
+			title={
+				<div className={style.drawer_header}>
+					{title}
+					<CloseOutlined onClick={onCloseThis} />
+				</div>
+			}
 			footer={
 				<div className="text-right">
 					<Button disabled={loading} onClick={() => setVisible(false)} style={{ marginRight: "5px" }}>
 						Cancelar
 					</Button>
-					<Button disabled={loading} className="btn-success" onClick={handleOk} icon={<CheckOutlined />} color="var(--success)" loading={loading}>
+
+					<Button
+						disabled={loading}
+						className="btn-success"
+						onClick={handleOk}
+						icon={<CheckOutlined />}
+						color="var(--success)"
+						loading={loading}
+					>
 						{okBtnName ? okBtnName : "Salvar"}
 					</Button>
 				</div>

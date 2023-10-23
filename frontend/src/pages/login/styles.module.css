@@ -1,6 +1,14 @@
+.form {
+	width: 25%;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	-webkit-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+}
+
 .login_btn {
 	width: 100%;
-	/* background-color: var(--navyBlue); */
 }
 
 .sign_up_btn {

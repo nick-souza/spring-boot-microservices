@@ -49,14 +49,14 @@ export default function CreateRoom({ fetchTable }: CreateEntityProps) {
 			</Button>
 
 			<RightDrawer
-				title="Adicionar sala"
+				title="Criar sala"
 				visible={visible}
 				setVisible={setVisible}
 				loading={loading}
 				setLoading={setLoading}
 				handleOk={() => form.submit()}
 			>
-				<RoomForm text="Sala" saveForm={saveAdd} form={form} loading={loading} setLoading={setLoading} />
+				<RoomForm saveForm={saveAdd} form={form} loading={loading} setLoading={setLoading} />
 			</RightDrawer>
 		</>
 	);

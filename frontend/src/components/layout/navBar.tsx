@@ -19,7 +19,7 @@ export default function NavBar() {
 	);
 
 	return (
-		<header className={style.header}>
+		<div className={style.header}>
 			<div className={style.logo}>
 				<Logo />
 			</div>
@@ -58,7 +58,7 @@ export default function NavBar() {
 					<div className={style.menu_drawer}>{items()}</div>
 				</Drawer>
 			</>
-		</header>
+		</div>
 	);
 }
 

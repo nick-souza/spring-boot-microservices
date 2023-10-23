@@ -22,19 +22,21 @@ export default function NavProfile() {
 	const [visibleEdit, setEditVisible] = useState(false);
 	const [visibleScheduleList, setVisibleScheduleList] = useState(false);
 
-	const handleEdit = async (userForm: UserInterface) => {
+	const handleEdit = async (values: UserInterface) => {
+		if (!values?.id) return;
+
 		setLoading(true);
 
 		const payload = {
-			id: userForm?.id,
-			name: userForm?.name,
-			lastName: userForm?.lastName,
-			email: userForm?.email,
+			id: values?.id,
+			name: values?.name,
+			lastName: values?.lastName,
+			email: values?.email,
 		};
 
 		try {
 			const { success, data, errorMessage } = await api.put<ResponseInterface<UserInterface>>(
-				`/user/update/${userForm?.id}`,
+				`/user/update/${values?.id}`,
 				payload
 			);
 
@@ -58,33 +60,36 @@ export default function NavProfile() {
 	const items: MenuItemType[] = [
 		{
 			key: "1",
+			onClick: () => setEditVisible(true),
+			label: <span>{user?.name}</span>,
 			icon: (
 				<Tooltip title={user?.email}>
 					<i className="uil-user" />
 				</Tooltip>
 			),
-			label: <span onClick={() => setEditVisible(true)}>{user?.name}</span>,
 		},
 		{
 			key: "2",
+			onClick: () => setVisibleScheduleList(true),
+			label: <span>Meus agendamentos</span>,
 			icon: <i className="uil-schedule" />,
-			label: <span onClick={() => setVisibleScheduleList(true)}>Meus agendamentos</span>,
 		},
 		{
 			key: "3",
+			onClick: () => logout(),
+			label: <span>Log out</span>,
 			icon: <i className="uil-sign-out-alt" />,
-			label: <span onClick={() => logout()}>Log out</span>,
 		},
 	];
 
 	return (
 		<>
-			<Dropdown trigger={["click"]} menu={{ items }}>
+			<Dropdown trigger={["click"]} placement="bottomRight" menu={{ items }} arrow>
 				<Avatar className={style.user_profile} icon={<UserOutlined />} />
 			</Dropdown>
 
 			<RightDrawer
-				title={visibleEdit ? "Editar" : "Meus agendamentos"}
+				title={visibleEdit ? "Editar perfil" : "Meus agendamentos"}
 				visible={visibleEdit || visibleScheduleList}
 				setVisible={visibleEdit ? setEditVisible : setVisibleScheduleList}
 				loading={loading}
@@ -96,16 +101,7 @@ export default function NavProfile() {
 					else if (visibleScheduleList) setVisibleScheduleList(false);
 				}}
 			>
-				{visibleEdit && (
-					<UserForm
-						saveForm={handleEdit}
-						form={form}
-						text={user?.name || "user"}
-						user={user}
-						loading={loading}
-						setLoading={setLoading}
-					/>
-				)}
+				{visibleEdit && <UserForm saveForm={handleEdit} form={form} user={user} loading={loading} setLoading={setLoading} />}
 
 				{visibleScheduleList && <UserSchedules user={user} />}
 			</RightDrawer>

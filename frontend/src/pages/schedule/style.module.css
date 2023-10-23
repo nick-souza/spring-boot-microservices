@@ -21,27 +21,28 @@
 }
 
 .calendar_header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 1rem 0 !important;
 	background-color: var(--gray-background-login) !important;
-	display: grid;
-	margin-top: 1rem;
-	padding-bottom: 1rem !important;
 }
 
 .calendar_header h1 {
 	margin: 0;
-	grid-column: 1/2 !important;
+	flex: 1;
 }
 
-.calendar_select {
-	justify-self: end;
-	width: 30%;
-	margin-right: -7px;
-	grid-column: 2/2 !important;
-	margin-top: 5px !important;
+@media (min-width: 750px) {
+	.calendar_select {
+		flex: 0 0 15%;
+	}
 }
 
-.calendar_header .calendar_header .ant-select-arrow {
-	margin-top: -8px !important;
+@media (max-width: 750px) {
+	.calendar_select {
+		flex: 0 0 45%;
+	}
 }
 
 .calendar_root {
