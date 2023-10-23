@@ -14,7 +14,7 @@ export default function MainLayout({ children }: LayoutCompProps) {
 			<Layout className="layout">
 				<NavBar />
 
-				<Content className="layout-content" style={{ padding: "0 50px" }}>
+				<Content className="layout-content" style={{ padding: "0 50px", marginTop: "60px" }}>
 					{children}
 				</Content>
 			</Layout>

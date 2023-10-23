@@ -13,7 +13,7 @@ export default class MyDocument extends Document {
 					<link rel="icon" href="page-icon.png" />
 				</Head>
 
-				<body className="site-navbar-small custom-scrollbar">
+				<body className="site-navbar-small scrollbar-custom">
 					<Main />
 					<NextScript />
 				</body>

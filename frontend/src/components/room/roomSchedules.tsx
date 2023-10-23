@@ -15,7 +15,6 @@ interface RoomSchedulesListProps {
 
 export default function RoomSchedulesList({ visible, setVisible, room }: RoomSchedulesListProps) {
 	const [schedules, setSchedules] = useState<ScheduleInterface[]>();
-
 	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
@@ -36,7 +35,7 @@ export default function RoomSchedulesList({ visible, setVisible, room }: RoomSch
 
 	return (
 		<>
-			<h1 className={style.room_schedule_title}>{room?.name}</h1>
+			{/* <h1 className={style.room_schedule_title}>{room?.name}</h1> */}
 
 			<Table
 				bordered

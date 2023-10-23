@@ -1,9 +1,8 @@
-import { Form, FormInstance, Input } from "antd";
-import { useEffect, useState } from "react";
+import { Col, Form, FormInstance, Input, Row } from "antd";
+import { useEffect } from "react";
 import { RoomInterface } from "../../interfaces/roomInterface";
 
 interface RoomEditFormProps {
-	text: string;
 	form: FormInstance;
 	room?: RoomInterface;
 	saveForm: (values: RoomInterface) => void;
@@ -11,11 +10,12 @@ interface RoomEditFormProps {
 	setLoading?: (loading: boolean) => void;
 }
 
-export default function RoomForm({ room, text, form, saveForm, loading, setLoading }: RoomEditFormProps) {
-	const [title, setTitle] = useState(room?.name);
-
+export default function RoomForm({ room, form, saveForm, loading, setLoading }: RoomEditFormProps) {
 	useEffect(() => {
-		if (!room) return;
+		if (!room) {
+			form.resetFields();
+			return;
+		}
 
 		form.setFieldsValue({
 			id: room?.id,
@@ -26,70 +26,66 @@ export default function RoomForm({ room, text, form, saveForm, loading, setLoadi
 		});
 	}, [room]);
 
-	useEffect(() => {
-		handleName();
-	}, []);
-
-	const handleName = () => {
-		if (form.getFieldValue("name")) {
-			setTitle(form.getFieldValue("name"));
-		} else {
-			form.setFieldValue("name", null);
-			setTitle(text);
-		}
-	};
-
 	return (
 		<>
-			<h1>{title}</h1>
 			<Form form={form} layout="vertical" onFinish={(values) => saveForm(values)} disabled={loading}>
-				{room && (
-					<Form.Item name="id" label="Id">
-						<Input disabled />
-					</Form.Item>
-				)}
+				<Row gutter={24}>
+					{room && (
+						<Form.Item name="id" label="Id" hidden>
+							<Input disabled />
+						</Form.Item>
+					)}
 
-				<Form.Item
-					name="name"
-					label="Nome"
-					rules={[
-						{
-							required: true,
-							message: "Nome é obrigatório",
-						},
-						{
-							min: 4,
-							message: "Name must contain at least 4 characters",
-						},
-					]}
-				>
-					<Input placeholder="Nome" onChange={handleName} value={room?.name} />
-				</Form.Item>
+					<Col span={24}>
+						<Form.Item
+							name="name"
+							label="Nome"
+							rules={[
+								{
+									required: true,
+									message: "Nome é obrigatório",
+								},
+								{
+									min: 4,
+									message: "Name must contain at least 4 characters",
+								},
+							]}
+						>
+							<Input placeholder="Nome" value={room?.name} />
+						</Form.Item>
+					</Col>
 
-				<Form.Item
-					name="capacity"
-					label={"Capacidade"}
-					rules={[
-						{
-							required: true,
-							message: "Capacidade é obrigatório",
-						},
-					]}
-				>
-					<Input placeholder="Capacity" type="number" />
-				</Form.Item>
+					<Col span={24}>
+						<Form.Item
+							name="capacity"
+							label={"Capacidade"}
+							rules={[
+								{
+									required: true,
+									message: "Capacidade é obrigatório",
+								},
+							]}
+						>
+							<Input placeholder="Capacity" type="number" />
+						</Form.Item>
+					</Col>
 
-				{room && (
-					<Form.Item name="creationDate" label="Data de criação">
-						<Input disabled />
-					</Form.Item>
-				)}
+					{room && (
+						<Col span={12}>
+							<Form.Item name="creationDate" label="Data de criação">
+								<Input disabled />
+							</Form.Item>
+						</Col>
+					)}
 
-				{room && (
-					<Form.Item name="lastUpdate" label="Última atualização">
-						<Input disabled />
-					</Form.Item>
-				)}
+					{room && (
+						<Col span={12}>
+							<Form.Item name="lastUpdate" label="Última atualização">
+								<Input disabled />
+							</Form.Item>
+						</Col>
+					)}
+				</Row>
 			</Form>
 		</>
 	);

@@ -69,7 +69,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 			});
 
 			setCookie(undefined, "auth.token", data.token, {
-				maxAge: 60 * 60 * 1, // 1 hora
+				maxAge: 60 * 60 * 24, // 24 horas
 			});
 
 			const _user = {
@@ -91,7 +91,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
 	const signUp = async (SignUpCredentials: SignUpCredentials) => {
 		try {
-			const { success, data } = await api.post<ResponseInterface<UserInterface>>("/auth/sign-up", SignUpCredentials);
+			const { success } = await api.post<ResponseInterface<UserInterface>>("/auth/sign-up", SignUpCredentials);
+
 			if (success) {
 				notify.success("Account created successfully");
 				Router.push("/");

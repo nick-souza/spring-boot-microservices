@@ -1,6 +1,11 @@
-/* .signup_btn {
-	background-color: var(--navyBlue);
-} */
+.form {
+	width: 25%;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	-webkit-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+}
 
 .signup_title {
 	font-size: 1.75rem;

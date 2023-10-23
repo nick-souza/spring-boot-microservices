@@ -51,16 +51,21 @@ export default function RoomList() {
 		setDeleteLoading(true);
 
 		try {
-			const { success } = await api.delete<ResponseBoolInterface>(`/room/delete/${activeRoom?.id}`);
-			if (!success) return;
+			const { success, errorMessage } = await api.delete<ResponseBoolInterface>(`/room/delete/${activeRoom?.id}`);
+
+			if (success) {
+				notify.success("Sala excluída com sucesso!");
+				getRooms();
+			} else {
+				notify.error(errorMessage);
+			}
 		} catch (error: any) {
 			notify.error(error.response?.data?.errorMessage);
+			return;
 		}
 
-		notify.success("Sala excluída com sucesso!");
 		setDeleteVisible(false);
 		setDeleteLoading(false);
-		getRooms();
 	};
 
 	const handleEdit = async (room: RoomInterface) => {
@@ -117,7 +122,7 @@ export default function RoomList() {
 			dataIndex: "operation",
 			render: (_, room: RoomInterface) => (
 				<TableOptions
-					isSelf={false}
+					isSelf
 					applyPermissions={false}
 					handleDelete={() => {
 						setDeleteVisible(true);
@@ -152,14 +157,7 @@ export default function RoomList() {
 				loading={loading}
 				addButton={<CreateRoom fetchTable={getRooms} />}
 			>
-				<RoomForm
-					saveForm={handleEdit}
-					form={form}
-					text={activeRoom?.name || "Room"}
-					room={activeRoom}
-					loading={editLoading}
-					setLoading={setEditLoading}
-				/>
+				<RoomForm saveForm={handleEdit} form={form} room={activeRoom} loading={editLoading} setLoading={setEditLoading} />
 			</TableList>
 
 			<DeleteItemModal

@@ -133,7 +133,7 @@ public class AuthenticationService {
 
         // Validade de uma hora:
         var now = new Date();
-        var validity = new Date(now.getTime() + 3600000); // 1 hour
+        var validity = new Date(now.getTime() + 86400000); // 24 hours
 
         // Criando e retornando o JWT token:
         return Jwts.builder().setClaims(claims).setIssuedAt(now).setExpiration(validity).signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();
