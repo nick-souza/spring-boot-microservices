@@ -1,15 +1,15 @@
 import BigCalendar from "../../components/calendar";
-import LayoutComp from "../../components/layout/layoutComp";
+import MainLayout from "../../components/layout/mainLayout";
 import { AuthProvider } from "../../contexts/AuthContext";
 
 export default function Calendar() {
 	return (
 		<AuthProvider>
-			<LayoutComp>
+			<MainLayout>
 				{/* <div className={style.calendar_wrapper}> */}
 				<BigCalendar />
 				{/* </div> */}
-			</LayoutComp>
+			</MainLayout>
 		</AuthProvider>
 	);
 }

@@ -1,45 +1,96 @@
-.logo {
-	float: left;
-	width: 120px;
-	height: 31px;
-	margin: 16px 24px 16px 0;
-	/* background: rgba(255, 255, 255, 0.3); */
-	display: flex;
-	align-items: center;
+@media (min-width: 750px) {
+	.drawer_button {
+		margin-top: 20px;
+		display: none;
+	}
 }
 
-.title {
-	color: #fff;
-	font-family: "Bebas Neue", cursive !important;
-	font-size: 2rem;
-	margin-top: 6px;
-	/* margin-left: 15px; */
-}
-
-.icon {
-	color: #fff;
-	font-size: 2rem;
-}
-
-.user_profile {
-	float: right;
-	width: 35px;
-	height: 35px;
-	border-radius: 50%;
-	margin: 14px 0 0;
-	background: var(--danger);
-	margin-left: 24px;
+@media (max-width: 750px) {
+	.menu {
+		margin-top: 10px;
+		display: none !important;
+	}
 }
 
 .header {
-	border-bottom: 1px solid var(--blueGrotto) !important;
+	background-color: #fff;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0 50px;
+	height: 60px;
+
+	/* TODO: */
+	box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
 }
 
-.header ul {
-	border-bottom: 0 !important;
+.logo {
+	height: 60px;
+	flex: 0 0 25%;
 }
 
-.navItem {
-	text-decoration: none;
-	color: #fff !important;
+.menu {
+	height: 60px;
+	display: flex;
+	align-items: center;
+	gap: 42px;
+}
+
+.menu .wrapper {
+	height: 100%;
+	padding: 0 14px 0 10px;
+	display: flex;
+	align-items: center;
+	border-bottom: #fff 2px solid;
+	cursor: pointer;
+}
+
+.menu .wrapper.active {
+	border-bottom: var(--navbar-selected) 2px solid;
+	color: var(--navbar-selected);
+}
+
+.menu .wrapper .item {
+	color: #000;
+	display: flex;
+	align-items: center;
+	height: 100%;
+	justify-content: center;
+}
+
+.menu .wrapper:hover .item {
+	color: var(--navbar-selected);
+}
+
+.wrapper.active .item {
+	color: var(--navbar-selected);
+}
+
+.item .text {
+	padding-left: 8px;
+}
+
+.user_profile {
+	width: 35px;
+	height: 35px;
+	background: var(--danger);
+}
+
+.menu_drawer {
+	display: inline;
+}
+
+.menu_drawer .item {
+	color: #000;
+	height: 32px;
+	display: inline-block;
+	display: flex;
+	align-items: center;
+	padding: 0 12px;
+}
+
+.drawer_header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 }

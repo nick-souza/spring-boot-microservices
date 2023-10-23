@@ -83,12 +83,11 @@ export default function UserList() {
 
 		// try {
 
-
 		await api
 			.put(`/user/update/${user?.id}`, {
 				id: user.id,
 				name: user.name,
-				lastName: user.las tName,
+				lastName: user.lastName,
 				email: user.email != activeUser?.email ? user.email : null,
 			})
 			.then((res) => {

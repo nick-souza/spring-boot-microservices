@@ -1,4 +1,4 @@
-import LayoutComp from "../../components/layout/layoutComp";
+import MainLayout from "../../components/layout/mainLayout";
 import Calendar1 from "../../components/schedule/calendar";
 import { AuthProvider } from "../../contexts/AuthContext";
 import style from "./style.module.css";
@@ -6,12 +6,12 @@ import style from "./style.module.css";
 export default function ScheduleDashboard() {
 	return (
 		<AuthProvider>
-			<LayoutComp>
+			<MainLayout>
 				{/* <ScheduleList /> */}
 				<div className={style.calendar_wrapper}>
 					<Calendar1 />
 				</div>
-			</LayoutComp>
+			</MainLayout>
 		</AuthProvider>
 	);
 }
