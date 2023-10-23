@@ -36,7 +36,7 @@ export function getAPIClient(context?: any) {
 
 	const _api = {
 		axios: api,
-		get: <T,>(url: string, config?: AxiosRequestConfig) =>
+		get: <T>(url: string, config?: AxiosRequestConfig) =>
 			new Promise<T>((resolve, reject) => {
 				api
 					.get(url, config)
@@ -46,7 +46,7 @@ export function getAPIClient(context?: any) {
 						reject(error);
 					});
 			}),
-		post: <T,>(url: string, data?: any, config?: AxiosRequestConfig) =>
+		post: <T>(url: string, data?: any, config?: AxiosRequestConfig) =>
 			new Promise<T>((resolve, reject) => {
 				api
 					.post(url, data, config)
@@ -56,7 +56,7 @@ export function getAPIClient(context?: any) {
 						reject(error);
 					});
 			}),
-		put: <T,>(url: string, data?: any, config?: AxiosRequestConfig) =>
+		put: <T>(url: string, data?: any, config?: AxiosRequestConfig) =>
 			new Promise<T>((resolve, reject) => {
 				api
 					.put(url, data, config)
@@ -66,7 +66,7 @@ export function getAPIClient(context?: any) {
 						reject(error);
 					});
 			}),
-		delete: <T,>(url: string, config?: AxiosRequestConfig) =>
+		delete: <T>(url: string, config?: AxiosRequestConfig) =>
 			new Promise<T>((resolve, reject) => {
 				api
 					.delete(url, config)
@@ -76,7 +76,7 @@ export function getAPIClient(context?: any) {
 						reject(error);
 					});
 			}),
-		patch: <T,>(url: string, data?: any, config?: AxiosRequestConfig) =>
+		patch: <T>(url: string, data?: any, config?: AxiosRequestConfig) =>
 			new Promise<T>((resolve, reject) => {
 				api
 					.patch(url, data, config)

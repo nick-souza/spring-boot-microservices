@@ -136,6 +136,7 @@ public class UserService {
 
     private boolean emailCheck(String email) {
         var user = userRepository.findByEmail(email);
+
         return user.isPresent();
     }
 
