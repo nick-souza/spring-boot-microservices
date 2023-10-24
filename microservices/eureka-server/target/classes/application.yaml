@@ -2,8 +2,6 @@ spring:
   application:
     name: eureka-server
   security:
-#    basic:
-#      enabled: true
     user:
       name: admin
       password: password
