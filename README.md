@@ -45,3 +45,43 @@ To manage these PostgreSQL databases, there is a pgAdmin container and for MYSQL
 ## Docker and Docker Compose
 
 All services and databases are encapsulated in Docker containers, allowing easy and consistent deployment and configuration in any environment. Docker Compose is used to manage all these containers, allowing the entire system to be started with a single command.
+
+##
+
+![](https://imgur.com/x0nWTqZ.png)
+
+##
+
+![](https://imgur.com/pRr03Ht.png)
+
+##
+
+![](https://imgur.com/I7uDlHb.png)
+
+##
+
+![](https://imgur.com/8m4dhfP.png)
+
+##
+
+![](https://imgur.com/7UFseJ4.png)
+
+##
+
+![](https://imgur.com/oItVprl.png)
+
+##
+
+![](https://imgur.com/0GaY6qZ.png)
+
+##
+
+![](https://imgur.com/Z0nMa8u.png)
+
+##
+
+![](https://imgur.com/Jwnh7OT.png)
+
+##
+
+![](https://imgur.com/SfwhCRa.png)
